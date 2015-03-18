@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the TAPAS Project feature.
+ */
+
+include_once 'tapas_project.features.inc';
