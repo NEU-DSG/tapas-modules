@@ -31,44 +31,6 @@ function tapas_project_og_features_default_permissions() {
     ),
   );
 
-  // Exported og permission: 'node:project:create collection content'
-  $permissions['node:project:create collection content'] = array(
-    'roles' => array(
-      'project administrator' => 'project administrator',
-      'project editor' => 'project editor',
-    ),
-  );
-
-  // Exported og permission: 'node:project:create tapas_record content'
-  $permissions['node:project:create tapas_record content'] = array(
-    'roles' => array(),
-  );
-
-  // Exported og permission: 'node:project:delete any collection content'
-  $permissions['node:project:delete any collection content'] = array(
-    'roles' => array(
-      'project administrator' => 'project administrator',
-    ),
-  );
-
-  // Exported og permission: 'node:project:delete any tapas_record content'
-  $permissions['node:project:delete any tapas_record content'] = array(
-    'roles' => array(),
-  );
-
-  // Exported og permission: 'node:project:delete own collection content'
-  $permissions['node:project:delete own collection content'] = array(
-    'roles' => array(
-      'project administrator' => 'project administrator',
-      'project editor' => 'project editor',
-    ),
-  );
-
-  // Exported og permission: 'node:project:delete own tapas_record content'
-  $permissions['node:project:delete own tapas_record content'] = array(
-    'roles' => array(),
-  );
-
   // Exported og permission: 'node:project:manage members'
   $permissions['node:project:manage members'] = array(
     'roles' => array(
@@ -106,37 +68,12 @@ function tapas_project_og_features_default_permissions() {
     ),
   );
 
-  // Exported og permission: 'node:project:update any collection content'
-  $permissions['node:project:update any collection content'] = array(
-    'roles' => array(
-      'project administrator' => 'project administrator',
-    ),
-  );
-
-  // Exported og permission: 'node:project:update any tapas_record content'
-  $permissions['node:project:update any tapas_record content'] = array(
-    'roles' => array(),
-  );
-
   // Exported og permission: 'node:project:update group'
   $permissions['node:project:update group'] = array(
     'roles' => array(
       'project administrator' => 'project administrator',
       'project editor' => 'project editor',
     ),
-  );
-
-  // Exported og permission: 'node:project:update own collection content'
-  $permissions['node:project:update own collection content'] = array(
-    'roles' => array(
-      'project administrator' => 'project administrator',
-      'project editor' => 'project editor',
-    ),
-  );
-
-  // Exported og permission: 'node:project:update own tapas_record content'
-  $permissions['node:project:update own tapas_record content'] = array(
-    'roles' => array(),
   );
 
   return $permissions;

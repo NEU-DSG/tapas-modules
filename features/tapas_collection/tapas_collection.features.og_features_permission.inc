@@ -21,6 +21,7 @@ function tapas_collection_og_features_default_permissions() {
   $permissions['node:collection:administer group'] = array(
     'roles' => array(
       'collection administrator' => 'collection administrator',
+      'collection editor' => 'collection editor',
     ),
   );
 
@@ -34,41 +35,20 @@ function tapas_collection_og_features_default_permissions() {
   // Exported og permission: 'node:collection:create collection content'
   $permissions['node:collection:create collection content'] = array(
     'roles' => array(
-      'collection administrator' => 'collection administrator',
-    ),
-  );
-
-  // Exported og permission: 'node:collection:create tapas_record content'
-  $permissions['node:collection:create tapas_record content'] = array(
-    'roles' => array(
-      'collection administrator' => 'collection administrator',
       'collection editor' => 'collection editor',
     ),
   );
 
   // Exported og permission: 'node:collection:delete any collection content'
   $permissions['node:collection:delete any collection content'] = array(
-    'roles' => array(),
-  );
-
-  // Exported og permission: 'node:collection:delete any tapas_record content'
-  $permissions['node:collection:delete any tapas_record content'] = array(
     'roles' => array(
-      'collection administrator' => 'collection administrator',
+      'collection editor' => 'collection editor',
     ),
   );
 
   // Exported og permission: 'node:collection:delete own collection content'
   $permissions['node:collection:delete own collection content'] = array(
     'roles' => array(
-      'collection administrator' => 'collection administrator',
-    ),
-  );
-
-  // Exported og permission: 'node:collection:delete own tapas_record content'
-  $permissions['node:collection:delete own tapas_record content'] = array(
-    'roles' => array(
-      'collection administrator' => 'collection administrator',
       'collection editor' => 'collection editor',
     ),
   );
@@ -112,13 +92,8 @@ function tapas_collection_og_features_default_permissions() {
 
   // Exported og permission: 'node:collection:update any collection content'
   $permissions['node:collection:update any collection content'] = array(
-    'roles' => array(),
-  );
-
-  // Exported og permission: 'node:collection:update any tapas_record content'
-  $permissions['node:collection:update any tapas_record content'] = array(
     'roles' => array(
-      'collection administrator' => 'collection administrator',
+      'collection editor' => 'collection editor',
     ),
   );
 
@@ -132,13 +107,6 @@ function tapas_collection_og_features_default_permissions() {
 
   // Exported og permission: 'node:collection:update own collection content'
   $permissions['node:collection:update own collection content'] = array(
-    'roles' => array(
-      'collection administrator' => 'collection administrator',
-    ),
-  );
-
-  // Exported og permission: 'node:collection:update own tapas_record content'
-  $permissions['node:collection:update own tapas_record content'] = array(
     'roles' => array(
       'collection administrator' => 'collection administrator',
       'collection editor' => 'collection editor',

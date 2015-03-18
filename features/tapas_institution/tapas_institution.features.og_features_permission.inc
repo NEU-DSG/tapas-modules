@@ -36,28 +36,13 @@ function tapas_institution_og_features_default_permissions() {
     'roles' => array(),
   );
 
-  // Exported og permission: 'node:institution:create tapas_record content'
-  $permissions['node:institution:create tapas_record content'] = array(
-    'roles' => array(),
-  );
-
   // Exported og permission: 'node:institution:delete any collection content'
   $permissions['node:institution:delete any collection content'] = array(
     'roles' => array(),
   );
 
-  // Exported og permission: 'node:institution:delete any tapas_record content'
-  $permissions['node:institution:delete any tapas_record content'] = array(
-    'roles' => array(),
-  );
-
   // Exported og permission: 'node:institution:delete own collection content'
   $permissions['node:institution:delete own collection content'] = array(
-    'roles' => array(),
-  );
-
-  // Exported og permission: 'node:institution:delete own tapas_record content'
-  $permissions['node:institution:delete own tapas_record content'] = array(
     'roles' => array(),
   );
 
@@ -106,11 +91,6 @@ function tapas_institution_og_features_default_permissions() {
     'roles' => array(),
   );
 
-  // Exported og permission: 'node:institution:update any tapas_record content'
-  $permissions['node:institution:update any tapas_record content'] = array(
-    'roles' => array(),
-  );
-
   // Exported og permission: 'node:institution:update group'
   $permissions['node:institution:update group'] = array(
     'roles' => array(
@@ -120,11 +100,6 @@ function tapas_institution_og_features_default_permissions() {
 
   // Exported og permission: 'node:institution:update own collection content'
   $permissions['node:institution:update own collection content'] = array(
-    'roles' => array(),
-  );
-
-  // Exported og permission: 'node:institution:update own tapas_record content'
-  $permissions['node:institution:update own tapas_record content'] = array(
     'roles' => array(),
   );
 
