@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas CT Record feature.
+ */
+
+include_once 'tapas_ct_record.features.inc';

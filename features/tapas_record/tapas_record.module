@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the TAPAS Record feature.
- */
-
-include_once 'tapas_record.features.inc';
