@@ -75,6 +75,15 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
     'module' => 'contextual',
   );
 
+  // Exported permission: 'access dashboard'.
+  $permissions['access dashboard'] = array(
+    'name' => 'access dashboard',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'dashboard',
+  );
+
   // Exported permission: 'access site in maintenance mode'.
   $permissions['access site in maintenance mode'] = array(
     'name' => 'access site in maintenance mode',
@@ -100,6 +109,15 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
       'site administrator' => 'site administrator',
     ),
     'module' => 'contact',
+  );
+
+  // Exported permission: 'access toolbar'.
+  $permissions['access toolbar'] = array(
+    'name' => 'access toolbar',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'toolbar',
   );
 
   // Exported permission: 'access user contact forms'.
@@ -238,6 +256,15 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
     'module' => 'search',
   );
 
+  // Exported permission: 'administer shortcuts'.
+  $permissions['administer shortcuts'] = array(
+    'name' => 'administer shortcuts',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'shortcut',
+  );
+
   // Exported permission: 'administer site configuration'.
   $permissions['administer site configuration'] = array(
     'name' => 'administer site configuration',
@@ -272,6 +299,15 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
       'site administrator' => 'site administrator',
     ),
     'module' => 'system',
+  );
+
+  // Exported permission: 'administer url aliases'.
+  $permissions['administer url aliases'] = array(
+    'name' => 'administer url aliases',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'path',
   );
 
   // Exported permission: 'administer users'.
@@ -328,6 +364,24 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
       'site member' => 'site member',
     ),
     'module' => 'user',
+  );
+
+  // Exported permission: 'create url aliases'.
+  $permissions['create url aliases'] = array(
+    'name' => 'create url aliases',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'path',
+  );
+
+  // Exported permission: 'customize shortcut links'.
+  $permissions['customize shortcut links'] = array(
+    'name' => 'customize shortcut links',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'shortcut',
   );
 
   // Exported permission: 'delete revisions'.
@@ -458,6 +512,15 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
       'site administrator' => 'site administrator',
     ),
     'module' => 'comment',
+  );
+
+  // Exported permission: 'switch shortcut sets'.
+  $permissions['switch shortcut sets'] = array(
+    'name' => 'switch shortcut sets',
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
+    'module' => 'shortcut',
   );
 
   // Exported permission: 'use advanced search'.

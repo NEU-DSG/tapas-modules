@@ -10,6 +10,39 @@
 function tapas_ct_institution_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'comment-comment_node_tapas_institution-comment_body'
+  $field_instances['comment-comment_node_tapas_institution-comment_body'] = array(
+    'bundle' => 'comment_node_tapas_institution',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'comment',
+    'field_name' => 'comment_body',
+    'label' => 'Comment',
+    'required' => TRUE,
+    'settings' => array(
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 0,
+    ),
+  );
+
   // Exported field_instance: 'node-tapas_institution-field_locator_address'
   $field_instances['node-tapas_institution-field_locator_address'] = array(
     'bundle' => 'tapas_institution',
@@ -164,7 +197,7 @@ function tapas_ct_institution_field_default_field_instances() {
       'active' => 1,
       'module' => 'image',
       'settings' => array(
-        'preview_image_style' => 'thumbnail',
+        'preview_image_style' => 'tiny',
         'progress_indicator' => 'throbber',
       ),
       'type' => 'image_image',
@@ -212,6 +245,57 @@ function tapas_ct_institution_field_default_field_instances() {
       'type' => 'text_textarea_with_summary',
       'weight' => 5,
     ),
+  );
+
+  // Exported field_instance: 'node-tapas_institution-group_access'
+  $field_instances['node-tapas_institution-group_access'] = array(
+    'bundle' => 'tapas_institution',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 6,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'group_access',
+    'label' => 'Group visibility',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'view modes' => array(
+      'full' => array(
+        'label' => 'above',
+        'type' => 'options_onoff',
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'type' => 'options_onoff',
+      ),
+    ),
+    'widget' => array(
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 7,
+    ),
+    'widget_type' => 'options_select',
   );
 
   // Exported field_instance: 'node-tapas_institution-group_group'
@@ -325,9 +409,11 @@ function tapas_ct_institution_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
+  t('Comment');
   t('Determine if this is an OG group.');
   t('Group');
   t('Group roles and permissions');
+  t('Group visibility');
   t('Institution Address');
   t('Institution Description');
   t('Institution Image');

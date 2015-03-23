@@ -46,7 +46,7 @@ function tapas_ct_collection_views_default_views() {
   $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['label'] = 'og_collection_to_project';
   $handler->display->display_options['relationships']['og_membership_rel']['required'] = TRUE;
-  /* Field: Content: Collection Image */
+  /* Field: Content: Project Image */
   $handler->display->display_options['fields']['field_logo_image']['id'] = 'field_logo_image';
   $handler->display->display_options['fields']['field_logo_image']['table'] = 'field_data_field_logo_image';
   $handler->display->display_options['fields']['field_logo_image']['field'] = 'field_logo_image';
@@ -62,11 +62,10 @@ function tapas_ct_collection_views_default_views() {
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = 'Record Title';
-  /* Field: Content: Collection Description */
+  /* Field: Content: Project Description */
   $handler->display->display_options['fields']['field_summary_description']['id'] = 'field_summary_description';
   $handler->display->display_options['fields']['field_summary_description']['table'] = 'field_data_field_summary_description';
   $handler->display->display_options['fields']['field_summary_description']['field'] = 'field_summary_description';
-  $handler->display->display_options['fields']['field_summary_description']['label'] = 'Project Description';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -135,7 +134,7 @@ function tapas_ct_collection_views_default_views() {
   $handler->display->display_options['relationships']['og_membership_related_node_group']['table'] = 'og_membership';
   $handler->display->display_options['relationships']['og_membership_related_node_group']['field'] = 'og_membership_related_node_group';
   $handler->display->display_options['relationships']['og_membership_related_node_group']['required'] = TRUE;
-  /* Field: Content: Collection Image */
+  /* Field: Content: Project Image */
   $handler->display->display_options['fields']['field_logo_image']['id'] = 'field_logo_image';
   $handler->display->display_options['fields']['field_logo_image']['table'] = 'field_data_field_logo_image';
   $handler->display->display_options['fields']['field_logo_image']['field'] = 'field_logo_image';
@@ -156,7 +155,7 @@ function tapas_ct_collection_views_default_views() {
   $handler->display->display_options['fields']['title_1']['field'] = 'title';
   $handler->display->display_options['fields']['title_1']['relationship'] = 'og_membership_related_node_group';
   $handler->display->display_options['fields']['title_1']['label'] = 'Project';
-  /* Field: Content: Collection Description */
+  /* Field: Content: Project Description */
   $handler->display->display_options['fields']['field_summary_description']['id'] = 'field_summary_description';
   $handler->display->display_options['fields']['field_summary_description']['table'] = 'field_data_field_summary_description';
   $handler->display->display_options['fields']['field_summary_description']['field'] = 'field_summary_description';

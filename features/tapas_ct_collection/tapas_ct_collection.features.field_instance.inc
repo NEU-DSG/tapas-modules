@@ -10,6 +10,39 @@
 function tapas_ct_collection_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'comment-comment_node_tapas_collection-comment_body'
+  $field_instances['comment-comment_node_tapas_collection-comment_body'] = array(
+    'bundle' => 'comment_node_tapas_collection',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'comment',
+    'field_name' => 'comment_body',
+    'label' => 'Comment',
+    'required' => TRUE,
+    'settings' => array(
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 0,
+    ),
+  );
+
   // Exported field_instance: 'node-tapas_collection-field_logo_image'
   $field_instances['node-tapas_collection-field_logo_image'] = array(
     'bundle' => 'tapas_collection',
@@ -52,7 +85,7 @@ function tapas_ct_collection_field_default_field_instances() {
       'active' => 1,
       'module' => 'image',
       'settings' => array(
-        'preview_image_style' => 'thumbnail',
+        'preview_image_style' => 'tiny',
         'progress_indicator' => 'throbber',
       ),
       'type' => 'image_image',
@@ -376,6 +409,7 @@ function tapas_ct_collection_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Collection Description');
   t('Collection Image');
+  t('Comment');
   t('Determine if this is an OG group.');
   t('Group');
   t('Group content visibility');

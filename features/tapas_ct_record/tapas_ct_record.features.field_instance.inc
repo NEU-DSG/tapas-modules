@@ -10,6 +10,39 @@
 function tapas_ct_record_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'comment-comment_node_tapas_record-comment_body'
+  $field_instances['comment-comment_node_tapas_record-comment_body'] = array(
+    'bundle' => 'comment_node_tapas_record',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'comment',
+    'field_name' => 'comment_body',
+    'label' => 'Comment',
+    'required' => TRUE,
+    'settings' => array(
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 0,
+    ),
+  );
+
   // Exported field_instance: 'node-tapas_record-field_tei_upload'
   $field_instances['node-tapas_record-field_tei_upload'] = array(
     'bundle' => 'tapas_record',
@@ -56,6 +89,7 @@ function tapas_ct_record_field_default_field_instances() {
   $field_instances['node-tapas_record-og_record_to_collection'] = array(
     'bundle' => 'tapas_record',
     'default_value' => NULL,
+    'default_value_function' => '',
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -89,6 +123,9 @@ function tapas_ct_record_field_default_field_instances() {
           ),
           'status' => TRUE,
         ),
+        'prepopulate' => array(
+          'status' => 0,
+        ),
       ),
       'user_register_form' => FALSE,
     ),
@@ -115,6 +152,7 @@ function tapas_ct_record_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
+  t('Comment');
   t('Groups audience');
   t('TEI_upload');
 

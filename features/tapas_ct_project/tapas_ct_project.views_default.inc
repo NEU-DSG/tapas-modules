@@ -31,7 +31,7 @@ function tapas_ct_project_views_default_views() {
   $handler->display->display_options['pager']['type'] = 'full';
   $handler->display->display_options['pager']['options']['items_per_page'] = '50';
   $handler->display->display_options['style_plugin'] = 'table';
-  /* Field: Content: Collection Image */
+  /* Field: Content: Institution Image */
   $handler->display->display_options['fields']['field_logo_image']['id'] = 'field_logo_image';
   $handler->display->display_options['fields']['field_logo_image']['table'] = 'field_data_field_logo_image';
   $handler->display->display_options['fields']['field_logo_image']['field'] = 'field_logo_image';
@@ -48,11 +48,10 @@ function tapas_ct_project_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Collection Description */
+  /* Field: Content: Institution Description */
   $handler->display->display_options['fields']['field_summary_description']['id'] = 'field_summary_description';
   $handler->display->display_options['fields']['field_summary_description']['table'] = 'field_data_field_summary_description';
   $handler->display->display_options['fields']['field_summary_description']['field'] = 'field_summary_description';
-  $handler->display->display_options['fields']['field_summary_description']['label'] = 'Project Description';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
