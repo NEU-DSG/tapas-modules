@@ -1,20 +1,20 @@
 <?php
 /**
  * @file
- * tapas_institution.features.inc
+ * tapas_ct_institution.features.inc
  */
 
 /**
  * Implements hook_node_info().
  */
-function tapas_institution_node_info() {
+function tapas_ct_institution_node_info() {
   $items = array(
-    'institution' => array(
+    'tapas_institution' => array(
       'name' => t('Institution'),
       'base' => 'node_content',
       'description' => '',
       'has_title' => '1',
-      'title_label' => t('Institution Title'),
+      'title_label' => t('Institution Name'),
       'help' => '',
     ),
   );

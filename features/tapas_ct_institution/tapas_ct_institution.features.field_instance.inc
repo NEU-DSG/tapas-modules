@@ -1,63 +1,21 @@
 <?php
 /**
  * @file
- * tapas_institution.features.field_instance.inc
+ * tapas_ct_institution.features.field_instance.inc
  */
 
 /**
  * Implements hook_field_default_field_instances().
  */
-function tapas_institution_field_default_field_instances() {
+function tapas_ct_institution_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-institution-field_institution_about'
-  $field_instances['node-institution-field_institution_about'] = array(
-    'bundle' => 'institution',
+  // Exported field_instance: 'node-tapas_institution-field_locator_address'
+  $field_instances['node-tapas_institution-field_locator_address'] = array(
+    'bundle' => 'tapas_institution',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => 'Tell us about your institution.',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 4,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_institution_about',
-    'label' => 'Institution About',
-    'required' => 0,
-    'settings' => array(
-      'display_summary' => 1,
-      'text_processing' => 1,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'text',
-      'settings' => array(
-        'rows' => 20,
-        'summary_rows' => 5,
-      ),
-      'type' => 'text_textarea_with_summary',
-      'weight' => 4,
-    ),
-  );
-
-  // Exported field_instance: 'node-institution-field_institution_address'
-  $field_instances['node-institution-field_institution_address'] = array(
-    'bundle' => 'institution',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => 'Postal address of your institution.',
+    'description' => '',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -69,7 +27,7 @@ function tapas_institution_field_default_field_instances() {
           'use_widget_handlers' => 1,
         ),
         'type' => 'addressfield_default',
-        'weight' => 6,
+        'weight' => 4,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -79,7 +37,7 @@ function tapas_institution_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_institution_address',
+    'field_name' => 'field_locator_address',
     'label' => 'Institution Address',
     'required' => 0,
     'settings' => array(
@@ -103,73 +61,23 @@ function tapas_institution_field_default_field_instances() {
         ),
       ),
       'type' => 'addressfield_standard',
-      'weight' => 6,
+      'weight' => 4,
     ),
   );
 
-  // Exported field_instance: 'node-institution-field_institution_image'
-  $field_instances['node-institution-field_institution_image'] = array(
-    'bundle' => 'institution',
-    'deleted' => 0,
-    'description' => 'Upload a photograph, logo, or other image to represent your institution.',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'image',
-        'settings' => array(
-          'image_link' => '',
-          'image_style' => '',
-        ),
-        'type' => 'image',
-        'weight' => 5,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_institution_image',
-    'label' => 'Institution Image',
-    'required' => 0,
-    'settings' => array(
-      'alt_field' => 1,
-      'default_image' => 0,
-      'file_directory' => 'institution_images',
-      'file_extensions' => 'png gif jpg jpeg',
-      'max_filesize' => '',
-      'max_resolution' => '',
-      'min_resolution' => '',
-      'title_field' => 1,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'image',
-      'settings' => array(
-        'preview_image_style' => 'thumbnail',
-        'progress_indicator' => 'throbber',
-      ),
-      'type' => 'image_image',
-      'weight' => 5,
-    ),
-  );
-
-  // Exported field_instance: 'node-institution-field_website'
-  $field_instances['node-institution-field_website'] = array(
-    'bundle' => 'institution',
+  // Exported field_instance: 'node-tapas_institution-field_locator_url'
+  $field_instances['node-tapas_institution-field_locator_url'] = array(
+    'bundle' => 'tapas_institution',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => 'A link to your institution\'s website.',
+    'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'link',
         'settings' => array(),
         'type' => 'link_default',
-        'weight' => 7,
+        'weight' => 3,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -179,8 +87,8 @@ function tapas_institution_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_website',
-    'label' => 'Website',
+    'field_name' => 'field_locator_url',
+    'label' => 'Institution URL',
     'required' => 0,
     'settings' => array(
       'absolute_url' => 1,
@@ -197,7 +105,7 @@ function tapas_institution_field_default_field_instances() {
       ),
       'enable_tokens' => 1,
       'rel_remove' => 'default',
-      'title' => 'none',
+      'title' => 'optional',
       'title_label_use_field_label' => 0,
       'title_maxlength' => 128,
       'title_value' => '',
@@ -210,27 +118,25 @@ function tapas_institution_field_default_field_instances() {
       'module' => 'link',
       'settings' => array(),
       'type' => 'link_field',
-      'weight' => 7,
+      'weight' => 3,
     ),
   );
 
-  // Exported field_instance: 'node-institution-group_access'
-  $field_instances['node-institution-group_access'] = array(
-    'bundle' => 'institution',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
+  // Exported field_instance: 'node-tapas_institution-field_logo_image'
+  $field_instances['node-tapas_institution-field_logo_image'] = array(
+    'bundle' => 'tapas_institution',
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
-        'module' => 'list',
-        'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 3,
+        'label' => 'hidden',
+        'module' => 'image',
+        'settings' => array(
+          'image_link' => '',
+          'image_style' => 'medium',
+        ),
+        'type' => 'image',
+        'weight' => 1,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -240,34 +146,77 @@ function tapas_institution_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'group_access',
-    'label' => 'Group visibility',
-    'required' => TRUE,
+    'field_name' => 'field_logo_image',
+    'label' => 'Institution Image',
+    'required' => 0,
     'settings' => array(
+      'alt_field' => 1,
+      'default_image' => 0,
+      'file_directory' => 'institution_images',
+      'file_extensions' => 'png gif jpg jpeg',
+      'max_filesize' => '1 MB',
+      'max_resolution' => '800x800',
+      'min_resolution' => '50x50',
+      'title_field' => 1,
       'user_register_form' => FALSE,
     ),
-    'view modes' => array(
-      'full' => array(
+    'widget' => array(
+      'active' => 1,
+      'module' => 'image',
+      'settings' => array(
+        'preview_image_style' => 'thumbnail',
+        'progress_indicator' => 'throbber',
+      ),
+      'type' => 'image_image',
+      'weight' => 2,
+    ),
+  );
+
+  // Exported field_instance: 'node-tapas_institution-field_summary_description'
+  $field_instances['node-tapas_institution-field_summary_description'] = array(
+    'bundle' => 'tapas_institution',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
         'label' => 'above',
-        'type' => 'options_onoff',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 2,
       ),
       'teaser' => array(
         'label' => 'above',
-        'type' => 'options_onoff',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
     ),
-    'widget' => array(
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_buttons',
-      'weight' => 3,
+    'entity_type' => 'node',
+    'field_name' => 'field_summary_description',
+    'label' => 'Institution Description',
+    'required' => 0,
+    'settings' => array(
+      'display_summary' => 1,
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
     ),
-    'widget_type' => 'options_select',
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 20,
+        'summary_rows' => 5,
+      ),
+      'type' => 'text_textarea_with_summary',
+      'weight' => 5,
+    ),
   );
 
-  // Exported field_instance: 'node-institution-group_group'
-  $field_instances['node-institution-group_group'] = array(
-    'bundle' => 'institution',
+  // Exported field_instance: 'node-tapas_institution-group_group'
+  $field_instances['node-tapas_institution-group_group'] = array(
+    'bundle' => 'tapas_institution',
     'default_value' => array(
       0 => array(
         'value' => 1,
@@ -277,7 +226,7 @@ function tapas_institution_field_default_field_instances() {
     'description' => 'Determine if this is an OG group.',
     'display' => array(
       'default' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'og_ui',
         'settings' => array(
           'field_name' => FALSE,
@@ -319,13 +268,13 @@ function tapas_institution_field_default_field_instances() {
         'og_hide' => TRUE,
       ),
       'type' => 'options_onoff',
-      'weight' => 0,
+      'weight' => 1,
     ),
   );
 
-  // Exported field_instance: 'node-institution-og_roles_permissions'
-  $field_instances['node-institution-og_roles_permissions'] = array(
-    'bundle' => 'institution',
+  // Exported field_instance: 'node-tapas_institution-og_roles_permissions'
+  $field_instances['node-tapas_institution-og_roles_permissions'] = array(
+    'bundle' => 'tapas_institution',
     'default_value' => array(
       0 => array(
         'value' => 0,
@@ -335,11 +284,10 @@ function tapas_institution_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'above',
-        'module' => 'list',
+        'label' => 'hidden',
         'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 2,
+        'type' => 'hidden',
+        'weight' => 5,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -371,24 +319,19 @@ function tapas_institution_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 2,
+      'weight' => 6,
     ),
   );
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('A link to your institution\'s website.');
   t('Determine if this is an OG group.');
   t('Group');
   t('Group roles and permissions');
-  t('Group visibility');
-  t('Institution About');
   t('Institution Address');
+  t('Institution Description');
   t('Institution Image');
-  t('Postal address of your institution.');
-  t('Tell us about your institution.');
-  t('Upload a photograph, logo, or other image to represent your institution.');
-  t('Website');
+  t('Institution URL');
 
   return $field_instances;
 }

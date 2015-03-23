@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the TAPAS Institution feature.
- */
-
-include_once 'tapas_institution.features.inc';
