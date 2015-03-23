@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the TAPAS Collection feature.
- */
-
-include_once 'tapas_collection.features.inc';
