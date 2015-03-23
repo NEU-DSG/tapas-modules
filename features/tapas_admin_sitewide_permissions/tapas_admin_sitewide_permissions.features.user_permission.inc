@@ -75,15 +75,6 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
     'module' => 'contextual',
   );
 
-  // Exported permission: 'access devel information'.
-  $permissions['access devel information'] = array(
-    'name' => 'access devel information',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'devel',
-  );
-
   // Exported permission: 'access site in maintenance mode'.
   $permissions['access site in maintenance mode'] = array(
     'name' => 'access site in maintenance mode',
@@ -349,15 +340,6 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: 'delete terms in forums'.
-  $permissions['delete terms in forums'] = array(
-    'name' => 'delete terms in forums',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'taxonomy',
-  );
-
   // Exported permission: 'delete terms in tags'.
   $permissions['delete terms in tags'] = array(
     'name' => 'delete terms in tags',
@@ -385,15 +367,6 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
     'module' => 'comment',
   );
 
-  // Exported permission: 'edit terms in forums'.
-  $permissions['edit terms in forums'] = array(
-    'name' => 'edit terms in forums',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'taxonomy',
-  );
-
   // Exported permission: 'edit terms in tags'.
   $permissions['edit terms in tags'] = array(
     'name' => 'edit terms in tags',
@@ -401,15 +374,6 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
       'site administrator' => 'site administrator',
     ),
     'module' => 'taxonomy',
-  );
-
-  // Exported permission: 'execute php code'.
-  $permissions['execute php code'] = array(
-    'name' => 'execute php code',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'devel',
   );
 
   // Exported permission: 'flush caches'.
@@ -496,15 +460,6 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
     'module' => 'comment',
   );
 
-  // Exported permission: 'switch users'.
-  $permissions['switch users'] = array(
-    'name' => 'switch users',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'devel',
-  );
-
   // Exported permission: 'use advanced search'.
   $permissions['use advanced search'] = array(
     'name' => 'use advanced search',
@@ -543,33 +498,6 @@ function tapas_admin_sitewide_permissions_user_default_permissions() {
       'site administrator' => 'site administrator',
     ),
     'module' => 'filter',
-  );
-
-  // Exported permission: 'view advanced help index'.
-  $permissions['view advanced help index'] = array(
-    'name' => 'view advanced help index',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'advanced_help',
-  );
-
-  // Exported permission: 'view advanced help popup'.
-  $permissions['view advanced help popup'] = array(
-    'name' => 'view advanced help popup',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'advanced_help',
-  );
-
-  // Exported permission: 'view advanced help topic'.
-  $permissions['view advanced help topic'] = array(
-    'name' => 'view advanced help topic',
-    'roles' => array(
-      'site administrator' => 'site administrator',
-    ),
-    'module' => 'advanced_help',
   );
 
   // Exported permission: 'view own unpublished content'.
