@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Tapas Tiny Image feature.
- */
-
-include_once 'tapas_tiny_image.features.inc';

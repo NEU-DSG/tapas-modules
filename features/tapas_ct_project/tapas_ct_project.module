@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the Tapas CT Project feature.
- */
-
-include_once 'tapas_ct_project.features.inc';
