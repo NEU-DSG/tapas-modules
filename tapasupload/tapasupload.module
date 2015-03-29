@@ -1,0 +1,81 @@
+<?php
+/**
+ * @file
+ * tapasupload.module TAPAS TEI upload and transformation
+ * 
+ * defines tapas_record conent type, performs
+ * TEI upload and validation, calls TFC transform.
+ */
+
+
+/**
+ * implements hook_node_info()
+ *
+ * Defines the TAPAS record content type
+ *
+ * I considered making this an entity rather than a node, since node brings
+ * along extra baggage that we don't need. However, Drupal's access-control
+ * system is node-based; therefore, it would be far more difficult to enforce
+ * access restrictions on a custom entity than on a custom node type.
+ **/
+
+function tapasupload_node_info()
+{
+  $result = array(
+    'tapas_record' => array(
+      'name' => t('TAPAS Record'),
+      'base' => 'tapasupload_record',
+      'description' => t('Holds a TEI record along with it\'s associated metadata and TFC'),
+      'has_title' => TRUE,
+      'title_label' => t('Record Title'),
+      'help' => '',
+    ),
+  );
+  node_type_save($result);
+  return $result;
+}
+
+/**
+ * implements hook_node_type_insert()
+ *
+ * Adds fields to the TAPAS Record content type
+ **/
+
+function tapasupload_node_type_insert($info)
+{
+	if ($info->type == 'tapas_record') {
+		// Create field bases
+		field_create_field(array(
+			'name' => 'tapas_TEI_file',
+			'cardinality' => 1,
+			'type' => 'file',
+			'locked' => TRUE,
+		));
+
+		// Create field instances
+		field_create_instance(array(
+			'field_name' => 'tapas_TEI_file',
+			'entity_type' => 'node',
+			'bundle' => 'tapas_record',
+			'label' => 'TEI File',
+		));
+
+	}
+}
+
+/**
+ * Implements hook_validate()
+ *
+ *
+ **/
+
+function tapasupload_record_validate($node, $form, &$form_state)
+{
+	if (! isset($node->field_tapas_tei_file) && ($node->field_tapas_tei_file != '')) {
+		form_set_error('field_tapas_tei_field', t("Did you forget to upload a file?"));
+		return;
+	}
+}
+
+
+
