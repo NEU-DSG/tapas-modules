@@ -35,33 +35,6 @@ function tapasupload_node_info()
   return $result;
 }
 
-/**
- * implements hook_node_type_insert()
- *
- * Adds fields to the TAPAS Record content type
- **/
-
-function tapasupload_node_type_insert($info)
-{
-	if ($info->type == 'tapas_record') {
-		// Create field bases
-		field_create_field(array(
-			'name' => 'tapas_TEI_file',
-			'cardinality' => 1,
-			'type' => 'file',
-			'locked' => TRUE,
-		));
-
-		// Create field instances
-		field_create_instance(array(
-			'field_name' => 'tapas_TEI_file',
-			'entity_type' => 'node',
-			'bundle' => 'tapas_record',
-			'label' => 'TEI File',
-		));
-
-	}
-}
 
 /**
  * Implements hook_validate()
