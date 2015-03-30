@@ -7,6 +7,17 @@
  * TEI upload and validation, calls TFC transform.
  */
 
+/** implements hook_form()
+ * 
+ * This has to be present even if it's just a pass-through,
+ * otherwise the content type won't appear in the 
+ * admin/structure/types list (I have no idea what the
+ * connection is, or why)
+ **/
+function tapasupload_record_form($node, $form_state) {
+  return node_content_form($node, $form_state);
+}
+
 
 /**
  * implements hook_node_info()
@@ -21,7 +32,7 @@
 
 function tapasupload_node_info()
 {
-  $result = array(
+  return array(
     'tapas_record' => array(
       'name' => t('TAPAS Record'),
       'base' => 'tapasupload_record',
@@ -31,15 +42,31 @@ function tapasupload_node_info()
       'help' => '',
     ),
   );
-  node_type_save($result);
-  return $result;
+	$content_type = node_type_set_defaults($node_example);
 }
 
+/**
+ * Implements hook_node_type_insert()
+ **/
+
+function tapasupload_node_type_insert($info)
+{
+	if ($info->type == 'tapas_record')
+	{
+		// Create field instances
+		field_info_cache_clear();
+		field_create_instance(array(
+			'field_name' => 'tapas_tei_file',
+			'entity_type' => 'node',
+			'bundle' => 'tapas_record',
+			'label' => 'TEI File',
+	));
+	}
+
+}
 
 /**
  * Implements hook_validate()
- *
- *
  **/
 
 function tapasupload_record_validate($node, $form, &$form_state)
@@ -50,5 +77,21 @@ function tapasupload_record_validate($node, $form, &$form_state)
 	}
 }
 
+/**
+ * Implements hook_menu()
+ **/
 
+function tapasupload_menu()
+{
+  $items['admin/structure/tapas_record'] = array(
+    'title' => 'TAPAS Record',
+    'description' => 'Control forum hierarchy settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('forum_overview'),
+    'access arguments' => array('administer forums'),
+    'file' => 'forum.admin.inc',
+  );
+
+
+}
 

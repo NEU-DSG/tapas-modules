@@ -13,41 +13,27 @@ function tapasupload_install()
 {
 	// Create field bases
 	field_create_field(array(
-		'name' => 'tapas_file',
+		'field_name' => 'tapas_tei_file',
 		'cardinality' => 1,
 		'type' => 'file',
 		'locked' => TRUE,
 		'label' => get_t('TEI File'),
 	));
 
-	// Create field instances
-	field_create_instance(array(
-		'field_name' => 'tapas_TEI_file',
-		'entity_type' => 'node',
-		'bundle' => 'tapas_record',
-		'label' => 'TEI File',
-	));
 }
 
 /**
  * Implements hook_uninstall
  **/
-
 function tapasupload_uninstall()
 {
-	$sql = 'SELECT nid from {node} n WHERE n.type = :type';
-	$result = db_query($sql, array(':type' => 'tapas_tei_record'));
-	$nids = array();
-	foreach ($result as $row) {
-		$nids[] = $row->nid;
+	field_delete_field('tapas_tei_file');
+
+	$instances = field_info_instances('node', 'tapas_record');
+	foreach ($instances as $instance_name => $instace) {
+		field_delete_instance($instance);
 	}
 
-	node_delete_multiple($nids);
-
-	field_delete_instance('tapas_TEI_file');
-	field_delete_field('tapas_file');
-
 	node_type_delete('tapas_record');
-
 	field_purge_batch(1000);
 }
