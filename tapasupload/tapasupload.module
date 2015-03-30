@@ -15,7 +15,35 @@
  * connection is, or why)
  **/
 function tapasupload_record_form($node, $form_state) {
-  return node_content_form($node, $form_state);
+  //return node_content_form($node, $form_state);
+	$form = array();
+
+	$form['tapasupload_form_title'] = array(
+		'#type' => 'textfield',
+		'#title' => t('A name for this record'),
+	);
+
+	$form['tapasupload_form_tei_file'] = array(
+		'#type' => 'managed_file',
+		'#title' => 'TEI File to Upload',
+		'#required' => TRUE,
+	);
+
+	$form['tapasupload_form_actions'] = array(
+		'#type' => 'actions',
+	);
+
+	$form['tapasupload_form_actions']['submit'] = array(
+		'#type' => 'submit',
+		'#value' => t('Save'),
+	);
+
+	$form['tapasupload_form_actions']['cancel'] = array(
+		'#type' => 'button',
+		'#value' => t('Cancel')
+	);
+
+	return $form;
 }
 
 
@@ -62,36 +90,6 @@ function tapasupload_node_type_insert($info)
 			'label' => 'TEI File',
 	));
 	}
-
-}
-
-/**
- * Implements hook_validate()
- **/
-
-function tapasupload_record_validate($node, $form, &$form_state)
-{
-	if (! isset($node->field_tapas_tei_file) && ($node->field_tapas_tei_file != '')) {
-		form_set_error('field_tapas_tei_field', t("Did you forget to upload a file?"));
-		return;
-	}
-}
-
-/**
- * Implements hook_menu()
- **/
-
-function tapasupload_menu()
-{
-  $items['admin/structure/tapas_record'] = array(
-    'title' => 'TAPAS Record',
-    'description' => 'Control forum hierarchy settings.',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('forum_overview'),
-    'access arguments' => array('administer forums'),
-    'file' => 'forum.admin.inc',
-  );
-
 
 }
 
