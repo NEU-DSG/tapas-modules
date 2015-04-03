@@ -13,7 +13,7 @@ function tapasrecord_install()
 {
 	// Create field bases
 	field_create_field(array(
-		'field_name' => 'tapas_tei_file',
+		'field_name' => 'tapas_teifield',
 		'cardinality' => 1,
 		'type' => 'file',
 		'locked' => TRUE,
@@ -27,7 +27,7 @@ function tapasrecord_install()
  **/
 function tapasrecord_uninstall()
 {
-	field_delete_field('tapas_tei_file');
+	field_delete_field('tapas_teifield');
 
 	$instances = field_info_instances('node', 'tapas_record');
 	foreach ($instances as $instance_name => $instace) {

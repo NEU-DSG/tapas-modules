@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * tapasupload.module TAPAS TEI upload and transformation
+ * tapasrecord.module TAPAS TEI upload and transformation
  * 
  * defines tapas_record conent type, performs
  * TEI upload and validation, calls TFC transform.
@@ -14,31 +14,30 @@
  * admin/structure/types list (I have no idea what the
  * connection is, or why)
  **/
-function tapasrecord_record_form($node, $form_state) {
+function tapas_recordnode_form($node, $form_state) {
   //return node_content_form($node, $form_state);
 	$form = array();
 
-	$form['tapasupload_form_title'] = array(
+	$form['tapasrecord_form_title'] = array(
 		'#type' => 'textfield',
 		'#title' => t('A name for this record'),
 	);
 
-	$form['tapasupload_form_tei_file'] = array(
+	$form['tapasrecord_form_tei_file'] = array(
 		'#type' => 'managed_file',
 		'#title' => 'TEI File to Upload',
-		'#required' => TRUE,
 	);
 
-	$form['tapasupload_form_actions'] = array(
+	$form['tapasrecord_form_actions'] = array(
 		'#type' => 'actions',
 	);
 
-	$form['tapasupload_form_actions']['submit'] = array(
+	$form['tapasrecord_form_actions']['submit'] = array(
 		'#type' => 'submit',
 		'#value' => t('Save'),
 	);
 
-	$form['tapasupload_form_actions']['cancel'] = array(
+	$form['tapasrecord_form_actions']['cancel'] = array(
 		'#type' => 'button',
 		'#value' => t('Cancel')
 	);
@@ -63,7 +62,7 @@ function tapasrecord_node_info()
   return array(
     'tapas_record' => array(
       'name' => t('TAPAS Record'),
-      'base' => 'tapasupload_record',
+      'base' => 'tapas_recordnode',
       'description' => t('Holds a TEI record along with it\'s associated metadata and TFC'),
       'has_title' => TRUE,
       'title_label' => t('Record Title'),
@@ -79,14 +78,14 @@ function tapasrecord_node_info()
 
 function tapasrecord_node_type_insert($info)
 {
-	if ($info->type == 'tapas_record')
+	if ($info->type == 'tapas_recordnode')
 	{
 		// Create field instances
 		field_info_cache_clear();
 		field_create_instance(array(
-			'field_name' => 'tapas_tei_file',
+			'field_name' => 'tapas_teifield',
 			'entity_type' => 'node',
-			'bundle' => 'tapas_record',
+			'bundle' => 'tapas_recordnode',
 			'label' => 'TEI File',
 	));
 	}
