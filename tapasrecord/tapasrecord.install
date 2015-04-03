@@ -9,7 +9,7 @@
  * Implements hook_install()
  */
 
-function tapasupload_install()
+function tapasrecord_install()
 {
 	// Create field bases
 	field_create_field(array(
@@ -25,7 +25,7 @@ function tapasupload_install()
 /**
  * Implements hook_uninstall
  **/
-function tapasupload_uninstall()
+function tapasrecord_uninstall()
 {
 	field_delete_field('tapas_tei_file');
 

@@ -14,7 +14,7 @@
  * admin/structure/types list (I have no idea what the
  * connection is, or why)
  **/
-function tapasupload_record_form($node, $form_state) {
+function tapasrecord_record_form($node, $form_state) {
   //return node_content_form($node, $form_state);
 	$form = array();
 
@@ -58,7 +58,7 @@ function tapasupload_record_form($node, $form_state) {
  * access restrictions on a custom entity than on a custom node type.
  **/
 
-function tapasupload_node_info()
+function tapasrecord_node_info()
 {
   return array(
     'tapas_record' => array(
@@ -77,7 +77,7 @@ function tapasupload_node_info()
  * Implements hook_node_type_insert()
  **/
 
-function tapasupload_node_type_insert($info)
+function tapasrecord_node_type_insert($info)
 {
 	if ($info->type == 'tapas_record')
 	{

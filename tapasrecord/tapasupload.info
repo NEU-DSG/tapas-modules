@@ -1,6 +1,0 @@
-name = Tapas Upload
-core = 7.x
-package = TAPAS
-version = 7.x-0.1
-description = Uploads and validates a TEI file, then runs the TFC transformation.
-dependencies[] = file
