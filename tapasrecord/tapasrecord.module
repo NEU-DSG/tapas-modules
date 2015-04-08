@@ -38,7 +38,9 @@ function tapasrecord_node_info()
  */
 
 function tapasrecord_node_type_insert($info) {
-	if ($info->type == 'tapas_recordnode')
+	if (
+		($info->type == 'tapas_recordnode') ||
+		($info->type == 'tapasrecord_node'))
 	{
 		// Create field instances
 		field_info_cache_clear();
