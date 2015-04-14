@@ -37,7 +37,7 @@ function tapasrecord_node_info()
  * Implements hook_node_type_insert()
  */
 
-function tapasrecord_node_type_insert($info) {
+function tapas_recordnode_type_insert($info) {
 	if (
 		($info->type == 'tapas_recordnode') ||
 		($info->type == 'tapasrecord_node'))
@@ -123,7 +123,7 @@ function _tapas_file_extention() {
  * Implements node_form_submit().
  */
 
-function taoas_recordnode_form_submit($form, &$form_state) {
+function tapas_recordnode_form_submit($form, &$form_state) {
 
 	$file = $form_state['storage']['file'];
 
