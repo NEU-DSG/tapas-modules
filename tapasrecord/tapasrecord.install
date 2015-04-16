@@ -11,14 +11,6 @@
 
 function tapasrecord_install()
 {
-	// Create field bases
-	field_create_field(array(
-		'field_name' => 'tapas_teifield',
-		'cardinality' => 1,
-		'type' => 'file',
-		'locked' => TRUE,
-		'label' => get_t('TEI File'),
-	));
 
 }
 

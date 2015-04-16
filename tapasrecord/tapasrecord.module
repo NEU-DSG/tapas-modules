@@ -46,6 +46,14 @@ function tapasrecord_enable()
 function tapasrecord_type_insert($info) {
 	if ($info->type == 'tapasrecordnode')
 	{
+		// Create field bases
+		field_create_field(array(
+			'field_name' => 'tapas_teifield',
+			'cardinality' => 1,
+			'type' => 'file',
+			'locked' => TRUE,
+			'label' => get_t('TEI File'),
+		));
 		// Create field instances
 		field_info_cache_clear();
 		field_create_instance(array(
