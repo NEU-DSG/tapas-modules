@@ -34,6 +34,6 @@ function tapasrecord_uninstall()
 		field_delete_instance($instance);
 	}
 
-	node_type_delete('tapas_record');
+	node_type_delete('tapasrecordnode');
 	field_purge_batch(1000);
 }
