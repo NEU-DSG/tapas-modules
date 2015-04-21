@@ -14,7 +14,9 @@ function tapasrecord_install()
 	// Make custom node type available at install
 	node_types_rebuild();
 	$types = node_type_get_types();
-	$recnodetype = $types['tapasrecordnode'];
+	$recnodetype = $types['tapas_record'];
+
+	$t = get_t();
 
 	// Create field bases
 	field_create_field(array(
@@ -22,7 +24,15 @@ function tapasrecord_install()
 		'cardinality' => 1,
 		'type' => 'file',
 		'locked' => TRUE,
-		'label' => get_t('TEI File'),
+		'label' => $t('TEI File'),
+	));
+	
+	field_create_field(array(
+		'field_name' => 'tapas_tfcfield',
+		'cardinality' => 1,
+		'type' => 'file',
+		'locked' => TRUE,
+		'label' => $t('TFC File'),
 	));
 
 	// Attatch field instances
@@ -30,13 +40,13 @@ function tapasrecord_install()
 	field_create_instance(array(
 		'field_name' => 'tapas_teifield',
 		'entity_type' => 'node',
-		'bundle' => 'tapasrecordnode',
+		'bundle' => 'tapas_record',
 		'label' => 'Original TEI File',
 	));
 	field_create_instance(array(
-		'field_name' => 'tapas_teifield',
+		'field_name' => 'tapas_tfcfield',
 		'entity_type' => 'node',
-		'bundle' => 'tapasrecordnode',
+		'bundle' => 'tapas_record',
 		'label' => 'TFC File',
 	));
 
@@ -48,6 +58,7 @@ function tapasrecord_install()
 function tapasrecord_uninstall()
 {
 	field_delete_field('tapas_teifield');
+	field_delete_field('tapas_tfcfield');
 
 	$instances = field_info_instances('node', 'tapas_record');
 	foreach ($instances as $instance_name => $instace) {
