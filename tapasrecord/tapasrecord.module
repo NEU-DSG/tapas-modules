@@ -21,7 +21,7 @@
 function tapasrecord_node_info()
 {
   return array(
-    'tapas_record' => array(
+    'tapasrecordnode' => array(
       'name' => t('TAPAS Record'),
       'base' => 'tapasrecordnode',
       'description' => t('Holds a TEI record along with it\'s associated metadata and TFC'),
@@ -32,18 +32,8 @@ function tapasrecord_node_info()
   );
 }
 
-/**
- * Implements hook_enable().
- */
-function tapasrecord_enable()
-{
-}
-
-/**
- * Implements hook_node_type_insert()
- */
-
-/** implements hook_form()
+/** 
+ * implements hook_form()
  * 
  * This has to be present even if it's just a pass-through,
  * otherwise the content type won't appear in the 
@@ -54,5 +44,10 @@ function tapasrecordnode_form($node, $form_state) {
   return node_content_form($node, $form_state);
 }
 
+/** 
+ * Implements hook_form_FORM_ID_alter().
+ */
 
+ function tapasrecordnode_form_alter(&$form, &$form_state, $form_id) {
 
+ }
