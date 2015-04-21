@@ -11,6 +11,34 @@
 
 function tapasrecord_install()
 {
+	// Make custom node type available at install
+	node_types_rebuild();
+	$types = node_type_get_types();
+	$recnodetype = $types['tapasrecordnode'];
+
+	// Create field bases
+	field_create_field(array(
+		'field_name' => 'tapas_teifield',
+		'cardinality' => 1,
+		'type' => 'file',
+		'locked' => TRUE,
+		'label' => get_t('TEI File'),
+	));
+
+	// Attatch field instances
+	field_info_cache_clear();
+	field_create_instance(array(
+		'field_name' => 'tapas_teifield',
+		'entity_type' => 'node',
+		'bundle' => 'tapasrecordnode',
+		'label' => 'Original TEI File',
+	));
+	field_create_instance(array(
+		'field_name' => 'tapas_teifield',
+		'entity_type' => 'node',
+		'bundle' => 'tapasrecordnode',
+		'label' => 'TFC File',
+	));
 
 }
 
