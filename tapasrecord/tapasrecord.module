@@ -1,4 +1,8 @@
 <?php
+
+define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
+define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
+
 /**
  * @file
  * tapasrecord.module TAPAS TEI upload and transformation
@@ -48,6 +52,125 @@ function tapasrecordnode_form($node, $form_state) {
  * Implements hook_form_FORM_ID_alter().
  */
 
+ // Node creation/editing form should not show the TFC file field.
  function tapasrecord_form_tapasrecordnode_node_form_alter(&$form, &$form_state, $form_id) {
+
+	 // hide the TFC field
 	 $form['tapas_tfcfield']['#access'] = FALSE;
+
+	 // add file validation callbacks to the TEI file field
+	 $form['tapas_teifield'][LANGUAGE_NONE][0]['#upload_validators']['tapasrecord_validate_tei'] = array($form_id);
+
+	 // TODO: if this is a new (rather than edited) node, make tei field mandatory
+
+	 $form['tapas_teifield'][LANGUAGE_NONE][0]['#upload_location'] = _tapasrecord_get_file_upload_location();
  }
+
+function _tapasrecord_get_file_upload_location() {
+	// TODO: will add subdirectories for project and collections, and add a directory_prepare
+	return TAPAS_SAVE_FILE_ROOT_DIRECTORY;
+}
+
+function tapasrecord_validate_tei($file, $form_id) {
+
+	return _validate_xslt($file);
+}
+
+function tapasrecord_form_tapasrecordnode_node_form_submit($form, &$form_state) {
+
+}
+
+/**
+ * Run the validation XSLT checks on the TEI file.
+ *
+ * @param $tei_file
+ *
+ * @return array containing any errors (or empty array if no errors).
+ */
+
+function _validate_xslt($tei_file) {
+
+	// Load the TEI file as a DOM document.
+	$teiDOM = new DOMDocument();
+	$teiDOM->load($tei_file);
+
+	// Array to keep track of errors found in TEI file.
+	$errors = array();
+
+	// DOM documents that will be reused each iteration of loop.
+	$xsltDOM = new DOMDocument();
+	$result = new DOMDocument();
+
+
+	// Get the location of the XSLT files
+	$xslt_path = drupal_get_path('module', 'tapasrecord') . TAPAS_VALIDATION_XSLT_SUBDIRECTORY;
+	// Loop through all XSLT files in the validation directory.
+	$iterator = new DirectoryIterator($xslt_path);
+	foreach ($iterator as $next_xslt) {
+		$ext = $next_xslt->getExtention();
+		if ($ext == 'xsl' || $ext == 'xslt') {
+
+			// Create an XSLT Processor with the XSLT file found.
+			$xsltDOM->load($next_xslt->getRealPath());
+			$proc = new XSLTProcessor();
+			$proc->importStylesheet($xsltDOM);
+			$result->loadXML($proc->transformToXML($teiDOM));
+
+			// If there were NO errors, the result will be empty.
+			// If there WERE errors, the result will contain the error message.
+		  if ($result) {
+			  $errors[] = $result;
+		  }
+		}
+	}
+	return $errors;
+}
+
+/**
+ * Run an XSLT Transform on an XML File
+ *
+ * Used to run the TFC transform on the original TEI file, but
+ * function is more general.
+ *
+ * Eventually the actual transform will be moved to eXist, at
+ * which point this function can be removed if it isn't being
+ * used by any other process.
+ *
+ * @param $tei_file
+ * @param $xslt_file
+ * @param &$tfc_file
+ *
+ * @return
+ */
+function _run_transform($tei_file, $xslt_file, &$tfc_file) {
+
+	$teiDOM = new DOMDocument();
+	$teiDOM->load($tei_file);
+
+	$xsltDOM = new DOMDocument();
+	$xsltDOM-> load($xslt_file);
+
+	$proc = new XSLTProcessor();
+	$proc->importStylesheet($xsltDOM);	
+
+	$tfc = new DOMDocument();
+	$tfc->loadXML($proc->transformToXML($teiDOM));
+
+	// Handle any errors
+	// Write result to file
+}
+
+
+/**
+ * TAPAS upload form validation callback
+ */
+
+// Verify that the record has a file attatched
+// Verify that this file has the correct extention
+// if _validate_xslt($tei_file), then set the error messages on the form
+
+
+/**
+ * TAPAS submit button
+ */
+
