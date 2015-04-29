@@ -40,6 +40,7 @@ function tapasrecord_install()
 		'entity_type' => 'node',
 		'bundle' => 'tapasrecordnode',
 		'label' => 'Original TEI File',
+		'settings' => array('file_extentions' => 'tei xml'),
 	));
 	field_create_instance(array(
 		'field_name' => 'tapas_tfcfield',
@@ -47,6 +48,7 @@ function tapasrecord_install()
 		'bundle' => 'tapasrecordnode',
 		'label' => 'TFC File',
 		'display' => array('default' => array('type' => 'hidden')),
+		'settings' => array('file_extentions' => 'tei xml tfc'),
 	));
 
 }

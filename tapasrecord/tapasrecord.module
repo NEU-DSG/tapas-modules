@@ -58,8 +58,13 @@ function tapasrecordnode_form($node, $form_state) {
 	 // hide the TFC field
 	 $form['tapas_tfcfield']['#access'] = FALSE;
 
+
+	 // TAPAS TEI field
 	 // add file validation callbacks to the TEI file field
-	 $form['tapas_teifield'][LANGUAGE_NONE][0]['#upload_validators']['tapasrecord_validate_tei'] = array($form_id);
+	$form['tapas_teifield'][LANGUAGE_NONE][0]['#upload_validators'] = array(
+		'tapas_validate_extentions' => array("tei xml"),
+		'tapasrecord_validate_tei' => array($form_id),
+	);
 
 	 // TODO: if this is a new (rather than edited) node, make tei field mandatory
 
@@ -71,28 +76,25 @@ function _tapasrecord_get_file_upload_location() {
 	return TAPAS_SAVE_FILE_ROOT_DIRECTORY;
 }
 
+/**
+ * Callback to run the validation XSLT checks on the TEI file.
+ *
+ */
 function tapasrecord_validate_tei($file, $form_id) {
 
 	return _validate_xslt($file);
 }
 
 function tapasrecord_form_tapasrecordnode_node_form_submit($form, &$form_state) {
-
+	// TODO: if new node or new TEI file, create TFC and attach/replace
 }
 
-/**
- * Run the validation XSLT checks on the TEI file.
- *
- * @param $tei_file
- *
- * @return array containing any errors (or empty array if no errors).
- */
 
 function _validate_xslt($tei_file) {
 
 	// Load the TEI file as a DOM document.
 	$teiDOM = new DOMDocument();
-	$teiDOM->load($tei_file);
+	$teiDOM->load(drupal_realpath($tei_file->uri) . "/" . $tei_file->filename);
 
 	// Array to keep track of errors found in TEI file.
 	$errors = array();
@@ -105,16 +107,16 @@ function _validate_xslt($tei_file) {
 	// Get the location of the XSLT files
 	$xslt_path = drupal_get_path('module', 'tapasrecord') . TAPAS_VALIDATION_XSLT_SUBDIRECTORY;
 	// Loop through all XSLT files in the validation directory.
-	$iterator = new DirectoryIterator($xslt_path);
+	$iterator = new \DirectoryIterator($xslt_path);
 	foreach ($iterator as $next_xslt) {
-		$ext = $next_xslt->getExtention();
+		$ext = $next_xslt->getExtension();
 		if ($ext == 'xsl' || $ext == 'xslt') {
 
 			// Create an XSLT Processor with the XSLT file found.
 			$xsltDOM->load($next_xslt->getRealPath());
-			$proc = new XSLTProcessor();
+			$proc = new \XSLTProcessor();
 			$proc->importStylesheet($xsltDOM);
-			$result->loadXML($proc->transformToXML($teiDOM));
+			$result = $proc->transformToXML($teiDOM);
 
 			// If there were NO errors, the result will be empty.
 			// If there WERE errors, the result will contain the error message.
