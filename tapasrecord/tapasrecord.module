@@ -52,24 +52,37 @@ function tapasrecordnode_form($node, $form_state) {
  * Implements hook_form_FORM_ID_alter().
  */
 
- // Node creation/editing form should not show the TFC file field.
- function tapasrecord_form_tapasrecordnode_node_form_alter(&$form, &$form_state, $form_id) {
+// Node creation/editing form should not show the TFC file field.
+function tapasrecord_form_tapasrecordnode_node_form_alter(&$form, &$form_state, $form_id) {
 
-	 // hide the TFC field
-	 $form['tapas_tfcfield']['#access'] = FALSE;
+	// hide the TFC field
+	$form['tapas_tfcfield']['#access'] = FALSE;
 
 
-	 // TAPAS TEI field
-	 // add file validation callbacks to the TEI file field
-	$form['tapas_teifield'][LANGUAGE_NONE][0]['#upload_validators'] = array(
-		'tapas_validate_extentions' => array("tei xml"),
-		'tapasrecord_validate_tei' => array($form_id),
+	// TAPAS TEI field
+	$form['tapas_teifield'][LANGUAGE_NONE][0] = array_merge(
+    $form['tapas_teifield'][LANGUAGE_NONE][0],
+		_tapasrecord_form_teifield()
 	);
 
-	 // TODO: if this is a new (rather than edited) node, make tei field mandatory
+  // TODO: if this is a new (rather than edited) node, make tei field mandatory
 
-	 $form['tapas_teifield'][LANGUAGE_NONE][0]['#upload_location'] = _tapasrecord_get_file_upload_location();
- }
+}
+
+function _tapasrecord_form_teifield()
+{
+	return array(
+		'#type' => 'managed_file',
+		'#title' => t('TEI file'),
+		'#description' => t('allowed extentions: .tei, .xml'),
+		'#upload_location' => _tapasrecord_get_file_upload_location(),
+		'#upload_validators' => array(
+			'file_validate_extentions' => array('tei xml'),
+			'tapasrecord_validate_tei' => array($form_id),
+		),
+  );
+
+}
 
 function _tapasrecord_get_file_upload_location() {
 	// TODO: will add subdirectories for project and collections, and add a directory_prepare
