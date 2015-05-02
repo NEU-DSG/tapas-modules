@@ -62,14 +62,14 @@ function tapasrecord_form_tapasrecordnode_node_form_alter(&$form, &$form_state, 
 	// TAPAS TEI field
 	$form['tapas_teifield'][LANGUAGE_NONE][0] = array_merge(
     $form['tapas_teifield'][LANGUAGE_NONE][0],
-		_tapasrecord_form_teifield()
+		_tapasrecord_form_teifield($form_id)
 	);
 
   // TODO: if this is a new (rather than edited) node, make tei field mandatory
 
 }
 
-function _tapasrecord_form_teifield()
+function _tapasrecord_form_teifield($form_id)
 {
 	return array(
 		'#type' => 'managed_file',
@@ -77,7 +77,7 @@ function _tapasrecord_form_teifield()
 		'#description' => t('allowed extentions: .tei, .xml'),
 		'#upload_location' => _tapasrecord_get_file_upload_location(),
 		'#upload_validators' => array(
-			'file_validate_extentions' => array('tei xml'),
+			'file_validate_extensions' => array('tei xml'),
 			'tapasrecord_validate_tei' => array($form_id),
 		),
   );
