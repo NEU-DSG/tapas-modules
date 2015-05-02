@@ -122,6 +122,7 @@ function _validate_xslt($tei_file) {
 	// Loop through all XSLT files in the validation directory.
 	$iterator = new \DirectoryIterator($xslt_path);
 	foreach ($iterator as $next_xslt) {
+		$errors[] = "an iteration through the loop: " . $next_xslt->getRealPath();
 		$ext = $next_xslt->getExtension();
 		if ($ext == 'xsl' || $ext == 'xslt') {
 
@@ -130,6 +131,7 @@ function _validate_xslt($tei_file) {
 			$proc = new \XSLTProcessor();
 			$proc->importStylesheet($xsltDOM);
 			$result = $proc->transformToXML($teiDOM);
+			$errors[] = "validation run: " . $result;
 
 			// If there were NO errors, the result will be empty.
 			// If there WERE errors, the result will contain the error message.
@@ -138,6 +140,7 @@ function _validate_xslt($tei_file) {
 		  }
 		}
 	}
+	//$errors[] = "This error should always appear.";
 	return $errors;
 }
 
