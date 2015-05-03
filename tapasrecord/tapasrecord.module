@@ -145,11 +145,9 @@ function tapasrecord_validate_tei($file, $form_id) {
 	
 
 	if ($tfc_result) {
-		$tfc_saveloc = _tapasrecord_get_file_upload_location() . '/' . drupal_basename($file->uri) . "_TFC.xml";
+		$basename = preg_replace('/\.[^.]+$/','',$file->filename);
+		$tfc_saveloc = _tapasrecord_get_file_upload_location() . '/' . $basename . "_TFC.xml";
 
-		drupal_set_message("Attempting to save TFC file to " . $tfc_saveloc);
-		drupal_set_message("file upload location result: " . _tapasrecord_get_file_upload_location());
-		drupal_set_message("basename: " . drupal_basename($file->uri));
 		file_unmanaged_save_data($tfc_result, $tfc_saveloc, FILE_EXISTS_REPLACE);
 	} else {
 		$errors[] = t("The TAPAS system was unable to handle this TEI file. This may mean there " .
