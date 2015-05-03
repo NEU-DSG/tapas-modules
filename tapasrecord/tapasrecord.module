@@ -2,6 +2,7 @@
 
 define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
 define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
+define("TAPAS_TFC_TRANSFORM_FILENAME", "tfc_transform.xsl");
 
 /**
  * @file
@@ -95,19 +96,9 @@ function _tapasrecord_get_file_upload_location() {
  */
 function tapasrecord_validate_tei($file, $form_id) {
 
-	return _validate_xslt($file);
-}
-
-function tapasrecord_form_tapasrecordnode_node_form_submit($form, &$form_state) {
-	// TODO: if new node or new TEI file, create TFC and attach/replace
-}
-
-
-function _validate_xslt($tei_file) {
+	file_unmanaged_save_data("This is a test.", "public://tapasrecord/this_is_a_test.txt");
 
 	$errors = array();
-
-
 	// The error that the DOMDocument throws to the screen if the file is not
 	// loadable is NOT an Exception, and CANNOT be caught with a try/catch block.
 	// Therefore, in order to prevent the user from getting an libxml error when they
@@ -116,7 +107,7 @@ function _validate_xslt($tei_file) {
 	libxml_use_internal_errors(TRUE);
 
 	$teiDOM = new DOMDocument();
-	if (!$teiDOM->load($tei_file->uri)) {
+	if (!$teiDOM->load($file->uri)) {
 		$errors[] = "Unable to read the TEI file.";
 		foreach (libxml_get_errors() as $e) {
 			$errors[] = "(More info on why: " . $e->message . ")";
@@ -129,6 +120,54 @@ function _validate_xslt($tei_file) {
 
 	// Give libxml back the ability to post errors
 	libxml_use_internal_errors(FALSE);
+
+	$errors = _validate_xslt($teiDOM);
+	if ($errors) {
+		return $errors;
+	}
+	// if there were no errors returned by _validate_xslt, 
+	// then attempt to run the TFC transform before returning.
+	//$tfc_result = _run_transform($teiDOM, drupal_get_path('module', 'tapasrecord') . '/' . TAPAS_TFC_TRANSFORM_FILENAME);
+
+	//$teiDOM = new DOMDocument();
+	//$teiDOM->load($tei_path);
+
+	$xsltDOM = new DOMDocument();
+	$xsltDOM->load(drupal_get_path('module', 'tapasrecord') . '/' . TAPAS_TFC_TRANSFORM_FILENAME);
+
+	$proc = new XSLTProcessor();
+	$proc->importStylesheet($xsltDOM);	
+
+	$tfc = new DOMDocument();
+	$tfc_result = $proc->transformToXML($teiDOM);
+
+	// TODO: Handle any errors
+	
+
+	if ($tfc_result) {
+		$tfc_saveloc = _tapasrecord_get_file_upload_location() . '/' . drupal_basename($file->uri) . "_TFC.xml";
+
+		drupal_set_message("Attempting to save TFC file to " . $tfc_saveloc);
+		drupal_set_message("file upload location result: " . _tapasrecord_get_file_upload_location());
+		drupal_set_message("basename: " . drupal_basename($file->uri));
+		file_unmanaged_save_data($tfc_result, $tfc_saveloc, FILE_EXISTS_REPLACE);
+	} else {
+		$errors[] = t("The TAPAS system was unable to handle this TEI file. This may mean there " .
+			"is something wrong with the file, or it may mean that it contains valid TEI that our " .
+			"system is not yet equiped to handle. If you are confident that the TEI is valid, then " .
+			"please email 'info [at] tapasproject [dot] org' with the file so that we can determine " .
+			"why it is failing, and whether the system can be made to accomadate it.");
+	}
+
+	return $errors;
+}
+
+
+function _validate_xslt($teiDOM) {
+
+	$errors = array();
+
+
 
 	$xsltDOM = new DOMDocument();
 	$xslt_path = drupal_get_path('module', 'tapasrecord') . TAPAS_VALIDATION_XSLT_SUBDIRECTORY;
@@ -154,6 +193,7 @@ function _validate_xslt($tei_file) {
 		  }
 		}
 	}
+
 	return $errors;
 }
 
@@ -169,39 +209,9 @@ function _validate_xslt($tei_file) {
  *
  * @param $tei_file
  * @param $xslt_file
- * @param &$tfc_file
  *
- * @return
+ * @return string the TFC
  */
-function _run_transform($tei_file, $xslt_file, &$tfc_file) {
+function _run_transform($teiDOM, $xslt_path) {
 
-	$teiDOM = new DOMDocument();
-	$teiDOM->load($tei_file);
-
-	$xsltDOM = new DOMDocument();
-	$xsltDOM-> load($xslt_file);
-
-	$proc = new XSLTProcessor();
-	$proc->importStylesheet($xsltDOM);	
-
-	$tfc = new DOMDocument();
-	$tfc->loadXML($proc->transformToXML($teiDOM));
-
-	// Handle any errors
-	// Write result to file
 }
-
-
-/**
- * TAPAS upload form validation callback
- */
-
-// Verify that the record has a file attatched
-// Verify that this file has the correct extention
-// if _validate_xslt($tei_file), then set the error messages on the form
-
-
-/**
- * TAPAS submit button
- */
-
