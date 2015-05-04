@@ -13,7 +13,7 @@ function feature_tapas_tapasrecord_as_content_field_default_field_bases() {
   // Exported field_base: 'og_record_to_collection_ref'
   $field_bases['og_record_to_collection_ref'] = array(
     'active' => 1,
-    'cardinality' => -1,
+    'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'og_record_to_collection_ref',
@@ -31,9 +31,17 @@ function feature_tapas_tapasrecord_as_content_field_default_field_bases() {
           'og_behavior' => array(
             'status' => TRUE,
           ),
+          'views-select-list' => array(
+            'status' => 0,
+          ),
         ),
         'membership_type' => 'og_membership_type_default',
-        'target_bundles' => array(),
+        'sort' => array(
+          'type' => 'none',
+        ),
+        'target_bundles' => array(
+          'tapas_collection' => 'tapas_collection',
+        ),
       ),
       'handler_submit' => 'Change handler',
       'target_type' => 'node',

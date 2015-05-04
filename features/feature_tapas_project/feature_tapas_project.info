@@ -1,7 +1,7 @@
 name = feature_tapas_project
 core = 7.x
 package = TAPAS
-version = 7.x-0.2
+version = 7.x-0.3
 project = feature_tapas_project
 dependencies[] = features
 dependencies[] = image
@@ -38,6 +38,7 @@ features[og_features_permission][] = node:tapas_project:update any tapasrecordno
 features[og_features_permission][] = node:tapas_project:update group
 features[og_features_permission][] = node:tapas_project:update own tapas_collection content
 features[og_features_permission][] = node:tapas_project:update own tapasrecordnode content
+features[user_permission][] = create tapas_project content
 features[user_permission][] = delete any tapas_project content
 features[user_permission][] = delete own tapas_project content
 features[user_permission][] = edit any tapas_project content

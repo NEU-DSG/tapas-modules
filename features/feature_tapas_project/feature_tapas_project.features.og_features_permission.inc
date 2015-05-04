@@ -33,7 +33,9 @@ function feature_tapas_project_og_features_default_permissions() {
 
   // Exported og permission: 'node:tapas_project:create tapas_collection content'
   $permissions['node:tapas_project:create tapas_collection content'] = array(
-    'roles' => array(),
+    'roles' => array(
+      'administrator member' => 'administrator member',
+    ),
   );
 
   // Exported og permission: 'node:tapas_project:create tapasrecordnode content'
@@ -43,7 +45,9 @@ function feature_tapas_project_og_features_default_permissions() {
 
   // Exported og permission: 'node:tapas_project:delete any tapas_collection content'
   $permissions['node:tapas_project:delete any tapas_collection content'] = array(
-    'roles' => array(),
+    'roles' => array(
+      'administrator member' => 'administrator member',
+    ),
   );
 
   // Exported og permission: 'node:tapas_project:delete any tapasrecordnode content'
@@ -53,7 +57,9 @@ function feature_tapas_project_og_features_default_permissions() {
 
   // Exported og permission: 'node:tapas_project:delete own tapas_collection content'
   $permissions['node:tapas_project:delete own tapas_collection content'] = array(
-    'roles' => array(),
+    'roles' => array(
+      'administrator member' => 'administrator member',
+    ),
   );
 
   // Exported og permission: 'node:tapas_project:delete own tapasrecordnode content'
@@ -70,16 +76,12 @@ function feature_tapas_project_og_features_default_permissions() {
 
   // Exported og permission: 'node:tapas_project:manage permissions'
   $permissions['node:tapas_project:manage permissions'] = array(
-    'roles' => array(
-      'administrator member' => 'administrator member',
-    ),
+    'roles' => array(),
   );
 
   // Exported og permission: 'node:tapas_project:manage roles'
   $permissions['node:tapas_project:manage roles'] = array(
-    'roles' => array(
-      'administrator member' => 'administrator member',
-    ),
+    'roles' => array(),
   );
 
   // Exported og permission: 'node:tapas_project:subscribe'
@@ -103,7 +105,9 @@ function feature_tapas_project_og_features_default_permissions() {
 
   // Exported og permission: 'node:tapas_project:update any tapas_collection content'
   $permissions['node:tapas_project:update any tapas_collection content'] = array(
-    'roles' => array(),
+    'roles' => array(
+      'administrator member' => 'administrator member',
+    ),
   );
 
   // Exported og permission: 'node:tapas_project:update any tapasrecordnode content'
@@ -120,7 +124,9 @@ function feature_tapas_project_og_features_default_permissions() {
 
   // Exported og permission: 'node:tapas_project:update own tapas_collection content'
   $permissions['node:tapas_project:update own tapas_collection content'] = array(
-    'roles' => array(),
+    'roles' => array(
+      'administrator member' => 'administrator member',
+    ),
   );
 
   // Exported og permission: 'node:tapas_project:update own tapasrecordnode content'
