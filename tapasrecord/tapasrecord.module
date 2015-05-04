@@ -72,13 +72,7 @@ function tapasrecordnode_form($node, $form_state) {
 /** 
  * Implements hook_form_FORM_ID_alter().
  */
-
-// Node creation/editing form should not show the TFC file field.
 function tapasrecord_form_tapasrecordnode_node_form_alter(&$form, &$form_state, $form_id) {
-
-	// hide the TFC field
-	$form['tapas_tfcfield']['#access'] = FALSE;
-
 
 	// TAPAS TEI field
 	$form['tapas_teifield'][LANGUAGE_NONE][0] = array_merge(
