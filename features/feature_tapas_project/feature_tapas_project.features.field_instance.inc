@@ -10,51 +10,6 @@
 function feature_tapas_project_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-tapas_project-body'
-  $field_instances['node-tapas_project-body'] = array(
-    'bundle' => 'tapas_project',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 1,
-      ),
-      'teaser' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(
-          'trim_length' => 600,
-        ),
-        'type' => 'text_summary_or_trimmed',
-        'weight' => 1,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'body',
-    'label' => 'Project Description',
-    'required' => 0,
-    'settings' => array(
-      'display_summary' => 1,
-      'text_processing' => 1,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'text',
-      'settings' => array(
-        'rows' => 20,
-        'summary_rows' => 5,
-      ),
-      'type' => 'text_textarea_with_summary',
-      'weight' => 1,
-    ),
-  );
-
   // Exported field_instance: 'node-tapas_project-field_project_image'
   $field_instances['node-tapas_project-field_project_image'] = array(
     'bundle' => 'tapas_project',
@@ -121,11 +76,11 @@ function feature_tapas_project_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'inline',
+        'label' => 'above',
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 4,
+        'weight' => 5,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -136,8 +91,8 @@ function feature_tapas_project_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'group_access',
-    'label' => 'Project Visibility (as group)',
-    'required' => 1,
+    'label' => 'Group visibility',
+    'required' => TRUE,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
@@ -152,7 +107,6 @@ function feature_tapas_project_field_default_field_instances() {
       ),
     ),
     'widget' => array(
-      'active' => 1,
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
@@ -173,13 +127,13 @@ function feature_tapas_project_field_default_field_instances() {
     'description' => 'Determine if this is an OG group.',
     'display' => array(
       'default' => array(
-        'label' => 'inline',
+        'label' => 'above',
         'module' => 'og_ui',
         'settings' => array(
           'field_name' => FALSE,
         ),
         'type' => 'og_group_subscribe',
-        'weight' => 0,
+        'weight' => 3,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -231,11 +185,11 @@ function feature_tapas_project_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'inline',
+        'label' => 'above',
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 3,
+        'weight' => 6,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -246,8 +200,8 @@ function feature_tapas_project_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'og_roles_permissions',
-    'label' => 'Project Roles and Permissions',
-    'required' => 1,
+    'label' => 'Group roles and permissions',
+    'required' => TRUE,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
@@ -264,11 +218,10 @@ function feature_tapas_project_field_default_field_instances() {
       ),
     ),
     'widget' => array(
-      'active' => 1,
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 3,
+      'weight' => 5,
     ),
   );
 
@@ -276,10 +229,9 @@ function feature_tapas_project_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Determine if this is an OG group.');
   t('Group');
-  t('Project Description');
+  t('Group roles and permissions');
+  t('Group visibility');
   t('Project Image');
-  t('Project Roles and Permissions');
-  t('Project Visibility (as group)');
 
   return $field_instances;
 }

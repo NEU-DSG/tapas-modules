@@ -1,7 +1,7 @@
 name = feature_tapas_tinythumb
 core = 7.x
-package = Features
-version = 7.x-0.1
+package = TAPAS
+version = 7.x-0.2
 project = feature_tapas_tinythumb
 dependencies[] = image
 features[features_api][] = api:2
