@@ -3,6 +3,7 @@
 define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
 define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
 define("TAPAS_TFC_TRANSFORM_FILENAME", "tfc_transform.xsl");
+define("TAPASRECORD_SHOW_INTERNAL_ERRS", TRUE);
 
 define("TAPAS_ERROR_MESSAGE_OUR_END", t("There seems to be a problem at our end, trying to process this file. " .
 	"Please open a support ticket showing the following error message, and we'll get it fixed as soon as we can!"));
@@ -15,10 +16,14 @@ define("TAPAS_ERROR_MESSAGE_UNKNOWN", t("We are unable to upload this file; plea
 // TODO: Use private file system rather than public
 // TODO: Properly set path of saved files (project, collection).
 // TODO: Make TEI field mandatory for new (NOT updated) TAPAS Record nodes
+// TODO: REmove the TFC field, since we don't need that to be a field.
+// TODO: Handle TEI upload name collisions
 
 // TODO: Settings page to choose public or private?
 // TODO: Settings page to choose XSLT subdirectory?
 // TODO: Settings page to choose name/location of transform file?
+// TODO: Should each *record* have a folder, for the tei, tfc, and all attatchments?
+//       tapasrecord/project/collection/node_id_num/
 
 /**
  * @file
@@ -58,8 +63,7 @@ function tapasrecord_node_info()
  * 
  * This has to be present even if it's just a pass-through,
  * otherwise the content type won't appear in the 
- * admin/structure/types list (I have no idea what the
- * connection is, or why)
+ * admin/structure/types list 
  */
 function tapasrecordnode_form($node, $form_state) {
   return node_content_form($node, $form_state);
@@ -103,7 +107,45 @@ function _tapasrecord_get_file_upload_location() {
 	return TAPAS_SAVE_FILE_ROOT_DIRECTORY;
 }
 
-function _validate_xslt($teiDOM) {
+
+
+/**
+ * Callback to run the validation XSLT checks on the TEI file.
+ */
+function tapasrecord_validate_tei($file, $form_id) {
+
+	$errors = array();
+
+	$err_msg = TAPAS_ERROR_MESSAGE_FILE_ERR . ": Unable to load the TEI file.";
+	$teiDOM = tapasrecord_domdoc_load($file->uri, $err_msg, $errors);
+	if ($errors) {
+		return $errors;
+	}
+
+	$errors = _tapasrecord_validate_xslt($teiDOM);
+	if ($errors) {
+		return $errors;
+	}
+
+	return _tapasrecord_run_transform($teiDOM, $file);
+}
+
+// ===========================================
+// XSLT Processing
+// ===========================================
+
+/**
+ * Runs the validation scripts on the given TEI file, returns any errors
+ *
+ * If errors are found at certain stages, the function my return the 
+ * error list early rather than continuing to run the rest of the validation
+ * checks.
+ * 
+ * @param $teiDOM: the DocumentDOM object containing the TEI file
+ *
+ * @return an array of strings, containing any errors found
+ */
+function _tapasrecord_validate_xslt($teiDOM) {
 
 	$errors = array();
 
@@ -114,8 +156,9 @@ function _validate_xslt($teiDOM) {
 	foreach ($iterator as $next_xslt) {
 		$ext = $next_xslt->getExtension();
 		if ($ext == 'xsl' || $ext == 'xslt') {
-			$err_msg = TAPAS_ERROR_MESSAGE_FILE_ERR . ": [Unable to validate the TEI file.]";
-			$result = tapasrecord_apply_stylesheet($xslt_path, $teiDOM, $errors, $err_msg);
+			$err_msg = TAPAS_ERROR_MESSAGE_FILE_ERR . 
+				": [Unable to validate the TEI file. using " . $next_xslt->getPathname() . "]";
+			$result = tapasrecord_apply_stylesheet($next_xslt->getPathname(), $teiDOM, $errors, $err_msg);
 		
 			// $errors contains any libxml errors encountered while trying to run the validation
 			// $result contains one of:
@@ -137,29 +180,16 @@ function _validate_xslt($teiDOM) {
 	return $errors;
 }
 
-
 /**
- * Callback to run the validation XSLT checks on the TEI file.
+ * Create the TFC from the uploaded TEI file.
+ *
+ * @param $teiDOM: the DocumentDOM object containing the TEI file to transform
+ * @param $file: the Drupal file object, so we can get the non-temp name.
+ *
+ * @return: an array of strings containing any errors found (an empty array if none)
  */
-function tapasrecord_validate_tei($file, $form_id) {
 
-	$errors = array();
-
-	$err_msg = TAPAS_ERROR_MESSAGE_FILE_ERR . ": Unable to load the TEI file.";
-	$teiDOM = tapasrecord_domdoc_load($file->uri, $err_msg, $errors);
-	if ($errors) {
-		return $errors;
-	}
-
-	$errors = _validate_xslt($teiDOM);
-	if ($errors) {
-		return $errors;
-	}
-
-	return _tapasrecord_run_transform($teiDOM);
-}
-
-function _tapasrecord_run_transform(&$teiDOM) {
+function _tapasrecord_run_transform($teiDOM, $file) {
 
 	$transform_path = drupal_get_path('module', 'tapasrecord') . '/' . TAPAS_TFC_TRANSFORM_FILENAME;
 	$errors = array();
@@ -179,9 +209,26 @@ function _tapasrecord_run_transform(&$teiDOM) {
 	return $errors;
 
 }
-// ===========================================
-// XSLT Processing
-// ===========================================
+
+
+
+
+
+// ----------------------------------------------
+// XSLT Helpers
+// ----------------------------------------------
+
+
+/**
+ * Loads the file at $filepath to a DocumentDOM
+ *
+ * @param $filepath: which file to load into the DOM
+ * @param $err_msg: Custom error message to display if there are problems
+ * @param &$errors: any non-supressed error strings will be added to this array
+ * @param $show_raw: whether to include the raw libxml errors in &$errors
+ *
+ * @return The DocumentDOM containing the file at $filepath
+ */
 function tapasrecord_domdoc_load($filepath, $err_msg, &$errors, $show_raw=TRUE) {
 	$docDOM = new DOMDocument();
 	_tapasrecord_libxml_call($docDOM, 'load', $filepath, $err_msg, $errors, $show_raw);
@@ -190,24 +237,35 @@ function tapasrecord_domdoc_load($filepath, $err_msg, &$errors, $show_raw=TRUE) 
 
 }
 
+/**
+ * Applies a stylesheet to an XML DOM
+ *
+ * @param $xsltpath: the stylesheet to apply
+ * @param $xmlDOM: a DocumentDOM containing the xml file on which to run it
+ * @param $&errors: any error strings will be added to this array
+ * @param $result_err_msg: error to display if there are problems running the XSLT
+ *
+ * @return the transformed data, as a string
+ */
 function tapasrecord_apply_stylesheet($xsltpath, $xmlDOM, &$errors, $result_err_msg) {
 	
 	$err_msg = TAPAS_ERROR_MESSAGE_OUR_END . ": [unable to read xslt at $xsltpath]";
-	$xsltDOM = tapasrecord_domdoc_load($xsltpath, $err_msg, $errors, FALSE);
+	$xsltDOM = tapasrecord_domdoc_load($xsltpath, $err_msg, $errors, TAPASRECORD_SHOW_INTERNAL_ERRS);
 
 	if ($errors) {
-		return NULL;
-	}
-
-	$proc = new \XSLTProcessor();	
-	$err_msg = TAPAS_ERROR_MESSAGE_OUR_END . ": [unable to import the xslt stylesheet at $xsltpath]";
-	_tapasrecord_libxml_call($proc, 'importStylesheet', $xsltDOM, $err_msg, $errors, FALSE);
-	if ($errors) {
-		return NULL;
+		return FALSE;
 	}
 	
-	return _tapasrecord_libxml_call($proc, 'transformToXML', $xmlDOM, $result_err_msg, $errors, TRUE);
+	$proc = new \XSLTProcessor();	
+	$err_msg = TAPAS_ERROR_MESSAGE_OUR_END . ": [unable to import the xslt stylesheet at $xsltpath]";
 
+	_tapasrecord_libxml_call($proc, 'importStylesheet', $xsltDOM, $err_msg, $errors, TAPASRECORD_SHOW_INTERNAL_ERRS);
+	if ($errors) {
+		return FALSE;
+	}
+
+	$result =  _tapasrecord_libxml_call($proc, 'transformToXML', $xmlDOM, $result_err_msg, $errors, TRUE);
+	return $result;
 }
 
 
@@ -215,7 +273,8 @@ function tapasrecord_apply_stylesheet($xsltpath, $xmlDOM, &$errors, $result_err_
  * Runs a libxml function and takes control of the error display.
  *
  * libxml displays errors on the webpage that cannot be caught as exceptions-- the only
- *    way (to my knowledge) is to temporarily hijack libxml's error reporting. I dislike
+ *    way (to my knowledge) to prevent the raw error from being displayed to the user
+ *    is to temporarily hijack libxml's error reporting. I dislike
  *    supressing errors, but we want to be able to provide a non-confusing message if,
  *    for instance, the user tries to upload a non-xml file in the TEI field.
  *
@@ -236,10 +295,11 @@ function _tapasrecord_libxml_call(&$obj, $func, $param, $err_msg, &$errors, $sho
 
 	$result = call_user_func(array($obj, $func), $param);
 
-	if (!$result) {
+	$libxml_errors = libxml_get_errors();
+	if ($libxml_errors) {
 		$errors[] = $err_msg;
 		if ($show_raw) {
-			foreach (libxml_get_errors() as $e) {
+			foreach ($libxml_errors() as $e) {
 				$errors[] = "(More info on why: " . $e->message . ")";
 			}
 		}
