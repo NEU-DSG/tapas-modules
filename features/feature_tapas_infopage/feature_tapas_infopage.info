@@ -1,0 +1,17 @@
+name = feature_tapas_infopage
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = feature_tapas_infopage
+dependencies[] = features
+dependencies[] = node
+dependencies[] = text
+features[features_api][] = api:2
+features[field_instance][] = node-tapas_infopage-body
+features[node][] = tapas_infopage
+features[user_permission][] = create tapas_infopage content
+features[user_permission][] = delete any tapas_infopage content
+features[user_permission][] = delete own tapas_infopage content
+features[user_permission][] = edit any tapas_infopage content
+features[user_permission][] = edit own tapas_infopage content
+features_exclude[field_base][body] = body
