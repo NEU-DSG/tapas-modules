@@ -74,29 +74,5 @@ function feature_tapas_tapasrecord_as_content_field_default_field_bases() {
     'type' => 'file',
   );
 
-  // Exported field_base: 'tapas_tfcfield'
-  $field_bases['tapas_tfcfield'] = array(
-    'active' => 1,
-    'cardinality' => 1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'tapas_tfcfield',
-    'indexes' => array(
-      'fid' => array(
-        0 => 'fid',
-      ),
-    ),
-    'label' => 'TFC File',
-    'locked' => 1,
-    'module' => 'file',
-    'settings' => array(
-      'display_default' => 0,
-      'display_field' => 0,
-      'uri_scheme' => 'public',
-    ),
-    'translatable' => 0,
-    'type' => 'file',
-  );
-
   return $field_bases;
 }

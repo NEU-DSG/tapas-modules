@@ -1,6 +1,6 @@
 name = feature_tapas_sitewide_permissions
 core = 7.x
-package = TAPAS
+package = Features
 version = 7.x-0.2
 project = feature_tapas_sitewide_permissions
 dependencies[] = features

@@ -3,6 +3,7 @@ core = 7.x
 package = TAPAS
 version = 7.x-0.3
 project = feature_tapas_project
+dependencies[] = feature_og_base
 dependencies[] = features
 dependencies[] = image
 dependencies[] = list

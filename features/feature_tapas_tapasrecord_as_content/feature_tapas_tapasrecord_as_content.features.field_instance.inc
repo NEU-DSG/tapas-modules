@@ -163,52 +163,11 @@ function feature_tapas_tapasrecord_as_content_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-tapasrecordnode-tapas_tfcfield'
-  $field_instances['node-tapasrecordnode-tapas_tfcfield'] = array(
-    'bundle' => 'tapasrecordnode',
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 1,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'tapas_tfcfield',
-    'label' => 'TFC File',
-    'required' => FALSE,
-    'settings' => array(
-      'description_field' => 0,
-      'file_directory' => '',
-      'file_extensions' => 'tei xml tfc',
-      'max_filesize' => '',
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'module' => 'file',
-      'settings' => array(
-        'progress_indicator' => 'throbber',
-      ),
-      'type' => 'file_generic',
-      'weight' => -3,
-    ),
-  );
-
   // Translatables
   // Included for use with string extractors like potx.
   t('Group content visibility');
   t('Groups audience');
   t('Original TEI File');
-  t('TFC File');
 
   return $field_instances;
 }
