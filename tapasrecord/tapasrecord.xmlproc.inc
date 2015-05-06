@@ -4,47 +4,45 @@
 // ===========================================
 
 /**
- * Runs the validation scripts on the given TEI file, returns any errors
+ * Runs the validation scripts on the given TEI file
  *
  * If errors are found at certain stages, the function my return the 
  * error list early rather than continuing to run the rest of the validation
  * checks.
- * 
- * @param $teiDOM: the DOMDocument object containing the TEI file
- *
- * @return an array of strings, containing any errors found
  */
 function _tapasrecord_validate_xslt($teiDOM) {
-
-	$errors = array();
 
 	$xsltDOM = new DOMDocument();
 	$xslt_path = drupal_get_path('module', 'tapasrecord') . TAPAS_VALIDATION_XSLT_SUBDIRECTORY;
 	$iterator = new \DirectoryIterator($xslt_path);
 
+	$known_errors = array();
+	$known_err_found = FALSE;
+
 	foreach ($iterator as $next_xslt) {
 		$ext = $next_xslt->getExtension();
 		if ($ext == 'xsl' || $ext == 'xslt') {
-			$err_msg = TAPAS_ERROR_MESSAGE_FILE_ERR . 
-				": [Unable to validate the TEI file. using " . $next_xslt->getPathname() . "]";
-			$result = tapasrecord_apply_stylesheet($next_xslt->getPathname(), $teiDOM, $errors, $err_msg);
+			$result = tapasrecord_apply_stylesheet($next_xslt->getPathname(), $teiDOM, $errors);
 		
 			// $errors contains any libxml errors encountered while trying to run the validation
 			// $result contains one of:
-			//		FALSE, if the xslt was unable to rune
-			//		an empty string, if the xslt ran without errors
-			//		a non-empty string, containing the validation error,
+			//		FALSE, if the xslt was unable to run
+			//		an empty string, if the validation ran without errors
+			//		a non-empty string, containing the validation error, otherwise.
 		
 			if ($result === FALSE) {
-				$errors[] = TAPAS_ERROR_MESSAGE_UNKNOWN;
-				return $errors;
+				drupal_set_message(TAPAS_ERROR_UNKNOWN_ERROR);
 			} elseif ($result) {
-				$errors[] = $result;
-				return $errors;
+				drupal_set_message($result, 'warning');
+				$known_err_found = TRUE;
 			}
 			
 		} // if $ext xsl or xslt
 	} // foreach
+	
+	if ($known_err_found) {
+		$errors[] = TAPAS_ERROR_KNOWN_FILE_ERROR;
+	}
 
 	return $errors;
 }
@@ -86,8 +84,7 @@ function _tapasrecord_run_transform($teiDOM, $file) {
 
 	$transform_path = drupal_get_path('module', 'tapasrecord') . '/' . TAPAS_TFC_TRANSFORM_FILENAME;
 	$errors = array();
-	$err_msg = '##' . t("Unable to process the TEI file.") . '##';	
-	$tfc_result = tapasrecord_apply_stylesheet($transform_path, $teiDOM, $errors, $err_msg);
+	$tfc_result = tapasrecord_apply_stylesheet($transform_path, $teiDOM, $errors);
 
 	if ($errors || !$tfc_result) {
 		$errors[] = TAPASRECORD_ERROR_MESSAGE_UNKNWON;
@@ -122,9 +119,9 @@ function _tapasrecord_run_transform($teiDOM, $file) {
  *
  * @return The DocumentDOM containing the file at $filepath
  */
-function tapasrecord_domdoc_load($filepath, $err_msg, &$errors, $show_raw=TRUE) {
+function tapasrecord_domdoc_load($filepath, &$errors, $show_raw=TRUE) {
 	$docDOM = new DOMDocument();
-	_tapasrecord_libxml_call($docDOM, 'load', $filepath, $err_msg, $errors, $show_raw);
+	_tapasrecord_libxml_call($docDOM, 'load', $filepath, $errors, $show_raw);
 	
 	return $docDOM;
 
@@ -136,29 +133,32 @@ function tapasrecord_domdoc_load($filepath, $err_msg, &$errors, $show_raw=TRUE) 
  * @param $xsltpath: the stylesheet to apply
  * @param $xmlDOM: a DOMDocument containing the xml file on which to run it
  * @param $&errors: any error strings will be added to this array
- * @param $result_err_msg: error to display if there are problems running the XSLT
  *
- * @return the transformed data, as a string
+ * @return 
+ *    -- If the XSLT ran successfully, this will be a string containing the
+ *       result (the string may be empty)
+ *    -- If the XSLT was unable to run, this will be FALSE.
+ *
+ * Note that because a successful run could potentially return an empty string,
+ *   checks against the result should be $result === FALSE, not $result == FALSE.
  */
-function tapasrecord_apply_stylesheet($xsltpath, $xmlDOM, &$errors, $result_err_msg) {
+function tapasrecord_apply_stylesheet($xsltpath, $xmlDOM, &$errors) {
 	
-	$err_msg = TAPAS_ERROR_MESSAGE_OUR_END . "##unable to read xslt at $xsltpath##";
-	$xsltDOM = tapasrecord_domdoc_load($xsltpath, $err_msg, $errors, TAPASRECORD_SHOW_INTERNAL_ERRS);
+	$xsltDOM = tapasrecord_domdoc_load($xsltpath, $errors);
 
 	if ($errors) {
+		drupal_set_message(TAPAS_ERROR_OUR_END , "##unable to read stylesheet at $xsltpath##");
 		return FALSE;
 	}
 	
 	$proc = new \XSLTProcessor();	
-	$err_msg = TAPAS_ERROR_MESSAGE_OUR_END . "##unable to import the xslt stylesheet at $xsltpath##";
-
-	_tapasrecord_libxml_call($proc, 'importStylesheet', $xsltDOM, $err_msg, $errors, TAPASRECORD_SHOW_INTERNAL_ERRS);
+	_tapasrecord_libxml_call($proc, 'importStylesheet', $xsltDOM, $errors);
 	if ($errors) {
+		drupal_set_message(TAPAS_ERROR_OUR_END , "##unable to import stylesheet at $xsltpath##");
 		return FALSE;
 	}
 
-	$result =  _tapasrecord_libxml_call($proc, 'transformToXML', $xmlDOM, $result_err_msg, $errors, TRUE);
-	return $result;
+	return _tapasrecord_libxml_call($proc, 'transformToXML', $xmlDOM, $errors, TRUE);
 }
 
 
@@ -180,7 +180,7 @@ function tapasrecord_apply_stylesheet($xsltpath, $xmlDOM, &$errors, $result_err_
  *
  * @return Returns the result that the called function returns.
  */
-function _tapasrecord_libxml_call(&$obj, $func, $param, $err_msg, &$errors, $show_raw=TRUE) {
+function _tapasrecord_libxml_call(&$obj, $func, $param, &$errors) {
 
 	assert(is_callable(array($obj, $func)));
 
@@ -189,15 +189,10 @@ function _tapasrecord_libxml_call(&$obj, $func, $param, $err_msg, &$errors, $sho
 	$result = call_user_func(array($obj, $func), $param);
 
 	$libxml_errors = libxml_get_errors();
-	if ($libxml_errors) {
-		$errors[] = $err_msg;
-		if ($show_raw) {
-			foreach ($libxml_errors as $e) {
-				$new_err = _tapasrecord_interpret_libxml_err($e->message);
-				if ($new_err) {
-					$errors[] = "(More info on why: " . $new_err . ")";
-				}
-			}
+	foreach ($libxml_errors as $e) {
+		$new_err = _tapasrecord_interpret_libxml_err($e->message);
+		if ($new_err) {
+			$errors[] = "(More info on why: " . $new_err . ")";
 		}
 	}
 		

@@ -3,15 +3,16 @@
 define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
 define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
 define("TAPAS_TFC_TRANSFORM_FILENAME", "tfc_transform.xsl");
-define("TAPASRECORD_SHOW_INTERNAL_ERRS", TRUE);
 
-define("TAPAS_ERROR_MESSAGE_OUR_END", t("There seems to be a problem at our end, trying to process this file. " .
-	"Please open a support ticket showing the following error message, and we'll get it fixed as soon as we can!"));
-define("TAPAS_ERROR_MESSAGE_FILE_ERR", t("We are unable to process this file. This could be because of a problem " .
-	"with the XML in the file itself, or, it might be valid TEI that we are not yet equipped to handle. If you are " .
-	"confident that the TEI is valid, please open a support ticket so that we can (hopefully!) improve our system."));
-define("TAPAS_ERROR_MESSAGE_UNKNOWN", t("We are unable to upload this file; please double-check that it is the " .
-	"correct one."));
+define("TAPAS_ERROR_KNOWN_FILE_ERROR", t("We found problems with the tei file which prevent us from being able " .
+	"to load it. Please double-check the file, or contact us with any questions."));
+define("TAPAS_ERROR_UNSUPPORTED_ERROR", t("We were unable to process the tei file. This may be due to a problem in " .
+	"the file, or it may be that while the tei is valid, we are not yet equipped to deal with all the elements. If " .
+	"you are confident your file is valid, please open a support ticket, to allow us to improve our system."));
+define("TAPAS_ERROR_OUR_END", t("There appears to be an error at our end. Please open a support ticket, " .
+	"copy-and-pasting all error messages, and we'll fix it as soon as possible."));
+define("TAPAS_ERROR_UNKNOWN", t("An unknown error occured. If you are confident that the tei file you are " .
+	"uploading is valid, please open a support ticket so that we can figure out what happened."));
 
 // TODO: Use private file system rather than public
 // TODO: Properly set path of saved files (project, collection).
@@ -24,6 +25,8 @@ define("TAPAS_ERROR_MESSAGE_UNKNOWN", t("We are unable to upload this file; plea
 // TODO: Settings page to choose name/location of transform file?
 // TODO: Should each *record* have a folder, for the tei, tfc, and all attatchments?
 //       tapasrecord/project/collection/node_id_num/
+// TODO: When there is a failed upload attempt, clear out errors from screen before next
+//       upload attempt, to prevent confusion.
 
 /**
  * @file
@@ -109,11 +112,9 @@ function _tapasrecord_get_file_upload_location() {
 function tapasrecord_validate_tei($file, $form_id) {
 
 	module_load_include('inc', 'tapasrecord', 'tapasrecord.xmlproc');
-
 	$errors = array();
 
-	$err_msg = TAPAS_ERROR_MESSAGE_FILE_ERR . ": Unable to load the TEI file.";
-	$teiDOM = tapasrecord_domdoc_load($file->uri, $err_msg, $errors);
+	$teiDOM = tapasrecord_domdoc_load($file->uri, $errors);
 	if ($errors) {
 		return $errors;
 	}
@@ -124,7 +125,14 @@ function tapasrecord_validate_tei($file, $form_id) {
 		return $errors;
 	}
 
-	drupal_set_message(_tapasrecord_extract_tei_metadata($teiDOM));
+	//drupal_set_message(_tapasrecord_extract_tei_metadata($teiDOM));
+	//$errors = _tapasrecord_extract_tei_metadata($teiDOM);
+	//if ($errors) {
+	//  foreach ($errors as $e) {
+	//    drupal_set_message($e, 'warning');
+	//  }
+	//  drupal_set_message(t("There were problems trying to extract metadata from this TEI file."), 'warning');
+	//}
 
 	return _tapasrecord_run_transform($teiDOM, $file);
 }
