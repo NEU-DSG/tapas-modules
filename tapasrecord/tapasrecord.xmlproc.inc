@@ -1,7 +1,4 @@
 <?php
-// ===========================================
-// XSLT Processing
-// ===========================================
 
 /**
  * Runs the validation scripts on the given TEI file
@@ -174,9 +171,7 @@ function tapasrecord_apply_stylesheet($xsltpath, $xmlDOM, &$errors) {
  * @param &$obj: the object on which to run the function
  * @param $func: the name of the function to call
  * @param $param: parameter to give the function (currently only one param supported)
- * @param $err_msg: Custom error message to display if there are any errors
  * @param &$errors: array in which to return all non-suppressed errors
- * @param $show_raw: also show the libxml errors, prefixed with "(more info:"
  *
  * @return Returns the result that the called function returns.
  */
