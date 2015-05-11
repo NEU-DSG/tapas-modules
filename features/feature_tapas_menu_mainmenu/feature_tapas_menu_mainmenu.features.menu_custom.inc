@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * feature_tapas_mainmenu.features.menu_custom.inc
+ * feature_tapas_menu_mainmenu.features.menu_custom.inc
  */
 
 /**
  * Implements hook_menu_default_menu_custom().
  */
-function feature_tapas_mainmenu_menu_default_menu_custom() {
+function feature_tapas_menu_mainmenu_menu_default_menu_custom() {
   $menus = array();
 
   // Exported menu: main-menu.

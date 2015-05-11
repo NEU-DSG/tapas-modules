@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the feature_tapas_view_collections_in_project feature.
+ */
+
+include_once 'feature_tapas_view_collections_in_project.features.inc';

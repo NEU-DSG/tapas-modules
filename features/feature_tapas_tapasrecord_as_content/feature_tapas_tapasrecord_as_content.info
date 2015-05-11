@@ -1,12 +1,13 @@
 name = feature_tapas_tapasrecord_as_content
 core = 7.x
-package = TAPAS
+package = Content Types
 version = 7.x-0.2
 project = feature_tapas_tapasrecord_as_content
 dependencies[] = entityreference
-dependencies[] = feature_og_base
 dependencies[] = feature_tapas_collection
+dependencies[] = feature_tapas_taxonomy_institution
 dependencies[] = features
+dependencies[] = features_tapas_og_base
 dependencies[] = file
 dependencies[] = list
 dependencies[] = node

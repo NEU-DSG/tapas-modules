@@ -1,6 +1,6 @@
 name = feature_tapas_sysadmin_permissions
 core = 7.x
-package = Features
+package = TAPAS
 version = 7.x-0.1
 project = feature_tapas_sysadmin_permissions
 dependencies[] = advanced_help

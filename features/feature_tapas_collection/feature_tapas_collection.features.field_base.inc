@@ -10,6 +10,25 @@
 function feature_tapas_collection_field_default_field_bases() {
   $field_bases = array();
 
+  // Exported field_base: 'field_collection_description'
+  $field_bases['field_collection_description'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_collection_description',
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'text_long',
+  );
+
   // Exported field_base: 'field_collection_image'
   $field_bases['field_collection_image'] = array(
     'active' => 1,
@@ -30,6 +49,27 @@ function feature_tapas_collection_field_default_field_bases() {
     ),
     'translatable' => 0,
     'type' => 'image',
+  );
+
+  // Exported field_base: 'field_collection_slug'
+  $field_bases['field_collection_slug'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_collection_slug',
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'max_length' => 60,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
   );
 
   // Exported field_base: 'og_collection_to_project_ref'
@@ -59,7 +99,9 @@ function feature_tapas_collection_field_default_field_bases() {
         ),
         'membership_type' => 'og_membership_type_default',
         'sort' => array(
-          'type' => 'none',
+          'direction' => 'ASC',
+          'property' => 'title',
+          'type' => 'property',
         ),
         'target_bundles' => array(
           'tapas_project' => 'tapas_project',
