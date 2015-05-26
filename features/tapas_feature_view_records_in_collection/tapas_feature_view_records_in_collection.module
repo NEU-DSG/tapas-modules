@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the tapas_feature_view_records_in_collection feature.
+ */
+
+include_once 'tapas_feature_view_records_in_collection.features.inc';
