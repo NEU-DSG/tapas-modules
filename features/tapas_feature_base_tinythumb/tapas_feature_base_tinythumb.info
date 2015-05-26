@@ -1,0 +1,9 @@
+name = tapas_feature_base_tinythumb
+description = Image Thumbnail 50 x 50 size
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_base_tinythumb
+dependencies[] = image
+features[features_api][] = api:2
+features[image][] = tapas_tiny

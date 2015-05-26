@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the feature_tapas_infopage feature.
- */
-
-include_once 'feature_tapas_infopage.features.inc';

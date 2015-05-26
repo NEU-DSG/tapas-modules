@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the tapas_feature_base_tinythumb feature.
+ */
+
+include_once 'tapas_feature_base_tinythumb.features.inc';
