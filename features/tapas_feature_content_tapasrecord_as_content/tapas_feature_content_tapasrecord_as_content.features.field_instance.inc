@@ -10,8 +10,8 @@
 function tapas_feature_content_tapasrecord_as_content_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-tapasrecordnode-field_tags'
-  $field_instances['node-tapasrecordnode-field_tags'] = array(
+  // Exported field_instance: 'node-tapasrecordnode-field_tei_record_tags'
+  $field_instances['node-tapasrecordnode-field_tei_record_tags'] = array(
     'bundle' => 'tapasrecordnode',
     'default_value' => NULL,
     'deleted' => 0,
@@ -32,8 +32,8 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_tags',
-    'label' => 'Tags',
+    'field_name' => 'field_tei_record_tags',
+    'label' => 'TEI Record Tags',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -46,7 +46,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => 2,
+      'weight' => 1,
     ),
   );
 
@@ -208,7 +208,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
   t('Group content visibility');
   t('Groups audience');
   t('Original TEI File');
-  t('Tags');
+  t('TEI Record Tags');
 
   return $field_instances;
 }

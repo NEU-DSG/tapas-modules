@@ -1,21 +1,21 @@
 <?php
 /**
  * @file
- * tapas_feature_view_records_in_collection.views_default.inc
+ * tapas_feature_content_tapasrecord_as_content.views_default.inc
  */
 
 /**
  * Implements hook_views_default_views().
  */
-function tapas_feature_view_records_in_collection_views_default_views() {
+function tapas_feature_content_tapasrecord_as_content_views_default_views() {
   $export = array();
 
   $view = new view();
-  $view->name = 'records_in_collection';
+  $view->name = 'records_in_collection_view';
   $view->description = 'Show all content (nodes) of a group.';
   $view->tag = 'tapas, og';
   $view->base_table = 'node';
-  $view->human_name = 'Records in Collection';
+  $view->human_name = 'Records in Collection View';
   $view->core = 0;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -94,7 +94,7 @@ function tapas_feature_view_records_in_collection_views_default_views() {
 
   /* Display: Block */
   $handler = $view->new_display('block', 'Block', 'block_1');
-  $export['records_in_collection'] = $view;
+  $export['records_in_collection_view'] = $view;
 
   return $export;
 }

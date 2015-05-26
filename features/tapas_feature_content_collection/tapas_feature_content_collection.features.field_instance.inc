@@ -147,8 +147,8 @@ function tapas_feature_content_collection_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-tapas_collection-field_tags'
-  $field_instances['node-tapas_collection-field_tags'] = array(
+  // Exported field_instance: 'node-tapas_collection-field_collection_tags'
+  $field_instances['node-tapas_collection-field_collection_tags'] = array(
     'bundle' => 'tapas_collection',
     'default_value' => NULL,
     'deleted' => 0,
@@ -169,8 +169,8 @@ function tapas_feature_content_collection_field_default_field_instances() {
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'field_tags',
-    'label' => 'Tags',
+    'field_name' => 'field_collection_tags',
+    'label' => 'Collection Tags',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -183,7 +183,7 @@ function tapas_feature_content_collection_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'taxonomy_autocomplete',
-      'weight' => 10,
+      'weight' => 9,
     ),
   );
 
@@ -417,12 +417,12 @@ function tapas_feature_content_collection_field_default_field_instances() {
   t('Collection Description');
   t('Collection Image');
   t('Collection Slug');
+  t('Collection Tags');
   t('Determine if this is an OG group.');
   t('Group');
   t('Group roles and permissions');
   t('Group visibility');
   t('Groups audience');
-  t('Tags');
 
   return $field_instances;
 }

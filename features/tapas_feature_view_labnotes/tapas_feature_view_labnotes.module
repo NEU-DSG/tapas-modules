@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the tapas_feature_view_labnotes feature.
- */
-
-include_once 'tapas_feature_view_labnotes.features.inc';

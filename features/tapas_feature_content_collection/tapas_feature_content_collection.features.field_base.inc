@@ -72,13 +72,13 @@ function tapas_feature_content_collection_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_tags'
-  $field_bases['field_tags'] = array(
+  // Exported field_base: 'field_collection_tags'
+  $field_bases['field_collection_tags'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_tags',
+    'field_name' => 'field_collection_tags',
     'indexes' => array(
       'tid' => array(
         0 => 'tid',
