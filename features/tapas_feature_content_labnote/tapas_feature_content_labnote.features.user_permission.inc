@@ -13,35 +13,45 @@ function tapas_feature_content_labnote_user_default_permissions() {
   // Exported permission: 'create lab_note content'.
   $permissions['create lab_note content'] = array(
     'name' => 'create lab_note content',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
     'module' => 'node',
   );
 
   // Exported permission: 'delete any lab_note content'.
   $permissions['delete any lab_note content'] = array(
     'name' => 'delete any lab_note content',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
     'module' => 'node',
   );
 
   // Exported permission: 'delete own lab_note content'.
   $permissions['delete own lab_note content'] = array(
     'name' => 'delete own lab_note content',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
     'module' => 'node',
   );
 
   // Exported permission: 'edit any lab_note content'.
   $permissions['edit any lab_note content'] = array(
     'name' => 'edit any lab_note content',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
     'module' => 'node',
   );
 
   // Exported permission: 'edit own lab_note content'.
   $permissions['edit own lab_note content'] = array(
     'name' => 'edit own lab_note content',
-    'roles' => array(),
+    'roles' => array(
+      'administrator' => 'administrator',
+    ),
     'module' => 'node',
   );
 

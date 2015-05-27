@@ -32,4 +32,5 @@ features[user_permission][] = delete own lab_note content
 features[user_permission][] = edit any lab_note content
 features[user_permission][] = edit own lab_note content
 features_exclude[taxonomy][tags] = tags
+no autodetect = 1
 project path = profiles/buildtapas/modules/tapas-modules/features
