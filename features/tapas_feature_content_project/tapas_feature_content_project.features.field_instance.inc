@@ -10,6 +10,39 @@
 function tapas_feature_content_project_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'comment-comment_node_tapas_project-comment_body'
+  $field_instances['comment-comment_node_tapas_project-comment_body'] = array(
+    'bundle' => 'comment_node_tapas_project',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'comment',
+    'field_name' => 'comment_body',
+    'label' => 'Comment',
+    'required' => TRUE,
+    'settings' => array(
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 0,
+    ),
+  );
+
   // Exported field_instance: 'node-tapas_project-field_project_description'
   $field_instances['node-tapas_project-field_project_description'] = array(
     'bundle' => 'tapas_project',
@@ -39,7 +72,7 @@ function tapas_feature_content_project_field_default_field_instances() {
     'label' => 'Project Description',
     'required' => 0,
     'settings' => array(
-      'text_processing' => 0,
+      'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
@@ -110,52 +143,9 @@ function tapas_feature_content_project_field_default_field_instances() {
   // Exported field_instance: 'node-tapas_project-field_project_institution'
   $field_instances['node-tapas_project-field_project_institution'] = array(
     'bundle' => 'tapas_project',
-    'default_value' => array(
-      0 => array(
-        'tid' => 48,
-        'vid' => 1,
-        'name' => '-- NONE --',
-        'description' => '',
-        'format' => 'filtered_html',
-        'weight' => 0,
-        'vocabulary_machine_name' => 'institution',
-        'field_institution_image' => array(),
-        'field_institution_address' => array(),
-        'field_institution_latitude' => array(),
-        'field_institution_longitude' => array(),
-        'field_institution_url' => array(),
-        'rdf_mapping' => array(
-          'description' => array(
-            'predicates' => array(
-              0 => 'skos:definition',
-            ),
-          ),
-          'name' => array(
-            'predicates' => array(
-              0 => 'rdfs:label',
-              1 => 'skos:prefLabel',
-            ),
-          ),
-          'parent' => array(
-            'predicates' => array(
-              0 => 'skos:broader',
-            ),
-            'type' => 'rel',
-          ),
-          'rdftype' => array(
-            0 => 'skos:Concept',
-          ),
-          'vid' => array(
-            'predicates' => array(
-              0 => 'skos:inScheme',
-            ),
-            'type' => 'rel',
-          ),
-        ),
-      ),
-    ),
+    'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'A comma-separated list of institutions this project is affiliated with.',
     'display' => array(
       'default' => array(
         'label' => 'inline',
@@ -165,7 +155,7 @@ function tapas_feature_content_project_field_default_field_instances() {
         'weight' => 1,
       ),
       'teaser' => array(
-        'label' => 'above',
+        'label' => 'inline',
         'module' => 'taxonomy',
         'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
@@ -253,7 +243,7 @@ function tapas_feature_content_project_field_default_field_instances() {
     'bundle' => 'tapas_project',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Machine-readable name for the project; used in the URL',
     'display' => array(
       'default' => array(
         'label' => 'hidden',
@@ -271,7 +261,7 @@ function tapas_feature_content_project_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'field_project_slug',
     'label' => 'Project Slug',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,
@@ -449,12 +439,15 @@ function tapas_feature_content_project_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
+  t('A comma-separated list of institutions this project is affiliated with.');
+  t('Comment');
   t('Determine if this is an OG group.');
   t('External Links');
   t('Group');
   t('Group roles and permissions');
   t('Group visibility');
   t('Institutional Affiliation');
+  t('Machine-readable name for the project; used in the URL');
   t('Project Description');
   t('Project Image');
   t('Project Slug');

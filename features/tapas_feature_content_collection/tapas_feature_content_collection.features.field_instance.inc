@@ -11,6 +11,40 @@ function tapas_feature_content_collection_field_default_field_instances() {
   $field_instances = array();
 
   // Exported field_instance:
+  // 'comment-comment_node_tapas_collection-comment_body'
+  $field_instances['comment-comment_node_tapas_collection-comment_body'] = array(
+    'bundle' => 'comment_node_tapas_collection',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'comment',
+    'field_name' => 'comment_body',
+    'label' => 'Comment',
+    'required' => TRUE,
+    'settings' => array(
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 0,
+    ),
+  );
+
+  // Exported field_instance:
   // 'node-tapas_collection-field_collection_description'
   $field_instances['node-tapas_collection-field_collection_description'] = array(
     'bundle' => 'tapas_collection',
@@ -113,7 +147,7 @@ function tapas_feature_content_collection_field_default_field_instances() {
     'bundle' => 'tapas_collection',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Machine readable name for collection, used in URL.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -152,7 +186,7 @@ function tapas_feature_content_collection_field_default_field_instances() {
     'bundle' => 'tapas_collection',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Comma separated list of tags',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -418,11 +452,14 @@ function tapas_feature_content_collection_field_default_field_instances() {
   t('Collection Image');
   t('Collection Slug');
   t('Collection Tags');
+  t('Comma separated list of tags');
+  t('Comment');
   t('Determine if this is an OG group.');
   t('Group');
   t('Group roles and permissions');
   t('Group visibility');
   t('Groups audience');
+  t('Machine readable name for collection, used in URL.');
 
   return $field_instances;
 }

@@ -67,6 +67,7 @@ function tapas_feature_content_collection_field_default_field_bases() {
     'module' => 'text',
     'settings' => array(
       'max_length' => 60,
+      'profile2_private' => FALSE,
     ),
     'translatable' => 0,
     'type' => 'text',
@@ -93,6 +94,7 @@ function tapas_feature_content_collection_field_default_field_bases() {
           'parent' => 0,
         ),
       ),
+      'profile2_private' => FALSE,
     ),
     'translatable' => 0,
     'type' => 'taxonomy_term_reference',

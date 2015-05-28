@@ -102,16 +102,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
     'module' => 'user',
   );
 
-  // Exported permission: 'administer sharethis'.
-  $permissions['administer sharethis'] = array(
-    'name' => 'administer sharethis',
-    'roles' => array(
-      'Editor' => 'Editor',
-      'administrator' => 'administrator',
-    ),
-    'module' => 'sharethis',
-  );
-
   // Exported permission: 'administer url aliases'.
   $permissions['administer url aliases'] = array(
     'name' => 'administer url aliases',
@@ -185,7 +175,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['create article content'] = array(
     'name' => 'create article content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -207,7 +196,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['create page content'] = array(
     'name' => 'create page content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -217,7 +205,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['delete any article content'] = array(
     'name' => 'delete any article content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -237,7 +224,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['delete any page content'] = array(
     'name' => 'delete any page content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -247,7 +233,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['delete own article content'] = array(
     'name' => 'delete own article content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -268,7 +253,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['delete own page content'] = array(
     'name' => 'delete own page content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -288,7 +272,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['edit any article content'] = array(
     'name' => 'edit any article content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -308,7 +291,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['edit any main profile'] = array(
     'name' => 'edit any main profile',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'profile2',
@@ -318,7 +300,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['edit any page content'] = array(
     'name' => 'edit any page content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -338,7 +319,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['edit own article content'] = array(
     'name' => 'edit own article content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -381,7 +361,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
     'name' => 'edit own main profile',
     'roles' => array(
       'administrator' => 'administrator',
-      'authenticated user' => 'authenticated user',
     ),
     'module' => 'profile2',
   );
@@ -390,7 +369,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
   $permissions['edit own page content'] = array(
     'name' => 'edit own page content',
     'roles' => array(
-      'Editor' => 'Editor',
       'administrator' => 'administrator',
     ),
     'module' => 'node',
@@ -465,7 +443,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
     'name' => 'view any main profile',
     'roles' => array(
       'administrator' => 'administrator',
-      'authenticated user' => 'authenticated user',
     ),
     'module' => 'profile2',
   );
@@ -475,7 +452,6 @@ function tapas_feature_base_permissions_user_default_permissions() {
     'name' => 'view own main profile',
     'roles' => array(
       'administrator' => 'administrator',
-      'authenticated user' => 'authenticated user',
     ),
     'module' => 'profile2',
   );

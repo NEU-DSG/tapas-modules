@@ -24,6 +24,7 @@ features[field_base][] = field_collection_image
 features[field_base][] = field_collection_slug
 features[field_base][] = field_collection_tags
 features[field_base][] = og_collection_to_project_ref
+features[field_instance][] = comment-comment_node_tapas_collection-comment_body
 features[field_instance][] = node-tapas_collection-field_collection_description
 features[field_instance][] = node-tapas_collection-field_collection_image
 features[field_instance][] = node-tapas_collection-field_collection_slug
