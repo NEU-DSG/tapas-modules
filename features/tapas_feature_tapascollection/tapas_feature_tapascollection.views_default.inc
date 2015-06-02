@@ -90,13 +90,10 @@ function tapas_feature_tapascollection_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Groups audience */
+  /* Field: Broken/missing handler */
   $handler->display->display_options['fields']['og_collection_to_project_ref']['id'] = 'og_collection_to_project_ref';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['table'] = 'og_membership';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['field'] = 'og_collection_to_project_ref';
-  $handler->display->display_options['fields']['og_collection_to_project_ref']['settings'] = array(
-    'link' => 0,
-  );
   /* Field: Content: Group visibility */
   $handler->display->display_options['fields']['group_access']['id'] = 'group_access';
   $handler->display->display_options['fields']['group_access']['table'] = 'field_data_group_access';
@@ -355,16 +352,13 @@ function tapas_feature_tapascollection_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Groups audience */
+  /* Field: Broken/missing handler */
   $handler->display->display_options['fields']['og_collection_to_project_ref']['id'] = 'og_collection_to_project_ref';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['table'] = 'og_membership';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['field'] = 'og_collection_to_project_ref';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['label'] = '';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['exclude'] = TRUE;
   $handler->display->display_options['fields']['og_collection_to_project_ref']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['og_collection_to_project_ref']['settings'] = array(
-    'link' => 0,
-  );
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
