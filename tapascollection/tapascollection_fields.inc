@@ -48,10 +48,10 @@ function _tapascollection_field_bases() {
 
 function _tapascollection_common_instances($short_nodetype) {
 
-	$type = 'tapascollection' . $short_nodetype;
+	$type = 'tapascollection_' . $short_nodetype;
 	$base_array = array(
 		'entity_type' => 'node',
-		'bundle' => 'type'
+		'bundle' => $type,
 	);
 
 	$prefix = 'tc_field';
