@@ -6,37 +6,37 @@ function _tapascollection_field_bases() {
 
 	$bases = array(
 		'description' => array(
-			'field_name' => $prefix . 'description',
+			'field_name' => $prefix . '_description',
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text_long',
 		),
 		'image' => array(
-			'field_name' => $prefix . 'image',
+			'field_name' => $prefix . '_image',
 			'cardinality' => 1,
 			'module' => 'image',
 			'type' => 'image',
 		),
 		'slug' => array(
-			'field_name' => $prefix . 'slug',
+			'field_name' => $prefix . '_slug',
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text',
 		),
 		'tags' => array(
-			'field_name' => $prefix . 'tags',
+			'field_name' => $prefix . '_tags',
 			'cardinality' => -1, // i.e. unlimitted
 			'module' => 'taxonomy',
 			'type' => 'taxonomy_term_reference'
 		),
 		'institution' => array(
-			'field_name' => $prefix . 'institution',
+			'field_name' => $prefix . '_institution',
 			'cardinality' => -1,
 			'module' => 'taxonomy',
 			'type' => 'taxonomy_term_reference',
 		),
 		'links' => array(
-			'field_name' => $prefix . 'links',
+			'field_name' => $prefix . '_links',
 			'cardinality' => -1,
 			'module' => 'link',
 			'type' => 'link_field'
