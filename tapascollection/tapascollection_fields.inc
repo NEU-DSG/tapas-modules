@@ -114,5 +114,7 @@ function _tapascollection_project_instances() {
 		)),
 	);
 
+	return $instances;
+
 }
 
