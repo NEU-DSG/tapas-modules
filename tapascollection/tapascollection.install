@@ -30,7 +30,7 @@ function tapascollection_install() {
 	$instances = array_merge($instances, _tapascollection_common_instances('project'));
 	$instances = array_merge($instances, _tapascollection_project_instances());
 	foreach($instances as $i) {
-		//field_create_instance($i);
+		field_create_instance($i);
 	}
 
 }
