@@ -1,131 +1,14 @@
 <?php
 /**
  * @file
- * tapas_feature_content_collection.views_default.inc
+ * tapas_feature_tapascollection.views_default.inc
  */
 
 /**
  * Implements hook_views_default_views().
  */
-function tapas_feature_content_collection_views_default_views() {
+function tapas_feature_tapascollection_views_default_views() {
   $export = array();
-
-  $view = new view();
-  $view->name = 'collections_in_project';
-  $view->description = '';
-  $view->tag = 'tapas, structure';
-  $view->base_table = 'node';
-  $view->human_name = 'Collections in Project';
-  $view->core = 7;
-  $view->api_version = '3.0';
-  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
-
-  /* Display: Master */
-  $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['use_more_always'] = FALSE;
-  $handler->display->display_options['access']['type'] = 'perm';
-  $handler->display->display_options['cache']['type'] = 'none';
-  $handler->display->display_options['query']['type'] = 'views_query';
-  $handler->display->display_options['query']['options']['query_comment'] = FALSE;
-  $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'full';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '100';
-  $handler->display->display_options['pager']['options']['offset'] = '0';
-  $handler->display->display_options['pager']['options']['id'] = '0';
-  $handler->display->display_options['pager']['options']['quantity'] = '9';
-  $handler->display->display_options['style_plugin'] = 'table';
-  $handler->display->display_options['style_options']['columns'] = array(
-    'title_1' => 'title_1',
-    'title' => 'title',
-  );
-  $handler->display->display_options['style_options']['default'] = '-1';
-  $handler->display->display_options['style_options']['info'] = array(
-    'title_1' => array(
-      'sortable' => 1,
-      'default_sort_order' => 'asc',
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
-    ),
-    'title' => array(
-      'sortable' => 1,
-      'default_sort_order' => 'asc',
-      'align' => '',
-      'separator' => '',
-      'empty_column' => 0,
-    ),
-  );
-  /* Relationship: OG membership: OG membership from Node */
-  $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
-  $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'node';
-  $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
-  /* Relationship: OG membership: Group Node from OG membership */
-  $handler->display->display_options['relationships']['og_membership_related_node_group']['id'] = 'og_membership_related_node_group';
-  $handler->display->display_options['relationships']['og_membership_related_node_group']['table'] = 'og_membership';
-  $handler->display->display_options['relationships']['og_membership_related_node_group']['field'] = 'og_membership_related_node_group';
-  $handler->display->display_options['relationships']['og_membership_related_node_group']['relationship'] = 'og_membership_rel';
-  /* Field: Content: Title */
-  $handler->display->display_options['fields']['title_1']['id'] = 'title_1';
-  $handler->display->display_options['fields']['title_1']['table'] = 'node';
-  $handler->display->display_options['fields']['title_1']['field'] = 'title';
-  $handler->display->display_options['fields']['title_1']['relationship'] = 'og_membership_related_node_group';
-  $handler->display->display_options['fields']['title_1']['label'] = '';
-  $handler->display->display_options['fields']['title_1']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['title_1']['hide_alter_empty'] = FALSE;
-  /* Field: Content: Title */
-  $handler->display->display_options['fields']['title']['id'] = 'title';
-  $handler->display->display_options['fields']['title']['table'] = 'node';
-  $handler->display->display_options['fields']['title']['field'] = 'title';
-  $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Sort criterion: Content: Post date */
-  $handler->display->display_options['sorts']['created']['id'] = 'created';
-  $handler->display->display_options['sorts']['created']['table'] = 'node';
-  $handler->display->display_options['sorts']['created']['field'] = 'created';
-  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Sort criterion: Content: Title */
-  $handler->display->display_options['sorts']['title']['id'] = 'title';
-  $handler->display->display_options['sorts']['title']['table'] = 'node';
-  $handler->display->display_options['sorts']['title']['field'] = 'title';
-  /* Contextual filter: OG membership: Group ID */
-  $handler->display->display_options['arguments']['gid']['id'] = 'gid';
-  $handler->display->display_options['arguments']['gid']['table'] = 'og_membership';
-  $handler->display->display_options['arguments']['gid']['field'] = 'gid';
-  $handler->display->display_options['arguments']['gid']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['arguments']['gid']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['gid']['default_argument_type'] = 'og_user_groups';
-  $handler->display->display_options['arguments']['gid']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['gid']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['gid']['summary_options']['items_per_page'] = '25';
-  $handler->display->display_options['arguments']['gid']['break_phrase'] = TRUE;
-  /* Filter criterion: Content: Published */
-  $handler->display->display_options['filters']['status']['id'] = 'status';
-  $handler->display->display_options['filters']['status']['table'] = 'node';
-  $handler->display->display_options['filters']['status']['field'] = 'status';
-  $handler->display->display_options['filters']['status']['value'] = 1;
-  $handler->display->display_options['filters']['status']['group'] = 0;
-  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
-  /* Filter criterion: OG membership: State */
-  $handler->display->display_options['filters']['state']['id'] = 'state';
-  $handler->display->display_options['filters']['state']['table'] = 'og_membership';
-  $handler->display->display_options['filters']['state']['field'] = 'state';
-  $handler->display->display_options['filters']['state']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['filters']['state']['value'] = array(
-    1 => '1',
-  );
-  /* Filter criterion: OG membership: Group_type */
-  $handler->display->display_options['filters']['group_type']['id'] = 'group_type';
-  $handler->display->display_options['filters']['group_type']['table'] = 'og_membership';
-  $handler->display->display_options['filters']['group_type']['field'] = 'group_type';
-  $handler->display->display_options['filters']['group_type']['relationship'] = 'og_membership_rel';
-  $handler->display->display_options['filters']['group_type']['value'] = array(
-    'node' => 'node',
-  );
-
-  /* Display: Block */
-  $handler = $view->new_display('block', 'Block', 'block_1');
-  $export['collections_in_project'] = $view;
 
   $view = new view();
   $view->name = 'list_all_collections';
@@ -201,29 +84,12 @@ function tapas_feature_content_collection_views_default_views() {
       'empty_column' => 0,
     ),
   );
-  /* Field: Content: Collection Image */
-  $handler->display->display_options['fields']['field_collection_image']['id'] = 'field_collection_image';
-  $handler->display->display_options['fields']['field_collection_image']['table'] = 'field_data_field_collection_image';
-  $handler->display->display_options['fields']['field_collection_image']['field'] = 'field_collection_image';
-  $handler->display->display_options['fields']['field_collection_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['field_collection_image']['settings'] = array(
-    'image_style' => '',
-    'image_link' => '',
-  );
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Collection Slug */
-  $handler->display->display_options['fields']['field_collection_slug']['id'] = 'field_collection_slug';
-  $handler->display->display_options['fields']['field_collection_slug']['table'] = 'field_data_field_collection_slug';
-  $handler->display->display_options['fields']['field_collection_slug']['field'] = 'field_collection_slug';
-  /* Field: Content: Collection Description */
-  $handler->display->display_options['fields']['field_collection_description']['id'] = 'field_collection_description';
-  $handler->display->display_options['fields']['field_collection_description']['table'] = 'field_data_field_collection_description';
-  $handler->display->display_options['fields']['field_collection_description']['field'] = 'field_collection_description';
   /* Field: Content: Groups audience */
   $handler->display->display_options['fields']['og_collection_to_project_ref']['id'] = 'og_collection_to_project_ref';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['table'] = 'og_membership';
@@ -252,7 +118,7 @@ function tapas_feature_content_collection_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapas_collection' => 'tapas_collection',
+    'tapascollection_collection' => 'tapascollection_collection',
   );
 
   /* Display: Page */
@@ -264,6 +130,175 @@ function tapas_feature_content_collection_views_default_views() {
   $handler->display->display_options['menu']['context'] = 0;
   $handler->display->display_options['menu']['context_only_inline'] = 0;
   $export['list_all_collections'] = $view;
+
+  $view = new view();
+  $view->name = 'list_all_projects';
+  $view->description = '';
+  $view->tag = 'tapas, structure';
+  $view->base_table = 'node';
+  $view->human_name = 'List All Projects';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'List All Projects';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '100';
+  $handler->display->display_options['style_plugin'] = 'table';
+  $handler->display->display_options['style_options']['columns'] = array(
+    'field_project_image' => 'field_project_image',
+    'group_access' => 'group_access',
+    'title' => 'title',
+    'field_project_slug' => 'field_project_slug',
+    'field_project_institution' => 'field_project_institution',
+    'field_project_description' => 'field_project_description',
+    'field_external_links' => 'field_external_links',
+  );
+  $handler->display->display_options['style_options']['default'] = 'title';
+  $handler->display->display_options['style_options']['info'] = array(
+    'field_project_image' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'group_access' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'title' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_project_slug' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_project_institution' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_project_description' => array(
+      'sortable' => 0,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_external_links' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+  );
+  /* Field: Content: Group visibility */
+  $handler->display->display_options['fields']['group_access']['id'] = 'group_access';
+  $handler->display->display_options['fields']['group_access']['table'] = 'field_data_group_access';
+  $handler->display->display_options['fields']['group_access']['field'] = 'group_access';
+  $handler->display->display_options['fields']['group_access']['type'] = 'list_key';
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Field: Content: Description */
+  $handler->display->display_options['fields']['tc_field_description']['id'] = 'tc_field_description';
+  $handler->display->display_options['fields']['tc_field_description']['table'] = 'field_data_tc_field_description';
+  $handler->display->display_options['fields']['tc_field_description']['field'] = 'tc_field_description';
+  /* Field: Content: External Links */
+  $handler->display->display_options['fields']['tc_field_links']['id'] = 'tc_field_links';
+  $handler->display->display_options['fields']['tc_field_links']['table'] = 'field_data_tc_field_links';
+  $handler->display->display_options['fields']['tc_field_links']['field'] = 'tc_field_links';
+  $handler->display->display_options['fields']['tc_field_links']['click_sort_column'] = 'url';
+  $handler->display->display_options['fields']['tc_field_links']['delta_offset'] = '0';
+  /* Field: Content: External Links (tc_field_links:delta) */
+  $handler->display->display_options['fields']['delta']['id'] = 'delta';
+  $handler->display->display_options['fields']['delta']['table'] = 'field_data_tc_field_links';
+  $handler->display->display_options['fields']['delta']['field'] = 'delta';
+  /* Field: Content: Group */
+  $handler->display->display_options['fields']['group_group']['id'] = 'group_group';
+  $handler->display->display_options['fields']['group_group']['table'] = 'field_data_group_group';
+  $handler->display->display_options['fields']['group_group']['field'] = 'group_group';
+  /* Field: Content: Group roles and permissions */
+  $handler->display->display_options['fields']['og_roles_permissions']['id'] = 'og_roles_permissions';
+  $handler->display->display_options['fields']['og_roles_permissions']['table'] = 'field_data_og_roles_permissions';
+  $handler->display->display_options['fields']['og_roles_permissions']['field'] = 'og_roles_permissions';
+  /* Field: Content: Group visibility */
+  $handler->display->display_options['fields']['group_access_1']['id'] = 'group_access_1';
+  $handler->display->display_options['fields']['group_access_1']['table'] = 'field_data_group_access';
+  $handler->display->display_options['fields']['group_access_1']['field'] = 'group_access';
+  /* Field: Content: Image */
+  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+    'image_style' => '',
+    'image_link' => '',
+  );
+  /* Field: Content: Institutional Affiliation */
+  $handler->display->display_options['fields']['tc_field_institution']['id'] = 'tc_field_institution';
+  $handler->display->display_options['fields']['tc_field_institution']['table'] = 'field_data_tc_field_institution';
+  $handler->display->display_options['fields']['tc_field_institution']['field'] = 'tc_field_institution';
+  $handler->display->display_options['fields']['tc_field_institution']['delta_offset'] = '0';
+  /* Field: Content: Institutional Affiliation (tc_field_institution:delta) */
+  $handler->display->display_options['fields']['delta_1']['id'] = 'delta_1';
+  $handler->display->display_options['fields']['delta_1']['table'] = 'field_data_tc_field_institution';
+  $handler->display->display_options['fields']['delta_1']['field'] = 'delta';
+  /* Field: Content: Slug */
+  $handler->display->display_options['fields']['tc_field_slug']['id'] = 'tc_field_slug';
+  $handler->display->display_options['fields']['tc_field_slug']['table'] = 'field_data_tc_field_slug';
+  $handler->display->display_options['fields']['tc_field_slug']['field'] = 'tc_field_slug';
+  /* Field: Content: Tags */
+  $handler->display->display_options['fields']['tc_field_tags']['id'] = 'tc_field_tags';
+  $handler->display->display_options['fields']['tc_field_tags']['table'] = 'field_data_tc_field_tags';
+  $handler->display->display_options['fields']['tc_field_tags']['field'] = 'tc_field_tags';
+  $handler->display->display_options['fields']['tc_field_tags']['delta_offset'] = '0';
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'tapascollection_project' => 'tapascollection_project',
+  );
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'list-all-projects';
+  $handler->display->display_options['menu']['type'] = 'normal';
+  $handler->display->display_options['menu']['title'] = 'List All Projects';
+  $export['list_all_projects'] = $view;
 
   $view = new view();
   $view->name = 'proj_and_coll';
@@ -347,7 +382,7 @@ function tapas_feature_content_collection_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapas_collection' => 'tapas_collection',
+    'tapascollection_collection' => 'tapascollection_collection',
   );
   /* Filter criterion: Content: Group visibility (group_access) */
   $handler->display->display_options['filters']['group_access_value']['id'] = 'group_access_value';
