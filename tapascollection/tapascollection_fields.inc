@@ -48,7 +48,7 @@ function _tapascollection_field_bases() {
 
 function _tapascollection_common_instances($short_nodetype) {
 
-	$type = 'tapascollection_' . $short_nodetype;
+	$type = 'tapas_' . $short_nodetype;
 	$base_array = array(
 		'entity_type' => 'node',
 		'bundle' => $type,
@@ -86,7 +86,7 @@ function _tapascollection_common_instances($short_nodetype) {
 
 function _tapascollection_project_instances() {
 
-	$type = 'tapascollection_project';
+	$type = 'tapas_project';
 
 	$base_array = array(
 		'entity_type' => 'node',
