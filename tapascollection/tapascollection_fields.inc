@@ -2,7 +2,7 @@
 
 function _tapascollection_field_bases() {
 
-	$prefix = 'tapascollection_field';
+	$prefix = 'tc_field';
 
 	$bases = array(
 		'description' => array(
@@ -54,7 +54,7 @@ function _tapascollection_common_instances($short_nodetype) {
 		'bundle' => 'type'
 	);
 
-	$prefix = 'tapascollection_field';
+	$prefix = 'tc_field';
 
 
 	$instances = array(
@@ -93,7 +93,7 @@ function _tapascollection_project_instances() {
 		'bundle' => $type,
 	);
 
-	$prefix = 'tapascollection_field';
+	$prefix = 'tc_field';
 
 	$instances = array(
 		'institution_' . $type => array_merge($base_array, array(
