@@ -14,7 +14,7 @@
 function tapascollection_node_info() {
 
 	$items = array(
-		'tapas_project' => array(
+		'tapascollection_project' => array(
 			'name' => t('TAPAS Project'),
 			'base' => 'node_content',
 			'description' => t(''),
@@ -22,7 +22,7 @@ function tapascollection_node_info() {
 			'title_label' => t('Project Title'),
 			'help' => t(''),
 		),
-		'tapas_collection' => array(
+		'tapascollection_collection' => array(
 			'name' => t('TAPAS Collection'),
 			'base' => 'node_content',
 			'description' => t(''),
@@ -36,3 +36,16 @@ function tapascollection_node_info() {
 	return $items;
 
 }
+
+/** 
+ * implements hook_form()
+ * 
+ * This has to be present even if it's just a pass-through,
+ * otherwise the content type won't appear in the 
+ * admin/structure/types list 
+ */
+function tapascollection_form($node, $form_state) {
+  return node_content_form($node, $form_state);
+}
+
+
