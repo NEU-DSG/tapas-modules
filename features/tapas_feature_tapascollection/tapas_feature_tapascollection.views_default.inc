@@ -90,7 +90,7 @@ function tapas_feature_tapascollection_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Broken/missing handler */
+  /* Field: Content: Groups audience */
   $handler->display->display_options['fields']['og_collection_to_project_ref']['id'] = 'og_collection_to_project_ref';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['table'] = 'og_membership';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['field'] = 'og_collection_to_project_ref';
@@ -352,7 +352,7 @@ function tapas_feature_tapascollection_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Broken/missing handler */
+  /* Field: Content: Groups audience */
   $handler->display->display_options['fields']['og_collection_to_project_ref']['id'] = 'og_collection_to_project_ref';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['table'] = 'og_membership';
   $handler->display->display_options['fields']['og_collection_to_project_ref']['field'] = 'og_collection_to_project_ref';
