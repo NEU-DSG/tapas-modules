@@ -10,6 +10,85 @@
 function tapas_feature_tapascollection_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'node-tapascollection_collection-field_image_name'
+  $field_instances['node-tapascollection_collection-field_image_name'] = array(
+    'bundle' => 'tapascollection_collection',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_image_name',
+    'label' => 'image name',
+    'required' => FALSE,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 7,
+    ),
+  );
+
+  // Exported field_instance: 'node-tapascollection_collection-field_title'
+  $field_instances['node-tapascollection_collection-field_title'] = array(
+    'bundle' => 'tapascollection_collection',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 8,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_title',
+    'label' => 'title',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 5,
+    ),
+  );
+
   // Exported field_instance: 'node-tapascollection_collection-group_access'
   $field_instances['node-tapascollection_collection-group_access'] = array(
     'bundle' => 'tapascollection_collection',
@@ -120,6 +199,68 @@ function tapas_feature_tapascollection_field_default_field_instances() {
   );
 
   // Exported field_instance:
+  // 'node-tapascollection_collection-og_collection_to_project_ref'
+  $field_instances['node-tapascollection_collection-og_collection_to_project_ref'] = array(
+    'bundle' => 'tapascollection_collection',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'og_ui',
+        'settings' => array(),
+        'type' => 'og_list_default',
+        'weight' => 9,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'og_collection_to_project_ref',
+    'label' => 'Parent Project',
+    'required' => 0,
+    'settings' => array(
+      'behaviors' => array(
+        'og_widget' => array(
+          'access_override' => 0,
+          'admin' => array(
+            'widget_type' => 'entityreference_autocomplete',
+          ),
+          'default' => array(
+            'widget_type' => 'options_select',
+          ),
+          'status' => TRUE,
+        ),
+      ),
+      'user_register_form' => FALSE,
+    ),
+    'view modes' => array(
+      'full' => array(
+        'custom settings' => FALSE,
+        'label' => 'Full',
+        'type' => 'og_list_default',
+      ),
+      'teaser' => array(
+        'custom settings' => FALSE,
+        'label' => 'Teaser',
+        'type' => 'og_list_default',
+      ),
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'og',
+      'settings' => array(),
+      'type' => 'og_complex',
+      'weight' => 6,
+    ),
+  );
+
+  // Exported field_instance:
   // 'node-tapascollection_collection-og_roles_permissions'
   $field_instances['node-tapascollection_collection-og_roles_permissions'] = array(
     'bundle' => 'tapascollection_collection',
@@ -197,12 +338,13 @@ function tapas_feature_tapascollection_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'tc_field_description',
     'label' => 'Description',
-    'required' => FALSE,
+    'required' => 0,
     'settings' => array(
-      'text_processing' => 0,
+      'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
+      'active' => 1,
       'module' => 'text',
       'settings' => array(
         'rows' => 5,
@@ -336,6 +478,125 @@ function tapas_feature_tapascollection_field_default_field_instances() {
       ),
       'type' => 'taxonomy_autocomplete',
       'weight' => -1,
+    ),
+  );
+
+  // Exported field_instance: 'node-tapascollection_project-field_image_name'
+  $field_instances['node-tapascollection_project-field_image_name'] = array(
+    'bundle' => 'tapascollection_project',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 11,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_image_name',
+    'label' => 'image name',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 7,
+    ),
+  );
+
+  // Exported field_instance: 'node-tapascollection_project-field_institution'
+  $field_instances['node-tapascollection_project-field_institution'] = array(
+    'bundle' => 'tapascollection_project',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 10,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_institution',
+    'label' => 'institution',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 5,
+    ),
+  );
+
+  // Exported field_instance: 'node-tapascollection_project-field_title'
+  $field_instances['node-tapascollection_project-field_title'] = array(
+    'bundle' => 'tapascollection_project',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 9,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_title',
+    'label' => 'title',
+    'required' => FALSE,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 4,
     ),
   );
 
@@ -526,12 +787,13 @@ function tapas_feature_tapascollection_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'tc_field_description',
     'label' => 'Description',
-    'required' => FALSE,
+    'required' => 0,
     'settings' => array(
-      'text_processing' => 0,
+      'text_processing' => 1,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
+      'active' => 1,
       'module' => 'text',
       'settings' => array(
         'rows' => 5,
@@ -777,8 +1039,12 @@ function tapas_feature_tapascollection_field_default_field_instances() {
   t('Group visibility');
   t('Image');
   t('Institutional Affiliation');
+  t('Parent Project');
   t('Slug');
   t('Tags');
+  t('image name');
+  t('institution');
+  t('title');
 
   return $field_instances;
 }

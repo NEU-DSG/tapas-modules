@@ -36,6 +36,47 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_bases(
     'type' => 'taxonomy_term_reference',
   );
 
+  // Exported field_base: 'og_record_to_collection_ref'
+  $field_bases['og_record_to_collection_ref'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'og_record_to_collection_ref',
+    'indexes' => array(
+      'target_id' => array(
+        0 => 'target_id',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'entityreference',
+    'settings' => array(
+      'handler' => 'og',
+      'handler_settings' => array(
+        'behaviors' => array(
+          'og_behavior' => array(
+            'status' => TRUE,
+          ),
+          'views-select-list' => array(
+            'status' => 0,
+          ),
+        ),
+        'membership_type' => 'og_membership_type_default',
+        'sort' => array(
+          'type' => 'none',
+        ),
+        'target_bundles' => array(
+          'tapascollection_collection' => 'tapascollection_collection',
+        ),
+      ),
+      'handler_submit' => 'Change handler',
+      'profile2_private' => FALSE,
+      'target_type' => 'node',
+    ),
+    'translatable' => 0,
+    'type' => 'entityreference',
+  );
+
   // Exported field_base: 'tapas_teifield'
   $field_bases['tapas_teifield'] = array(
     'active' => 1,

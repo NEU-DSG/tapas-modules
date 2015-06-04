@@ -50,6 +50,67 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
     ),
   );
 
+  // Exported field_instance: 'node-tapasrecordnode-og_record_to_collection_ref'
+  $field_instances['node-tapasrecordnode-og_record_to_collection_ref'] = array(
+    'bundle' => 'tapasrecordnode',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'og_ui',
+        'settings' => array(),
+        'type' => 'og_list_default',
+        'weight' => 6,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'og_record_to_collection_ref',
+    'label' => 'Parent Collection',
+    'required' => 0,
+    'settings' => array(
+      'behaviors' => array(
+        'og_widget' => array(
+          'access_override' => 0,
+          'admin' => array(
+            'widget_type' => 'entityreference_autocomplete',
+          ),
+          'default' => array(
+            'widget_type' => 'options_select',
+          ),
+          'status' => TRUE,
+        ),
+      ),
+      'user_register_form' => FALSE,
+    ),
+    'view modes' => array(
+      'full' => array(
+        'custom settings' => FALSE,
+        'label' => 'Full',
+        'type' => 'og_list_default',
+      ),
+      'teaser' => array(
+        'custom settings' => FALSE,
+        'label' => 'Teaser',
+        'type' => 'og_list_default',
+      ),
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'og',
+      'settings' => array(),
+      'type' => 'og_complex',
+      'weight' => 2,
+    ),
+  );
+
   // Exported field_instance: 'node-tapasrecordnode-tapas_teifield'
   $field_instances['node-tapasrecordnode-tapas_teifield'] = array(
     'bundle' => 'tapasrecordnode',
@@ -94,6 +155,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
   // Translatables
   // Included for use with string extractors like potx.
   t('Original TEI File');
+  t('Parent Collection');
   t('TEI Record Tags');
 
   return $field_instances;
