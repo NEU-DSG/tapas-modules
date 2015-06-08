@@ -6,8 +6,7 @@
  * Imports migrated taxonomy terms into the new tapas site.
  */
 
-include_once 'importtaxonomies.install';
-
+include_once 'importtaxonomies_institution.inc';
 /**
  * Implements hook_enable().
  */
