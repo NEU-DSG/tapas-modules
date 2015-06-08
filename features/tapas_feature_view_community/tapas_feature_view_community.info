@@ -1,0 +1,7 @@
+name = Tapas Feature View Community
+description = Featurization of the view for the community page
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_view_community
+features[features_api][] = api:2
