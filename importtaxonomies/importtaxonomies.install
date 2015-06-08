@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ *
+ * Imports migrated taxonomy terms into the new tapas site.
+ */
+
+include_once 'importtaxonomies.install';
+
+/**
+ * Implements hook_enable().
+ */
+
+function importtaxonomies_enable() {
+	importtaxonomies_import_institution();
+}
+
+/**
+ * Utility function to get the id of a vocabulary from it's name.
+ */
+
+function importtaxonomies_get_vid($vocab_name) {
+	$taxo_list = taxonomy_vocabulary_get_names();
+	return array_search($vocab_name, $taxo_list);
+
+}
+
+/**
+ * Populates a flat, name-only vocabulary.
+ */
+function _tapas_populate_simple_taxonomy($vocabname, $filename) {
+
+	$term_list = file('imports/' . $vocabname, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	foreach ($termlist as $line_num=>$term) {
+		taxonomy_term_save((object) array(
+			'name' => trim($term),
+		));
+	}
+}
