@@ -21,8 +21,6 @@ function tapascollection_install() {
 
 	$bases = _tapascollection_field_bases();
 	foreach($bases as $b) {
-		echo "Creating Field: " . $b['field_name'] . "
-		";
 		field_create_field($b);
 	}
 	
@@ -32,8 +30,6 @@ function tapascollection_install() {
 	$instances = array_merge($instances, _tapascollection_common_instances('project'));
 	$instances = array_merge($instances, _tapascollection_project_instances());
 	foreach($instances as $i) {
-		echo "Creating Instance:" . $i['field_name'] . "
-		";
 		field_create_instance($i);
 	}
 
