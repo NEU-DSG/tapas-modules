@@ -12,6 +12,7 @@ include_once 'importtaxonomies_institution.inc';
  */
 
 function importtaxonomies_enable() {
+	drupal_set_message("Enable module hook called", 'status');
 	importtaxonomies_import_institution();
 }
 

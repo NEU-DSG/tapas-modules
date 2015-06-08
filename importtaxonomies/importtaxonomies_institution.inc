@@ -13,18 +13,32 @@
  */
 
 function importtaxonomies_import_institution() {
+	
+	drupal_set_message("import taxonomies function called");
 
+	$taxo_list = taxonomy_vocabulary_get_names();
+	
+	drupal_set_message(implode(',', $taxo_list), 'status');
+/*	
+	$vid = array_search('tapas_institution', $taxo_list);
+	
 	$base_array = array(
-		'vid' => 'tapas_institution',
+		'vid' => $vid,
 		'format' => 'filtered_html',
-		//'vocabulary_machine_name' => 'tapas_institution',
+		'vocabulary_machine_name' => 'tapas_institution',
 	);
 
+	drupal_set_message( implode(',', $base_array), 'status');
 
 	taxonomy_term_save((object)array_merge($base_array, array(
 		"name" => "AIUCD",
 	)));
 
+*/
+
+
+
+/*
 	taxonomy_term_save((object)array_merge($base_array, array(
 		"name" => "American Antiquarian Society",
 	)));
@@ -351,5 +365,5 @@ function importtaxonomies_import_institution() {
 	taxonomy_term_save((object)array_merge($base_array, array(
 	"name" => "Yale",
 	)));
-		
+*/		
 }
