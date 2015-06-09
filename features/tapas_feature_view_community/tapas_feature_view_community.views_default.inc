@@ -192,6 +192,7 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['fields']['changed']['table'] = 'node';
   $handler->display->display_options['fields']['changed']['field'] = 'changed';
   $handler->display->display_options['fields']['changed']['label'] = '';
+  $handler->display->display_options['fields']['changed']['exclude'] = TRUE;
   $handler->display->display_options['fields']['changed']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['changed']['alter']['text'] = 'Posted at [changed]';
   $handler->display->display_options['fields']['changed']['element_type'] = 'div';
