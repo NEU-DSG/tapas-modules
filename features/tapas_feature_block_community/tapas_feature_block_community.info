@@ -1,0 +1,9 @@
+name = Tapas Feature Block Community
+description = community block for commons page
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_block_community
+dependencies[] = fe_block
+features[fe_block_boxes][] = commons_community_block
+features[features_api][] = api:2
