@@ -12,10 +12,10 @@ function tapas_feature_view_community_views_default_views() {
 
   $view = new view();
   $view->name = 'community';
-  $view->description = '';
-  $view->tag = 'default';
+  $view->description = 'activity feed page and block for the commons section';
+  $view->tag = 'TAPAS';
   $view->base_table = 'node';
-  $view->human_name = 'Community';
+  $view->human_name = 'Activity Feed';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
