@@ -6,35 +6,62 @@
  * Imports migrated taxonomy terms into the new tapas site.
  */
 
-include_once 'importtaxonomies_institution.inc';
 /**
  * Implements hook_enable().
  */
 
 function importtaxonomies_enable() {
-	drupal_set_message("Enable module hook called", 'status');
-	importtaxonomies_import_institution();
+	$vid_list = importtaxonomies_get_vids();
+
+	_importtaxonomies_populate_simple(
+		$vid_list['tapas_institution'],
+		'tapas_institution',
+		'taxo_institution.csv');
+
+	//_importtaxonomies_custom_institute_fields();
+	
+	_importtaxonomies_populate_simple(
+		$vid_list['forum'],
+		'forum',
+		'taxo_forum.csv');
+
+	_importtaxonomies_populate_simple(
+		$vid_list['project_slugs'],
+		'project_slugs',
+		'taxo_project_slugs.csv');
+
+	_importtaxonomes_populate_simple(
+		$vid_list['collection_slugs'],
+		'collection_slugs',
+		'taxo_collection_slugs.csv');
 }
 
+
 /**
- * Utility function to get the id of a vocabulary from it's name.
+ * Get an array of vids indexed by vocab machine name.
  */
 
-function importtaxonomies_get_vid($vocab_name) {
-	$taxo_list = taxonomy_vocabulary_get_names();
-	return array_search($vocab_name, $taxo_list);
-
+function importtaxonomies_get_vids() {
+	return array();
 }
 
 /**
  * Populates a flat, name-only vocabulary.
  */
-function _tapas_populate_simple_taxonomy($vocabname, $filename) {
 
-	$term_list = file('imports/' . $vocabname, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	foreach ($termlist as $line_num=>$term) {
-		taxonomy_term_save((object) array(
-			'name' => trim($term),
-		));
+function _importtaxonomies_populate_simple($vid, $vocab_name, $file_name) {
+
+	$filepath = drupal_get_path('module', 'importtaxonomies') . '/terms/' . $file_name;
+	$term_list = file($filepath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	foreach ($term_list as $term) {
+		_importtaxonomies_save_term($vid, $vocab_name, $term);
 	}
+}
+
+/**
+ * Saves a taxonomy term only if it doesn't already exist.
+ */
+function _importtaxonomies_save_term($vid, $vocab_name, $term_name) {
+
+
 }
