@@ -1,6 +1,6 @@
 name = tapas_feature_tapascollection
 core = 7.x
-package = TAPAS
+package = Content Types
 version = 7.x-0.1
 project = tapas_feature_tapascollection
 dependencies[] = ctools
@@ -77,5 +77,4 @@ features[user_permission][] = edit own tapascollection_project content
 features[views_view][] = list_all_collections
 features[views_view][] = list_all_projects
 features[views_view][] = proj_and_coll
-features_exclude[field_base][og_collection_to_project_ref] = og_collection_to_project_ref
 project path = profiles/buildtapas/modules/tapas-modules/features
