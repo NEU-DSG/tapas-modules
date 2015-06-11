@@ -14,7 +14,6 @@ function tapas_feature_content_tapasrecord_as_content_user_default_permissions()
   $permissions['create tapasrecordnode content'] = array(
     'name' => 'create tapasrecordnode content',
     'roles' => array(
-      'administrator' => 'administrator',
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'node',
@@ -23,9 +22,7 @@ function tapas_feature_content_tapasrecord_as_content_user_default_permissions()
   // Exported permission: 'delete any tapasrecordnode content'.
   $permissions['delete any tapasrecordnode content'] = array(
     'name' => 'delete any tapasrecordnode content',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
+    'roles' => array(),
     'module' => 'node',
   );
 
@@ -33,7 +30,6 @@ function tapas_feature_content_tapasrecord_as_content_user_default_permissions()
   $permissions['delete own tapasrecordnode content'] = array(
     'name' => 'delete own tapasrecordnode content',
     'roles' => array(
-      'administrator' => 'administrator',
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'node',
@@ -42,9 +38,7 @@ function tapas_feature_content_tapasrecord_as_content_user_default_permissions()
   // Exported permission: 'edit any tapasrecordnode content'.
   $permissions['edit any tapasrecordnode content'] = array(
     'name' => 'edit any tapasrecordnode content',
-    'roles' => array(
-      'administrator' => 'administrator',
-    ),
+    'roles' => array(),
     'module' => 'node',
   );
 
@@ -52,7 +46,6 @@ function tapas_feature_content_tapasrecord_as_content_user_default_permissions()
   $permissions['edit own tapasrecordnode content'] = array(
     'name' => 'edit own tapasrecordnode content',
     'roles' => array(
-      'administrator' => 'administrator',
       'authenticated user' => 'authenticated user',
     ),
     'module' => 'node',

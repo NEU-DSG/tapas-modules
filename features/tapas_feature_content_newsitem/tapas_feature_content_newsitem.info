@@ -1,0 +1,15 @@
+name = tapas_feature_content_newsitem
+core = 7.x
+package = Content Types
+version = 7.x-0.1
+project = tapas_feature_content_newsitem
+dependencies[] = features
+dependencies[] = image
+dependencies[] = text
+features[features_api][] = api:2
+features[field_base][] = field_news_image
+features[field_instance][] = node-tapas_newsitem-body
+features[field_instance][] = node-tapas_newsitem-field_news_image
+features[node][] = tapas_newsitem
+features_exclude[field_base][body] = body
+project path = profiles/buildtapas/modules/tapas-modules/features

@@ -1,0 +1,51 @@
+<?php
+/**
+ * @file
+ * Code for the tapascollection module
+ */
+
+
+/**
+ * Implements hook_node_info().
+ *
+ * Creates the TPAPAS Project and TAPAS Collection node types.
+ */
+
+function tapascollection_node_info() {
+
+	$items = array(
+		'tapascollection_project' => array(
+			'name' => t('TAPAS Project'),
+			'base' => 'node_content',
+			'description' => t(''),
+			'has_title' => TRUE,
+			'title_label' => t('Project Title'),
+			'help' => t(''),
+		),
+		'tapascollection_collection' => array(
+			'name' => t('TAPAS Collection'),
+			'base' => 'node_content',
+			'description' => t(''),
+			'has_title' => TRUE,
+			'title_label' => t('Collection Title'),
+			'help' => t(''),
+		),
+	);
+
+	drupal_alter('node_info', $items);
+	return $items;
+
+}
+
+/** 
+ * implements hook_form()
+ * 
+ * This has to be present even if it's just a pass-through,
+ * otherwise the content type won't appear in the 
+ * admin/structure/types list 
+ */
+function tapascollection_form($node, $form_state) {
+  return node_content_form($node, $form_state);
+}
+
+
