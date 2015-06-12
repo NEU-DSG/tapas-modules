@@ -7,4 +7,7 @@ dependencies[] = features
 dependencies[] = menu
 features[features_api][] = api:2
 features[menu_custom][] = main-menu
+features[menu_links][] = main-menu_about:node/165
+features[menu_links][] = main-menu_commons:node/166
+features[menu_links][] = main-menu_discover:node/167
 features[menu_links][] = main-menu_my-tapas:<front>
