@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas Feature View News feature.
+ */
+
+include_once 'tapas_feature_view_news.features.inc';
