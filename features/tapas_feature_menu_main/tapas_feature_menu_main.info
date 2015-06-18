@@ -1,14 +1,10 @@
 name = tapas_feature_menu_main
 core = 7.x
-package = Menus
+package = TAPAS
 version = 7.x-0.1
 project = tapas_feature_menu_main
 dependencies[] = features
 dependencies[] = menu
 features[features_api][] = api:2
 features[menu_custom][] = main-menu
-features[menu_links][] = main-menu_about:<front>
-features[menu_links][] = main-menu_discover:<front>
-features[menu_links][] = main-menu_home:<front>
 features[menu_links][] = main-menu_my-tapas:<front>
-features[menu_links][] = main-menu_search:<front>

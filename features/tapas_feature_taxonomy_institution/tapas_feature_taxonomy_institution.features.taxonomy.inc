@@ -9,9 +9,9 @@
  */
 function tapas_feature_taxonomy_institution_taxonomy_default_vocabularies() {
   return array(
-    'institution' => array(
+    'tapas_institution' => array(
       'name' => 'Institution',
-      'machine_name' => 'institution',
+      'machine_name' => 'tapas_institution',
       'description' => 'A vocabulary of institutions that have contributed to TAPAS.',
       'hierarchy' => 0,
       'module' => 'taxonomy',

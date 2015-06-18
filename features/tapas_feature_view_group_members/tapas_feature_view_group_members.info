@@ -1,12 +1,11 @@
 name = tapas_feature_view_group_members
 core = 7.x
-package = Views
+package = TAPAS
 version = 7.x-0.1
 project = tapas_feature_view_group_members
 dependencies[] = ctools
 dependencies[] = tapas_feature_base_og
-dependencies[] = tapas_feature_content_collection
-dependencies[] = tapas_feature_content_project
+dependencies[] = tapascollection
 dependencies[] = views
 features[ctools][] = views:views_default:3.0
 features[features_api][] = api:2

@@ -66,10 +66,11 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_bases(
           'type' => 'none',
         ),
         'target_bundles' => array(
-          'tapas_collection' => 'tapas_collection',
+          'tapascollection_collection' => 'tapascollection_collection',
         ),
       ),
       'handler_submit' => 'Change handler',
+      'profile2_private' => FALSE,
       'target_type' => 'node',
     ),
     'translatable' => 0,

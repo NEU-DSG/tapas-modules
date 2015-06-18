@@ -50,57 +50,6 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
     ),
   );
 
-  // Exported field_instance: 'node-tapasrecordnode-group_content_access'
-  $field_instances['node-tapasrecordnode-group_content_access'] = array(
-    'bundle' => 'tapasrecordnode',
-    'default_value' => array(
-      0 => array(
-        'value' => 0,
-      ),
-    ),
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'list',
-        'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 3,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'group_content_access',
-    'label' => 'Group content visibility',
-    'required' => TRUE,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'view modes' => array(
-      'full' => array(
-        'label' => 'above',
-        'type' => 'list_default',
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'type' => 'list_default',
-      ),
-    ),
-    'widget' => array(
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => -1,
-    ),
-    'widget_type' => 'options_select',
-  );
-
   // Exported field_instance: 'node-tapasrecordnode-og_record_to_collection_ref'
   $field_instances['node-tapasrecordnode-og_record_to_collection_ref'] = array(
     'bundle' => 'tapasrecordnode',
@@ -113,7 +62,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
         'module' => 'og_ui',
         'settings' => array(),
         'type' => 'og_list_default',
-        'weight' => 4,
+        'weight' => 6,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -124,7 +73,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
     ),
     'entity_type' => 'node',
     'field_name' => 'og_record_to_collection_ref',
-    'label' => 'Groups audience',
+    'label' => 'Parent Collection',
     'required' => 0,
     'settings' => array(
       'behaviors' => array(
@@ -158,7 +107,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
       'module' => 'og',
       'settings' => array(),
       'type' => 'og_complex',
-      'weight' => 0,
+      'weight' => 2,
     ),
   );
 
@@ -205,9 +154,8 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Group content visibility');
-  t('Groups audience');
   t('Original TEI File');
+  t('Parent Collection');
   t('TEI Record Tags');
 
   return $field_instances;

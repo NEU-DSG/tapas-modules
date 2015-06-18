@@ -1,0 +1,1 @@
+This module handles the creation of the Project and Collection content types, as well as customizations to the creation/editing forms. It creates the project-slug and collection-slug taxonomies, and assures that each collection and each project has a unique slug for use in the URL.

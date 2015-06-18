@@ -1,0 +1,12 @@
+name = tapas_feature_content_page
+core = 7.x
+package = Content Types
+version = 7.x-0.1
+project = tapas_feature_content_page
+dependencies[] = features
+dependencies[] = text
+features[features_api][] = api:2
+features[field_instance][] = node-tapas_staticpage-body
+features[node][] = tapas_staticpage
+features_exclude[field_base][body] = body
+project path = profiles/buildtapas/modules/tapas-modules/features
