@@ -1,0 +1,8 @@
+name = Tapas Feature Homebox My Tapas
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_homebox_my_tapas
+dependencies[] = homebox
+features[features_api][] = api:2
+features[homebox][] = my_tapas

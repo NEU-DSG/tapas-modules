@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas Feature View My Tapas feature.
+ */
+
+include_once 'tapas_feature_view_my_tapas.features.inc';

@@ -1,0 +1,12 @@
+name = Tapas Feature Context Commons
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_context_commons
+dependencies[] = block
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = views
+features[context][] = commons
+features[ctools][] = context:context:3
+features[features_api][] = api:2

@@ -1,0 +1,9 @@
+name = Tapas Feature Block Learn
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_block_learn
+dependencies[] = fe_block
+features[fe_block_boxes][] = commons_learn_block
+features[fe_block_settings][] = block-commons_learn_block
+features[features_api][] = api:2
