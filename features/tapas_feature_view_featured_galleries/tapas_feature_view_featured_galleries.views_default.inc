@@ -22,7 +22,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Featured Project Gallery';
+  $handler->display->display_options['title'] = 'Featured Projects';
   $handler->display->display_options['use_more'] = TRUE;
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
@@ -87,7 +87,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   /* Display: Collections */
   $handler = $view->new_display('block', 'Collections', 'block_1');
   $handler->display->display_options['defaults']['title'] = FALSE;
-  $handler->display->display_options['title'] = 'Featured Collection Gallery';
+  $handler->display->display_options['title'] = 'Featured Collections';
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Content: Published */
@@ -108,7 +108,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   /* Display: Records */
   $handler = $view->new_display('block', 'Records', 'block_2');
   $handler->display->display_options['defaults']['title'] = FALSE;
-  $handler->display->display_options['title'] = 'Featured Record Gallery';
+  $handler->display->display_options['title'] = 'Featured Records';
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Content: Published */
