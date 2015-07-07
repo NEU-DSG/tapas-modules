@@ -1,0 +1,11 @@
+name = Tapas Feature View Featured Galleries
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_view_featured_galleries
+dependencies[] = views
+dependencies[] = views_bootstrap
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = featured_project_gallery
+features_exclude[dependencies][ctools] = ctools

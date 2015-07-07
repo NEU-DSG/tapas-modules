@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas Feature Context Home feature.
+ */
+
+include_once 'tapas_feature_context_home.features.inc';

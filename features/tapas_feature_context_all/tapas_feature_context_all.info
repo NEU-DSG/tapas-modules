@@ -1,0 +1,11 @@
+name = Tapas Feature Context All
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+project = tapas_feature_context_all
+dependencies[] = context
+dependencies[] = ctools
+dependencies[] = search
+features[context][] = all_pages
+features[ctools][] = context:context:3
+features[features_api][] = api:2

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas Feature Homebox My Tapas feature.
+ */
+
+include_once 'tapas_feature_homebox_my_tapas.features.inc';

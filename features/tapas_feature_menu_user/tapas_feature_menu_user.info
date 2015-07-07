@@ -1,5 +1,5 @@
 name = Tapas Feature Menu User
-description = User Menu 
+description = User Menu
 core = 7.x
 package = TAPAS
 version = 7.x-0.1
@@ -8,3 +8,6 @@ dependencies[] = features
 dependencies[] = menu
 features[features_api][] = api:2
 features[menu_custom][] = user-menu
+features[menu_links][] = user-menu_log-out:user/logout
+features[menu_links][] = user-menu_sign-in:user/login
+features[menu_links][] = user-menu_user-account:user
