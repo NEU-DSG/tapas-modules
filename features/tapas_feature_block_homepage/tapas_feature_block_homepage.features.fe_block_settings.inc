@@ -34,6 +34,12 @@ function tapas_feature_block_homepage_default_fe_block_settings() {
         'theme' => 'bootstrap',
         'weight' => 0,
       ),
+      'seven' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'seven',
+        'weight' => 0,
+      ),
       'tapas_redesign' => array(
         'region' => '',
         'status' => 0,

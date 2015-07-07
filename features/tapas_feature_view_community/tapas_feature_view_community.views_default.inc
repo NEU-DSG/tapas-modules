@@ -39,12 +39,6 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['style_options']['wrapper_class'] = '';
   $handler->display->display_options['row_plugin'] = 'fields';
   $handler->display->display_options['row_options']['default_field_elements'] = FALSE;
-  /* Footer: Global: Text area */
-  $handler->display->display_options['footer']['area']['id'] = 'area';
-  $handler->display->display_options['footer']['area']['table'] = 'views';
-  $handler->display->display_options['footer']['area']['field'] = 'area';
-  $handler->display->display_options['footer']['area']['content'] = '<a href=\'commons/activity-feed\' class=\'btn btn-info\'>Read More</a>';
-  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
   /* Field: Content: Type */
   $handler->display->display_options['fields']['type']['id'] = 'type';
   $handler->display->display_options['fields']['type']['table'] = 'node';
@@ -78,6 +72,44 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['fields']['body']['settings'] = array(
     'trim_length' => '600',
   );
+  /* Field: Content: Lab Note Body */
+  $handler->display->display_options['fields']['field_lab_note_body']['id'] = 'field_lab_note_body';
+  $handler->display->display_options['fields']['field_lab_note_body']['table'] = 'field_data_field_lab_note_body';
+  $handler->display->display_options['fields']['field_lab_note_body']['field'] = 'field_lab_note_body';
+  $handler->display->display_options['fields']['field_lab_note_body']['label'] = '';
+  $handler->display->display_options['fields']['field_lab_note_body']['element_type'] = 'div';
+  $handler->display->display_options['fields']['field_lab_note_body']['element_class'] = 'panel-body panel-[type]';
+  $handler->display->display_options['fields']['field_lab_note_body']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_lab_note_body']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['field_lab_note_body']['hide_empty'] = TRUE;
+  $handler->display->display_options['fields']['field_lab_note_body']['type'] = 'text_trimmed';
+  $handler->display->display_options['fields']['field_lab_note_body']['settings'] = array(
+    'trim_length' => '600',
+  );
+  /* Field: Content: Lab Note Tags */
+  $handler->display->display_options['fields']['field_lab_note_tags']['id'] = 'field_lab_note_tags';
+  $handler->display->display_options['fields']['field_lab_note_tags']['table'] = 'field_data_field_lab_note_tags';
+  $handler->display->display_options['fields']['field_lab_note_tags']['field'] = 'field_lab_note_tags';
+  $handler->display->display_options['fields']['field_lab_note_tags']['label'] = '';
+  $handler->display->display_options['fields']['field_lab_note_tags']['element_type'] = 'div';
+  $handler->display->display_options['fields']['field_lab_note_tags']['element_class'] = 'panel-comm-tags';
+  $handler->display->display_options['fields']['field_lab_note_tags']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_lab_note_tags']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['field_lab_note_tags']['hide_empty'] = TRUE;
+  $handler->display->display_options['fields']['field_lab_note_tags']['delta_offset'] = '0';
+  $handler->display->display_options['fields']['field_lab_note_tags']['separator'] = ' | ';
+  /* Field: Content: Tags */
+  $handler->display->display_options['fields']['field_tags']['id'] = 'field_tags';
+  $handler->display->display_options['fields']['field_tags']['table'] = 'field_data_field_tags';
+  $handler->display->display_options['fields']['field_tags']['field'] = 'field_tags';
+  $handler->display->display_options['fields']['field_tags']['label'] = '';
+  $handler->display->display_options['fields']['field_tags']['element_type'] = 'div';
+  $handler->display->display_options['fields']['field_tags']['element_class'] = 'panel-comm-tags';
+  $handler->display->display_options['fields']['field_tags']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_tags']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['field_tags']['hide_empty'] = TRUE;
+  $handler->display->display_options['fields']['field_tags']['delta_offset'] = '0';
+  $handler->display->display_options['fields']['field_tags']['separator'] = ' | ';
   /* Field: Content: Updated date */
   $handler->display->display_options['fields']['changed']['id'] = 'changed';
   $handler->display->display_options['fields']['changed']['table'] = 'node';
@@ -116,8 +148,9 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
+    'article' => 'article',
     'forum' => 'forum',
-    'tapas_newsitem' => 'tapas_newsitem',
+    'lab_note' => 'lab_note',
   );
   $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
   $handler->display->display_options['filters']['type']['expose']['label'] = 'Type';
@@ -126,7 +159,6 @@ function tapas_feature_view_community_views_default_views() {
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
-  $handler->display->display_options['defaults']['footer'] = FALSE;
   $handler->display->display_options['path'] = 'commons/activity-feed';
 
   /* Display: Block */
@@ -176,6 +208,28 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
   $handler->display->display_options['sorts']['created']['expose']['label'] = 'Post Date';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'article' => 'article',
+    'forum' => 'forum',
+    'lab_note' => 'lab_note',
+  );
+  $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['label'] = 'Type';
+  $handler->display->display_options['filters']['type']['expose']['operator'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['identifier'] = 'type';
   $export['community'] = $view;
 
   return $export;

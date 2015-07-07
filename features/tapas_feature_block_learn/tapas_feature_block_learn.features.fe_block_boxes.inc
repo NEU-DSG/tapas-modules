@@ -14,11 +14,7 @@ function tapas_feature_block_learn_default_fe_block_boxes() {
   $fe_block_boxes->info = 'learn block for commons page';
   $fe_block_boxes->format = 'filtered_html';
   $fe_block_boxes->machine_name = 'commons_learn_block';
-  $fe_block_boxes->body = '<ul>
-<li>Workshops</li>
-<li>Resource Guides</li>
-<li>Code Alongs</li>
-</ul>';
+  $fe_block_boxes->body = '<ul><li>Workshops</li><li>Resource Guides</li><li>Code Alongs</li></ul>';
 
   $export['commons_learn_block'] = $fe_block_boxes;
 
