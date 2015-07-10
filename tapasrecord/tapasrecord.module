@@ -2,7 +2,6 @@
 
 define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
 define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
-define("TAPAS_TFC_TRANSFORM_FILENAME", "transform/tfc_transform.xsl");
 
 define("TAPAS_ERROR_KNOWN_FILE_ERROR", 
 	t("We found problems with the tei file which prevent us from being able " .
@@ -21,10 +20,7 @@ define("TAPAS_ERROR_UNKNOWN",
 	t("An unknown error occured. If you are confident that the tei file you are " .
 	"uploading is valid, please open a support ticket so that we can figure out what happened."));
 
-// TODO: Use private file system rather than public
 // TODO: Make TEI field mandatory for new (NOT updated) TAPAS Record nodes
-// TODO: REmove the TFC field, since we don't need that to be a field.
-// TODO: Handle TEI upload name collisions
 // TODO: When there is a failed upload attempt, clear out errors from screen before next
 //       upload attempt, to prevent confusion.
 // TODO: Fix XML-prefix error warning to say this on it's own won't prevent upload
@@ -34,8 +30,7 @@ define("TAPAS_ERROR_UNKNOWN",
  * @file
  * tapasrecord.module TAPAS TEI upload and transformation
  * 
- * defines tapas_record conent type, performs
- * TEI upload and validation, calls TFC transform.
+ * defines tapas_record conent type, 
  */
 
 /**
@@ -102,10 +97,7 @@ function _tapasrecord_form_teifield($form_id) {
 }
 
 function _tapasrecord_get_file_upload_location() {
-	// TODO: Project level files will be root/<project slug>
-	// TODO: Record level files will be root/<record persistant id>
-	// TODO: directory_prepare function to set permissions, & create directory
-	//       if it doesn't alreay exist.
+	// TODO: This will become a temporary location, and managed as such
 	return TAPAS_SAVE_FILE_ROOT_DIRECTORY;
 }
 
@@ -129,16 +121,5 @@ function tapasrecord_validate_tei($file, $form_id) {
 	if ($errors) {
 		return $errors;
 	}
-
-	//drupal_set_message(_tapasrecord_extract_tei_metadata($teiDOM));
-	//$errors = _tapasrecord_extract_tei_metadata($teiDOM);
-	//if ($errors) {
-	//  foreach ($errors as $e) {
-	//    drupal_set_message($e, 'warning');
-	//  }
-	//  drupal_set_message(t("There were problems trying to extract metadata from this TEI file."), 'warning');
-	//}
-
-	return _tapasrecord_run_transform($teiDOM, $file);
 }
 
