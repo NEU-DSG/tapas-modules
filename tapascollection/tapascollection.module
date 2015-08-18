@@ -48,4 +48,86 @@ function tapascollection_form($node, $form_state) {
   return node_content_form($node, $form_state);
 }
 
+/**
+ * Internal. Syntactic sugar to make it easier to get the slug.
+ *
+ * @param $node: The Project or Collection node we want the slug for.
+ * @return string, the slug itself.
+ */
 
+function _tapascollection_slug($node) {
+	return $node->tc_field_slug[$node->language][0]['value'];
+}
+
+/**
+ * Internal. Calls the POST function on the Hydra API.
+ *
+ * @param $node: The project or collection node to create or update
+ * @param $members: A list of member IDs
+ *
+ * @return String: the code returned by the API.
+ */
+
+function _tapascollection_hydra_post($node, $members) {
+	$url = "https://localhost:3000/communities/:" . _tapascollection_slug($node);
+
+	$data = array(
+		'members' => $members,
+		'depositor' => $node->uid,
+		'access' => $node->group_access[$node->language][0]['value']?'private':'public',
+		'thumbnail' => '', // TODO: Implement.
+		'title' => $node->title,
+		'description' => $node->tc_field_description[$node->language][0]['value']
+	);
+
+	return http_post_fields($url, $data);
+	
+}
+
+/**
+ * Implements hook_node_insert()
+ */
+
+function tapascollection_node_insert($node) {
+	//global $user;
+
+	switch($node->type) {
+		case 'tapascollection_project':
+		case 'tapascollection_collection':
+			_tapascollection_hydra_post($node, $node->uid);
+			break;
+	}
+}
+
+// TODO: Double-check hook name
+/** 
+ * Implements hook_node_update().
+ */
+
+function tapascollection_node_update($node) {
+
+	switch($node->type) {
+		case 'tapascollection_project':
+		case 'tapascollection_collection':
+			// TODO: Get all members, not just creator
+			$members = $node->uid;
+			_tapascollection_hydra_post($node, $members);
+			break;
+	}
+}
+
+// TODO: Double-check hook name
+/**
+ * Implements hook_node_delete().
+ */
+
+function tapascollection_node_delete($node) {
+
+	switch($node->type) {
+		case 'tapascollection_project':
+		case 'tapascollection_collection':
+			// $url = ?? . _tapascollection_slug($node);
+			// TODO: doublecheck hot to do an HTTP DELETE command.
+			break;
+	}
+}
