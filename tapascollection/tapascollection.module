@@ -4,6 +4,8 @@
  * Code for the tapascollection module
  */
 
+define("TAPASCOLLECTION_HYDRA_PROJECT_URL", "https://localhost:3000/communities:");
+define("TAPASCOLLECTION_HYDRA_COLLECTION_URL", "https://localhost:3000/collections:");
 
 /**
  * Implements hook_node_info().
@@ -49,39 +51,61 @@ function tapascollection_form($node, $form_state) {
 }
 
 /**
- * Internal. Syntactic sugar to make it easier to get the slug.
+ * Internal. Returns an array for proj and collection creation/updates
  *
- * @param $node: The Project or Collection node we want the slug for.
- * @return string, the slug itself.
+ * This function returns an data array with the information that is common
+ *   both to creating or updating a project, and to creating or updating a
+ *   collection.
+ *
+ * @param $node: The project or collection node to add or update
+ * @return array: common data elements.
  */
 
-function _tapascollection_slug($node) {
-	return $node->tc_field_slug[$node->language][0]['value'];
+function _tapascollection_projcol_data($node) {
+	return array(
+		'depositor' => $node->uid,
+		'thumbnail' => $node->tc_field_image,
+		'access' => $node->group_access[und][0]['value']?'private':'public',
+		'title' => $node->title,
+		'description' => $node->tc_field_description[$node->language][0]['value'],
+		'slug' => $node->tc_field_slug[$node->language][0]['value']
+	);
 }
 
 /**
- * Internal. Calls the POST function on the Hydra API.
+ * Internal. The Hydra API call to create or update a project.
  *
- * @param $node: The project or collection node to create or update
- * @param $members: A list of member IDs
- *
- * @return String: the code returned by the API.
+ * @param $node: the project node to add or update
+ * @param $members: The complete list of user IDs of people who should be
+ *           members of the project
+ * @return string: The code returned by the API call
  */
 
-function _tapascollection_hydra_post($node, $members) {
-	$url = "https://localhost:3000/communities/:" . _tapascollection_slug($node);
+function _tapascollection_hydra_project($node, $members) {
 
-	$data = array(
-		'members' => $members,
-		'depositor' => $node->uid,
-		'access' => $node->group_access[$node->language][0]['value']?'private':'public',
-		'thumbnail' => '', // TODO: Implement.
-		'title' => $node->title,
-		'description' => $node->tc_field_description[$node->language][0]['value']
-	);
+	$data = _tapascollection_projcol_data($node);
+	$data['members'] = $members;
+
+	$url = TAPASCOLLECTION_HYDRA_PROJECT_URL . $data['slug'];
 
 	return http_post_fields($url, $data);
-	
+}
+
+/**
+ * Internal. The Hydra API call to create or update a collection.
+ *
+ * @param $node: The collection node to add or update.
+ * @return string: The code returned by the API call
+ */
+
+function _tapascollection_hydra_collection($node) {
+
+	$data = _tapascollection_projcol_data($node);
+	$data['project_did'] = ''; // $node Change content type to have the straight-up slug to make this easier.
+
+	$url = TAPASCOLLECTION_HYDRA_COLLECTION_URL . $data['slug'];
+
+	return http_post_fields($url, $data);
 }
 
 /**
@@ -93,13 +117,14 @@ function tapascollection_node_insert($node) {
 
 	switch($node->type) {
 		case 'tapascollection_project':
+			$result = _tapascollection_hydra_project($node, $node->uid);
+			break;
 		case 'tapascollection_collection':
-			_tapascollection_hydra_post($node, $node->uid);
+			$result = _tapascollection_hydra_collection($node);
 			break;
 	}
 }
 
-// TODO: Double-check hook name
 /** 
  * Implements hook_node_update().
  */
@@ -108,15 +133,14 @@ function tapascollection_node_update($node) {
 
 	switch($node->type) {
 		case 'tapascollection_project':
-		case 'tapascollection_collection':
-			// TODO: Get all members, not just creator
-			$members = $node->uid;
+			$members = og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
 			_tapascollection_hydra_post($node, $members);
 			break;
+		case 'tapascollection_collection':
+			$result = _tapascollection_hydra_collection($node);
 	}
 }
 
-// TODO: Double-check hook name
 /**
  * Implements hook_node_delete().
  */
@@ -125,9 +149,43 @@ function tapascollection_node_delete($node) {
 
 	switch($node->type) {
 		case 'tapascollection_project':
+			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_PROJECT_URL, $node);
+			break;
 		case 'tapascollection_collection':
-			// $url = ?? . _tapascollection_slug($node);
-			// TODO: doublecheck hot to do an HTTP DELETE command.
+			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_COLLECTION_URL, $node);
 			break;
 	}
 }
+
+/**
+ * Internal. Performs a Hydra project or collection DELETE api command.
+ *
+ * Extracts the slug from $node, appends it to the end of $base_url, and sends a DELETE http
+ *   request to the resulting URL.
+ *
+ * @param $base_url: The API URL (without the slug)
+ * @param $node: the project or collection node to be deleted.
+ * @return string: The return code returned by the API.
+ */
+
+function _tapascollection_hydra_delete($base_url, $node) {
+	
+	$slug = $node->tc_field_slug[und][0]['value'];
+	$url = $base_url . $slug;
+
+	return http_request('DELETE', $url);
+
+}
+
+/**
+ * Internal. Returns a list of user-ids that are a member of the given project or collection.
+ *
+ * @param $node: The project or collection node
+ * @return array: A list of user-ids of users who are members of the group represented by $node
+ */
+
+function _tapascollection_get_group_members($node) {
+	og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+
+}
+
