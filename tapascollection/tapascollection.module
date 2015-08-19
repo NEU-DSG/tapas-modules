@@ -114,7 +114,7 @@ function _tapascollection_hydra_collection($node) {
 
 function tapascollection_node_insert($node) {
 	//global $user;
-
+	$result = "";
 	switch($node->type) {
 		case 'tapascollection_project':
 			$result = _tapascollection_hydra_project($node, $node->uid);
@@ -122,6 +122,9 @@ function tapascollection_node_insert($node) {
 		case 'tapascollection_collection':
 			$result = _tapascollection_hydra_collection($node);
 			break;
+	}
+	if ($result) {
+		drupal_set_message($result);
 	}
 }
 
@@ -131,13 +134,17 @@ function tapascollection_node_insert($node) {
 
 function tapascollection_node_update($node) {
 
+	$result = "";
 	switch($node->type) {
 		case 'tapascollection_project':
 			$members = og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
-			_tapascollection_hydra_post($node, $members);
+			$result = _tapascollection_hydra_post($node, $members);
 			break;
 		case 'tapascollection_collection':
 			$result = _tapascollection_hydra_collection($node);
+	}
+	if ($result) {
+		drupal_set_message($result);
 	}
 }
 
@@ -146,7 +153,7 @@ function tapascollection_node_update($node) {
  */
 
 function tapascollection_node_delete($node) {
-
+	$result = "";
 	switch($node->type) {
 		case 'tapascollection_project':
 			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_PROJECT_URL, $node);
@@ -154,6 +161,9 @@ function tapascollection_node_delete($node) {
 		case 'tapascollection_collection':
 			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_COLLECTION_URL, $node);
 			break;
+	}
+	if ($result) {
+		drupal_set_message("Hydra return code: $result");
 	}
 }
 
