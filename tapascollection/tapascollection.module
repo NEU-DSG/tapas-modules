@@ -62,13 +62,19 @@ function tapascollection_form($node, $form_state) {
  */
 
 function _tapascollection_projcol_data($node) {
+	
+	$description = '';
+	if (isset($node->tc_field_description[$node->language][0]['value'])) {
+		$description = $node->tc_field_description[$node->language][0]['value'];
+	}
+
 	return array(
 		'depositor' => $node->uid,
 		'thumbnail' => $node->tc_field_image,
-		'access' => $node->group_access[und][0]['value']?'private':'public',
+		'access' => $node->group_access['und'][0]['value']?'private':'public',
 		'title' => $node->title,
-		'description' => $node->tc_field_description[$node->language][0]['value'],
-		'slug' => $node->tc_field_slug[$node->language][0]['value']
+		'description' => $description,
+		'slug' => $node->tc_field_slug['und'][0]['value']
 	);
 }
 
@@ -100,12 +106,13 @@ function _tapascollection_hydra_project($node, $members) {
 
 function _tapascollection_hydra_collection($node) {
 
-	$data = _tapascollection_projcol_data($node);
-	$data['project_did'] = ''; // $node Change content type to have the straight-up slug to make this easier.
+	//$data = _tapascollection_projcol_data($node);
+	//$data['project_did'] = ''; // $node Change content type to have the straight-up slug to make this easier.
 
-	$url = TAPASCOLLECTION_HYDRA_COLLECTION_URL . $data['slug'];
+	//$url = TAPASCOLLECTION_HYDRA_COLLECTION_URL . $data['slug'];
 
-	return http_post_fields($url, $data);
+	//return "(http_post_fields commented out)";
+	//return http_post_fields($url, $data);
 }
 
 /**
@@ -134,18 +141,18 @@ function tapascollection_node_insert($node) {
 
 function tapascollection_node_update($node) {
 
-	$result = "";
-	switch($node->type) {
-		case 'tapascollection_project':
-			$members = og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
-			$result = _tapascollection_hydra_post($node, $members);
-			break;
-		case 'tapascollection_collection':
-			$result = _tapascollection_hydra_collection($node);
-	}
-	if ($result) {
-		drupal_set_message($result);
-	}
+	//$result = "";
+	//switch($node->type) {
+		//case 'tapascollection_project':
+			//$members = og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+			//$result = _tapascollection_hydra_post($node, $members);
+			//break;
+		//case 'tapascollection_collection':
+			//$result = _tapascollection_hydra_collection($node);
+	//}
+	//if ($result) {
+		//drupal_set_message($result);
+	//}
 }
 
 /**
@@ -153,18 +160,18 @@ function tapascollection_node_update($node) {
  */
 
 function tapascollection_node_delete($node) {
-	$result = "";
-	switch($node->type) {
-		case 'tapascollection_project':
-			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_PROJECT_URL, $node);
-			break;
-		case 'tapascollection_collection':
-			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_COLLECTION_URL, $node);
-			break;
-	}
-	if ($result) {
-		drupal_set_message("Hydra return code: $result");
-	}
+	//$result = "";
+	//switch($node->type) {
+		//case 'tapascollection_project':
+			//$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_PROJECT_URL, $node);
+			//break;
+		//case 'tapascollection_collection':
+			//$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_COLLECTION_URL, $node);
+			//break;
+	//}
+	//if ($result) {
+		//drupal_set_message("Hydra return code: $result");
+	//}
 }
 
 /**
@@ -180,10 +187,11 @@ function tapascollection_node_delete($node) {
 
 function _tapascollection_hydra_delete($base_url, $node) {
 	
-	$slug = $node->tc_field_slug[und][0]['value'];
-	$url = $base_url . $slug;
+	//$slug = $node->tc_field_slug[und][0]['value'];
+	//$url = $base_url . $slug;
 
-	return http_request('DELETE', $url);
+	//return '(http_request DELETE commented out)';
+	//return http_request('DELETE', $url);
 
 }
 
@@ -195,7 +203,8 @@ function _tapascollection_hydra_delete($base_url, $node) {
  */
 
 function _tapascollection_get_group_members($node) {
-	og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+	//og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+	return $node->uid;
 
 }
 
