@@ -9,7 +9,6 @@
  */
 function tapas_feature_tapascollection_field_default_field_instances() {
   $field_instances = array();
-
   // Exported field_instance: 'node-tapascollection_collection-field_image_name'
   $field_instances['node-tapascollection_collection-field_image_name'] = array(
     'bundle' => 'tapascollection_collection',
@@ -171,7 +170,7 @@ function tapas_feature_tapascollection_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'group_group',
     'label' => 'Group',
-    'required' => FALSE,
+    'required' => TRUE,
     'settings' => array(
       'user_register_form' => FALSE,
     ),

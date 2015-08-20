@@ -70,7 +70,7 @@ function _tapascollection_projcol_data($node) {
 
 	return array(
 		'depositor' => $node->uid,
-		'thumbnail' => $node->tc_field_image,
+		'thumbnail' => $node->tc_field_image['und'][0]['value'],
 		'access' => $node->group_access['und'][0]['value']?'private':'public',
 		'title' => $node->title,
 		'description' => $description,
@@ -94,6 +94,7 @@ function _tapascollection_hydra_project($node, $members) {
 
 	$url = TAPASCOLLECTION_HYDRA_PROJECT_URL . $data['slug'];
 
+	//return implode(',', $data);
 	return http_post_fields($url, $data);
 }
 
@@ -121,17 +122,20 @@ function _tapascollection_hydra_collection($node) {
 
 function tapascollection_node_insert($node) {
 	//global $user;
-	$result = "";
+
 	switch($node->type) {
 		case 'tapascollection_project':
 			$result = _tapascollection_hydra_project($node, $node->uid);
 			break;
 		case 'tapascollection_collection':
-			$result = _tapascollection_hydra_collection($node);
+			//$result = _tapascollection_hydra_collection($node);
 			break;
 	}
-	if ($result) {
-		drupal_set_message($result);
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
 	}
 }
 
