@@ -4,8 +4,8 @@
  * Code for the tapascollection module
  */
 
-define("TAPASCOLLECTION_HYDRA_PROJECT_URL", "https://localhost:3000/communities:");
-define("TAPASCOLLECTION_HYDRA_COLLECTION_URL", "https://localhost:3000/collections:");
+define("TAPASCOLLECTION_HYDRA_PROJECT_URL", "https://rails_api.localhost:8080/communities");
+define("TAPASCOLLECTION_HYDRA_COLLECTION_URL", "https://rails_api.localhost:8080/collections");
 
 /**
  * Implements hook_node_info().
@@ -51,6 +51,21 @@ function tapascollection_form($node, $form_state) {
 }
 
 /**
+ * Internal. Builds and posts the HTTP query using curl.
+ */
+
+function tapascollection_post($base, $data) {
+	$query = http_build_query($data, '', '&amp;');
+
+	$ch = curl_init("$base" . $data['slug'] . "?$query");
+	curl_setopt($ch, CURLOPT_POST, TRUE);
+	curl_exec($ch);
+	curl_close($ch);
+
+}
+
+
+/**
  * Internal. Returns an array for proj and collection creation/updates
  *
  * This function returns an data array with the information that is common
@@ -58,62 +73,32 @@ function tapascollection_form($node, $form_state) {
  *   collection.
  *
  * @param $node: The project or collection node to add or update
+ * @param $extra_key: Optional. The key for an additional value to add to the array.
+ * @param $extra_value: Optional. The value of an additional item for the array.
  * @return array: common data elements.
  */
 
-function _tapascollection_projcol_data($node) {
+function _tapascollection_projcol_data($node, $extra_key, $extra_value) {
 	
 	$description = '';
 	if (isset($node->tc_field_description[$node->language][0]['value'])) {
 		$description = $node->tc_field_description[$node->language][0]['value'];
 	}
 
-	return array(
+	$result = array(
 		'depositor' => $node->uid,
 		'thumbnail' => $node->tc_field_image['und'][0]['value'],
 		'access' => $node->group_access['und'][0]['value']?'private':'public',
 		'title' => $node->title,
 		'description' => $description,
-		'slug' => $node->tc_field_slug['und'][0]['value']
+		'slug' => $node->tc_field_slug['und'][0]['value'],
 	);
-}
 
-/**
- * Internal. The Hydra API call to create or update a project.
- *
- * @param $node: the project node to add or update
- * @param $members: The complete list of user IDs of people who should be
- *           members of the project
- * @return string: The code returned by the API call
- */
+	if (isset($extra_key)) {
+		$result[$extra_key] = $extra_value;
+	}
 
-function _tapascollection_hydra_project($node, $members) {
-
-	$data = _tapascollection_projcol_data($node);
-	$data['members'] = $members;
-
-	$url = TAPASCOLLECTION_HYDRA_PROJECT_URL . $data['slug'];
-
-	//return implode(',', $data);
-	return http_post_fields($url, $data);
-}
-
-/**
- * Internal. The Hydra API call to create or update a collection.
- *
- * @param $node: The collection node to add or update.
- * @return string: The code returned by the API call
- */
-
-function _tapascollection_hydra_collection($node) {
-
-	//$data = _tapascollection_projcol_data($node);
-	//$data['project_did'] = ''; // $node Change content type to have the straight-up slug to make this easier.
-
-	//$url = TAPASCOLLECTION_HYDRA_COLLECTION_URL . $data['slug'];
-
-	//return "(http_post_fields commented out)";
-	//return http_post_fields($url, $data);
+	return $result;
 }
 
 /**
@@ -125,10 +110,15 @@ function tapascollection_node_insert($node) {
 
 	switch($node->type) {
 		case 'tapascollection_project':
-			$result = _tapascollection_hydra_project($node, $node->uid);
+			$data = _tapascollection_projcol_data($node, 'members', $node->uid);
+			$result = _tapascollection_post(
+				TAPASCOLLECTION_HYDRA_PROJECT_URL, $data);
 			break;
 		case 'tapascollection_collection':
-			//$result = _tapascollection_hydra_collection($node);
+			$data = _tapascollection_projcol_data($node, 'project_did', '');
+			//$data['project_did'] = ''; // TODO: First, make a text-string field for this, to make this easier.
+			$result = _tapascollection_post(
+				TAPASCOLLECTION_HYDRA_COLLECTION_URL, $data);
 			break;
 	}
 	if (isset($result)) {
@@ -145,18 +135,22 @@ function tapascollection_node_insert($node) {
 
 function tapascollection_node_update($node) {
 
-	//$result = "";
-	//switch($node->type) {
-		//case 'tapascollection_project':
-			//$members = og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
-			//$result = _tapascollection_hydra_post($node, $members);
-			//break;
-		//case 'tapascollection_collection':
-			//$result = _tapascollection_hydra_collection($node);
-	//}
-	//if ($result) {
-		//drupal_set_message($result);
-	//}
+	$result = "";
+	switch($node->type) {
+		case 'tapascollection_project':
+			$members = og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+			$result = _tapascollection_post(
+				TAPASCOLLECTION_HYDRA_PROJECT_URL, 
+				_tapascollection_projcol_data($node, 'members', $members));
+			break;
+		case 'tapascollection_collection':
+			$result = _tapascollection_post(
+				TAPASCOLLECTION_HYDRA_COLLECTION_URL,
+				_tapascollection_projcol_data($node));
+	}
+	if ($result) {
+		drupal_set_message($result);
+	}
 }
 
 /**
@@ -164,18 +158,21 @@ function tapascollection_node_update($node) {
  */
 
 function tapascollection_node_delete($node) {
-	//$result = "";
-	//switch($node->type) {
-		//case 'tapascollection_project':
-			//$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_PROJECT_URL, $node);
-			//break;
-		//case 'tapascollection_collection':
-			//$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_COLLECTION_URL, $node);
-			//break;
-	//}
-	//if ($result) {
-		//drupal_set_message("Hydra return code: $result");
-	//}
+	$result = "";
+	switch($node->type) {
+		case 'tapascollection_project':
+			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_PROJECT_URL, $node);
+			break;
+		case 'tapascollection_collection':
+			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_COLLECTION_URL, $node);
+			break;
+	}
+	if ($result) {
+		drupal_set_message("Hydra return code: $result");
+	}
+	else {
+		drupal_set_message("No hydra return code.");
+	}
 }
 
 /**
@@ -191,13 +188,18 @@ function tapascollection_node_delete($node) {
 
 function _tapascollection_hydra_delete($base_url, $node) {
 	
-	//$slug = $node->tc_field_slug[und][0]['value'];
-	//$url = $base_url . $slug;
+	$slug = $node->tc_field_slug[und][0]['value'];
 
-	//return '(http_request DELETE commented out)';
+	return '(http_request DELETE commented out)';
 	//return http_request('DELETE', $url);
 
+	$ch = curl_init("$base_url$slug");
+	curl_setopt($ch, CULROPT_CUSTOMREQUEST, 'DELETE');
+	curl_exec($ch);
+	curl_close($ch);
+
 }
+
 
 /**
  * Internal. Returns a list of user-ids that are a member of the given project or collection.
@@ -207,7 +209,7 @@ function _tapascollection_hydra_delete($base_url, $node) {
  */
 
 function _tapascollection_get_group_members($node) {
-	//og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+	//return og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
 	return $node->uid;
 
 }
