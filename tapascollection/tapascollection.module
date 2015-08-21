@@ -4,8 +4,8 @@
  * Code for the tapascollection module
  */
 
-define("TAPASCOLLECTION_HYDRA_PROJECT_URL", "https://rails_api.localhost:8080/communities");
-define("TAPASCOLLECTION_HYDRA_COLLECTION_URL", "https://rails_api.localhost:8080/collections");
+define("TAPASCOLLECTION_HYDRA_PROJECT_URL", "https://rails_api.localhost:8080/communities/");
+define("TAPASCOLLECTION_HYDRA_COLLECTION_URL", "https://rails_api.localhost:8080/collections/");
 
 /**
  * Implements hook_node_info().
@@ -54,10 +54,12 @@ function tapascollection_form($node, $form_state) {
  * Internal. Builds and posts the HTTP query using curl.
  */
 
-function tapascollection_post($base, $data) {
+function _tapascollection_post($base, $data) {
 	$query = http_build_query($data, '', '&amp;');
+	$url = "$base" . $data['slug'] . "?$query";
+	drupal_set_message("Post URL is $url");
 
-	$ch = curl_init("$base" . $data['slug'] . "?$query");
+	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_POST, TRUE);
 	curl_exec($ch);
 	curl_close($ch);
@@ -79,18 +81,13 @@ function tapascollection_post($base, $data) {
  */
 
 function _tapascollection_projcol_data($node, $extra_key, $extra_value) {
-	
-	$description = '';
-	if (isset($node->tc_field_description[$node->language][0]['value'])) {
-		$description = $node->tc_field_description[$node->language][0]['value'];
-	}
 
 	$result = array(
 		'depositor' => $node->uid,
-		'thumbnail' => $node->tc_field_image['und'][0]['value'],
+		'thumbnail' => _tapascollection_fieldval($node, 'tc_field_image'),
 		'access' => $node->group_access['und'][0]['value']?'private':'public',
 		'title' => $node->title,
-		'description' => $description,
+		'description' => _tapascollection_fieldval($node, 'tc_field_description', '', TRUE),
 		'slug' => $node->tc_field_slug['und'][0]['value'],
 	);
 
@@ -99,6 +96,26 @@ function _tapascollection_projcol_data($node, $extra_key, $extra_value) {
 	}
 
 	return $result;
+}
+
+/**
+ * Internal. Syntactic sugar for getting a field value.
+ *
+ * @param $node: the node who's field we are checking.
+ * @param $field_name: the name of the field to check the value of.
+ * @param $val_if_unset: the value to return if the field is unset.
+ * @return the value of the field, if set (or $val_if_unset otherwise)
+ */
+
+function _tapascollection_fieldval($node, $field_name, $val_if_unset='') {
+
+	$value = field_get_items('node', $node, $field_name); 
+
+	if ($value === FALSE) {
+		return $val_if_unset;
+	} else {
+		return $value;
+	}
 }
 
 /**
