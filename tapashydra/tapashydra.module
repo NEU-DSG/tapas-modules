@@ -104,7 +104,7 @@ function _tapashydra_post_hydra($base, $data, $files) {
 
 	$ch = curl_init("$base" . $data['uid'] . "?$query");
 	curl_setopt($ch, CURLOPT_POST, TRUE);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 	$result = curl_exec($ch);
 	curl_close($ch);
 
@@ -125,14 +125,11 @@ function _tapashydra_post_hydra($base, $data, $files) {
 
 function tapashydra_delete($base_url, $node) {
 	
-	$slug = $node->tc_field_slug[und][0]['value'];
-
-	return '(http_request DELETE commented out)';
-	//return http_request('DELETE', $url);
+	$slug = $node->tc_field_slug['und'][0]['value'];
 
 	$ch = curl_init("$base_url$slug");
 	curl_setopt($ch, CULROPT_CUSTOMREQUEST, 'DELETE');
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 	$result = curl_exec($ch);
 	curl_close($ch);
 	
@@ -156,7 +153,7 @@ function tapashydra_delete($base_url, $node) {
  * @return string or number: The value of the field.
  */
 
-function _tapashydra_simple_fieldvalue($node, $field_name, $val_if_unset='', $delta=0) {
+function _tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
 
 	$array = field_get_items('node', $node, $field_name);
 
@@ -189,7 +186,7 @@ function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
 		'depositor' => $node->uid,
 		'access' => $node->group_access['und'][0]['value']?'private':'public',
 		'title' => $node->title,
-		'description' => _tapashydra_simple_fieldval($node, 'tc_field_description', 'description null value', TRUE),
+		'description' => _tapashydra_simple_fieldval($node, 'tc_field_description'),
 		'uid' => $node->tc_field_slug['und'][0]['value'],
 	);
 
@@ -209,7 +206,27 @@ function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
  * @return array: The file info as needed by the POST api call.
  */
 
-function tapashydra_projcol_thumb($node) {
+function _tapashydra_projcol_thumb($node) {
+
+
+	if (!isset($node->tc_field_image['und'][0])) {
+		drupal_set_message("There is no thumbnail.");
+	}
+
+	$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
+	$thumb_uri = $thumb_file->uri;
+
+	$files = array(
+		array(
+			'name' => 'thumbnail',
+			'type' => file_get_mimetype($thumb_uri),
+			'file' => drupal_realpath($thumb_uri),
+		)
+	);
+
+	drupal_set_message("Returning this files array: " . implode($files[0], '|'));
+
+	return $files;
 
 
 }
