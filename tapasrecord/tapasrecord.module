@@ -1,30 +1,17 @@
 <?php
 
-define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
+//define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
 define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
 
-define("TAPAS_ERROR_KNOWN_FILE_ERROR", 
-	t("We found problems with the tei file which prevent us from being able " .
-	"to load it. Please double-check the file, or contact us with any questions."));
 
-define("TAPAS_ERROR_UNSUPPORTED_ERROR", 
-	t("We were unable to process the tei file. This may be due to a problem in " .
-	"the file, or it may be that while the tei is valid, we are not yet equipped to deal with all the elements. If " .
-	"you are confident your file is valid, please open a support ticket, to allow us to improve our system."));
+define("TAPASRECORD_HYDRA_POST_URL", "https://rails_api.localhost:8080/files");
 
-define("TAPAS_ERROR_OUR_END", 
-	t("There appears to be an error at our end. Please open a support ticket, " .
-	"copy-and-pasting all error messages, and we'll fix it as soon as possible."));
-
-define("TAPAS_ERROR_UNKNOWN", 
-	t("An unknown error occured. If you are confident that the tei file you are " .
-	"uploading is valid, please open a support ticket so that we can figure out what happened."));
+define("TAPASRECORD_HYDRA_BASE_GET", "https://rails_api.localhost:8080/");
+define("TAPASRECORD_HYDRA_GET_RAW", "tei");
+define("TAPASRECORD_HYDRA_GET_BP", "teibp");
+define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
 
 // TODO: Make TEI field mandatory for new (NOT updated) TAPAS Record nodes
-// TODO: When there is a failed upload attempt, clear out errors from screen before next
-//       upload attempt, to prevent confusion.
-// TODO: Fix XML-prefix error warning to say this on it's own won't prevent upload
-// TODO: Change known errors that DO prevent upload from warnings back into errors.
 
 /**
  * @file
@@ -82,44 +69,117 @@ function tapasrecord_form_tapasrecordnode_node_form_alter(&$form, &$form_state, 
 
 }
 
+
+/**
+ * Internal. Retuerns info for the 'upload TEI' form field.
+ */
+
 function _tapasrecord_form_teifield($form_id) {
 	return array(
 		'#type' => 'managed_file',
 		'#title' => t('TEI file'),
 		'#description' => t('allowed extentions: .tei, .xml'),
-		'#upload_location' => _tapasrecord_get_file_upload_location(),
+		'#upload_location' => TAPAS_SAVE_FILE_ROOT_DIRECTORY,// _tapasrecord_get_file_upload_location(),
 		'#upload_validators' => array(
 			'file_validate_extensions' => array('tei xml'),
-			'tapasrecord_validate_tei' => array($form_id),
+			//'tapasrecord_validate_tei' => array($form_id),
 		),
   );
 
 }
 
-function _tapasrecord_get_file_upload_location() {
-	// TODO: This will become a temporary location, and managed as such
-	return TAPAS_SAVE_FILE_ROOT_DIRECTORY;
+/**
+ * Implements hook_node_insert().
+ */
+
+function tapasrecord_node_insert($node) {
+
+	switch ($node->type) {
+		case 'tapasrecordnode':
+			$result = _tapasrecord_post(
+				TAPASRECORD_HYDRA_POST_URL,
+				_tapasrecord_data($node));
+			break;
+	}
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
+	}
 }
 
+/**
+ * Implements hook_node_update().
+ */
+function tapasrecord_node_update($node) {
+
+	switch ($node->type) {
+		case 'tapasrecordnode':
+			$result = _tapasrecord_post(
+				TAPASRECORD_HYDRA_POST_URL,
+				_tapasrecord_data($node));
+			break;
+	}
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
+	}
+
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function tapasrecord_node_delete($node) {
+
+	switch ($node->type) {
+		case 'tapasrecordnode':
+			break;
+	}
+}
+/**
+ * Internal. Returns the data array for Hydra post new.
+ */
+
+function _tapasrecord_data($node) {
+//collection_dids : An array of Drupal IDs that this CoreFile should be associated with. To update this, pass in a new array that will entirely replace the previous collection relationships.
+
+//tei : The literal TEI file associated with this record. Reading interface versions of this file will be generated.
+
+//display_author : A sanitized version of the principle author of this document's name.
+
+//display_contributors : An array listing sanitized contributor names.
+
+//display_date : A date. For any TEI record there are several dates associated with it that may be considered significant, but for our 1.0 launch we're just asking for a single date that will be used everywhere. Must be in the ISO-8601 format.
+
+//support_files : A .zip file containing all of the files associated with this TEI record. When support file updates are required, every support file still attached to this TEI record must be sent in this zip; preexisting support type files are purged before adding new ones. Currently the only supported files are page images that are embedded in the TEI document and the thumbnail associated with this record. The expected zip file structure is this:
+
+	return array(
+		'collection_dids' => '',
+		'tei' => '',
+		'display_author' => '',
+		'display_contributors' => '',
+		'display_date' => '',
+		'support_files' => NULL,
+	);
+
+}	
 
 
 /**
- * Callback to run the validation XSLT checks on the TEI file.
+ * Internal. Makes the POST api calls to Hydra.
  */
-function tapasrecord_validate_tei($file, $form_id) {
+function _tapasrecord_post($base, $data) {
+	$query = http_build_query($data, '', '&amp;');
+	drupal_set_message("posting query: $query");
 
-	module_load_include('inc', 'tapasrecord', 'tapasrecord.xmlproc');
-	$errors = array();
+	$ch = curl_init("$base" . $data['slug'] . "?$query");
+	curl_setopt($ch, CURLOPT_POST, TRUE);
+	curl_exec($ch);
+	curl_close($ch);
 
-	$teiDOM = tapasrecord_domdoc_load($file->uri, $errors);
-	if ($errors) {
-		return $errors;
-	}
-
-
-	$errors = _tapasrecord_validate_xslt($teiDOM);
-	if ($errors) {
-		return $errors;
-	}
 }
 
