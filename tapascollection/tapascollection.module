@@ -140,8 +140,8 @@ function tapascollection_node_insert($node) {
 				TAPASCOLLECTION_HYDRA_PROJECT_URL, $data);
 			break;
 		case 'tapascollection_collection':
-			$data = _tapascollection_projcol_data($node, 'project_did', 
-				_tapascollection_fieldval($node, 'tc_field_slug'));
+			$proj_slug = _tapascollection_fieldval($node, 'tc_field_slug');
+			$data = _tapascollection_projcol_data($node, 'project_did', $proj_slug); 
 			$result = _tapascollection_post(
 				TAPASCOLLECTION_HYDRA_COLLECTION_URL, $data);
 			break;
@@ -160,22 +160,24 @@ function tapascollection_node_insert($node) {
 
 function tapascollection_node_update($node) {
 
-	$result = "";
 	switch($node->type) {
 		case 'tapascollection_project':
-			$members = og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+			$members = _tapascollection_get_group_members();
+			$data = _tapascollection_projcol_data($node, 'members', $members);
 			$result = _tapascollection_post(
-				TAPASCOLLECTION_HYDRA_PROJECT_URL, 
-				_tapascollection_projcol_data($node, 'members', $members));
+				TAPASCOLLECTION_HYDRA_PROJECT_URL, $data);
 			break;
 		case 'tapascollection_collection':
-			$projslug = 
+			$proj_slug = _tapascollection_fieldval($node, 'tc_field_slug');
+			$data = _tapascollection_projcol_data($node, 'project_did', $proj_slug);
 			$result = _tapascollection_post(
-				TAPASCOLLECTION_HYDRA_COLLECTION_URL,
-				_tapascollection_projcol_data($node));
+				TAPASCOLLECTION_HYDRA_COLLECTION_URL, $data);
 	}
-	if ($result) {
-		drupal_set_message($result);
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
 	}
 }
 
