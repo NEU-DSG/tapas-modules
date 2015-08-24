@@ -2,10 +2,13 @@
 /**
  * @file
  * Code for the tapascollection module
+ *
+ * TODO: Prevent edit from changing the slug.
  */
 
-define("TAPASCOLLECTION_HYDRA_PROJECT_URL", "https://rails_api.localhost:8080/communities");
-define("TAPASCOLLECTION_HYDRA_COLLECTION_URL", "https://rails_api.localhost:8080/collections");
+// ====================================================================================
+// Functions implementing hooks
+// ====================================================================================
 
 /**
  * Implements hook_node_info().
@@ -50,81 +53,6 @@ function tapascollection_form($node, $form_state) {
   return node_content_form($node, $form_state);
 }
 
-/**
- * Internal. Builds and posts the HTTP query using curl.
- */
-
-function _tapascollection_post($base, $data) {
-	$query = http_build_query($data, '', '&amp;');
-	drupal_set_message("posting query: $query");
-
-	$ch = curl_init("$base" . $data['slug'] . "?$query");
-	curl_setopt($ch, CURLOPT_POST, TRUE);
-	curl_exec($ch);
-	curl_close($ch);
-
-}
-
-
-/**
- * Internal. Returns an array for proj and collection creation/updates
- *
- * This function returns an data array with the information that is common
- *   both to creating or updating a project, and to creating or updating a
- *   collection.
- *
- * @param $node: The project or collection node to add or update
- * @param $extra_key: Optional. The key for an additional value to add to the array.
- * @param $extra_value: Optional. The value of an additional item for the array.
- * @return array: common data elements.
- */
-
-function _tapascollection_projcol_data($node, $extra_key, $extra_value) {
-
-	//$thumbnail = field_get_items('node', $node, 'tc_field_image');
-	
-	$result = array(
-		'depositor' => $node->uid,
-		//'thumbnail' => _tapascollection_fieldval($node, 'tc_field_image', "thumbnail null value"),
-		'access' => $node->group_access['und'][0]['value']?'private':'public',
-		'title' => $node->title,
-		'description' => _tapascollection_fieldval($node, 'tc_field_description', 'description null value', TRUE),
-		'slug' => $node->tc_field_slug['und'][0]['value'],
-	);
-
-	if (isset($extra_key)) {
-		$result[$extra_key] = $extra_value;
-	}
-
-	return $result;
-}
-
-/**
- * Internal. Syntactic sugar for getting a field value.
- *
- * @param $field_name: the name of the field to check the value of.
- * @param $val_if_unset: the value to return if the field is unset.
- * @param $use_trans: boolean. Whether to use the translated version, if avail.
- * @return the value of the field, if set (or $val_if_unset otherwise)
- */
-
-function _tapascollection_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
-
-	$array = field_get_items('node', $node, $field_name);
-
-	if ($array == FALSE) {
-		//drupal_set_message("Returning unset value: $val_if_unset");
-		return $val_if_unset;
-	}
-	else {
-		//drupal_set_message("Array[0] is: " . implode("|", $array[0]));
-		//drupal_set_message("Array[0] keys are: " . implode("|", array_keys($array[0])));
-		//drupal_set_message("Returning field value: " . $array[0]['value']);
-
-		//TODO: Only works for text-like fields. Image fields don't have ['value'] and need different treatment.
-		return $array[0]['value'];
-	}
-}
 
 /**
  * Implements hook_node_insert()
@@ -135,15 +63,10 @@ function tapascollection_node_insert($node) {
 
 	switch($node->type) {
 		case 'tapascollection_project':
-			$data = _tapascollection_projcol_data($node, 'members', $node->uid);
-			$result = _tapascollection_post(
-				TAPASCOLLECTION_HYDRA_PROJECT_URL, $data);
+			$result = tapashydra_post_project($node, $node->uid);
 			break;
 		case 'tapascollection_collection':
-			$proj_slug = _tapascollection_fieldval($node, 'tc_field_slug');
-			$data = _tapascollection_projcol_data($node, 'project_did', $proj_slug); 
-			$result = _tapascollection_post(
-				TAPASCOLLECTION_HYDRA_COLLECTION_URL, $data);
+			$result = tapashydra_post_collection($node);
 			break;
 	}
 	if (isset($result)) {
@@ -163,15 +86,11 @@ function tapascollection_node_update($node) {
 	switch($node->type) {
 		case 'tapascollection_project':
 			$members = _tapascollection_get_group_members();
-			$data = _tapascollection_projcol_data($node, 'members', $members);
-			$result = _tapascollection_post(
-				TAPASCOLLECTION_HYDRA_PROJECT_URL, $data);
+			$result = tapashydra_post_projec($node, $members);
 			break;
 		case 'tapascollection_collection':
-			$proj_slug = _tapascollection_fieldval($node, 'tc_field_slug');
-			$data = _tapascollection_projcol_data($node, 'project_did', $proj_slug);
-			$result = _tapascollection_post(
-				TAPASCOLLECTION_HYDRA_COLLECTION_URL, $data);
+			$result = tapashydra_post_collection($node);
+			break;
 	}
 	if (isset($result)) {
 		drupal_set_message("Hydra Return Value: $result");
@@ -189,10 +108,10 @@ function tapascollection_node_delete($node) {
 	$result = "";
 	switch($node->type) {
 		case 'tapascollection_project':
-			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_PROJECT_URL, $node);
+			$result = tapashydra_delete_project($node);
 			break;
 		case 'tapascollection_collection':
-			$result = _tapascollection_hydra_delete(TAPASCOLLECTION_HYDRA_COLLECTION_URL, $node);
+			$result = tapashydra_delete_collection($node);
 			break;
 	}
 	if ($result) {
@@ -203,31 +122,10 @@ function tapascollection_node_delete($node) {
 	}
 }
 
-/**
- * Internal. Performs a Hydra project or collection DELETE api command.
- *
- * Extracts the slug from $node, appends it to the end of $base_url, and sends a DELETE http
- *   request to the resulting URL.
- *
- * @param $base_url: The API URL (without the slug)
- * @param $node: the project or collection node to be deleted.
- * @return string: The return code returned by the API.
- */
 
-function _tapascollection_hydra_delete($base_url, $node) {
-	
-	$slug = $node->tc_field_slug[und][0]['value'];
-
-	return '(http_request DELETE commented out)';
-	//return http_request('DELETE', $url);
-
-	$ch = curl_init("$base_url$slug");
-	curl_setopt($ch, CULROPT_CUSTOMREQUEST, 'DELETE');
-	curl_exec($ch);
-	curl_close($ch);
-
-}
-
+// ====================================================================================
+// Internal Helper Functions
+// ====================================================================================
 
 /**
  * Internal. Returns a list of user-ids that are a member of the given project or collection.

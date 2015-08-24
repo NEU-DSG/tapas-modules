@@ -1,4 +1,4 @@
-name = tapascollection
+name = tapashydra
 core = 7.x
 package = TAPAS
 version = 7.x-0.1
@@ -11,6 +11,3 @@ dependencies[] = node
 dependencies[] = options
 dependencies[] = taxonomy
 dependencies[] = text
-dependencies[] = features
-dependencies[] = tapas_feature_taxonomy_institution
-dependencies[] = tapashydra

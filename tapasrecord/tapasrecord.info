@@ -4,3 +4,4 @@ package = TAPAS
 version = 7.x-0.2
 description = Defines a content type for the TAPAS Record; handles integration with eXist and Hydra
 dependencies[] = file
+dependencies[] = tapashydra

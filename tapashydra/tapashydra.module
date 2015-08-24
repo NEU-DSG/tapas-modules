@@ -1,0 +1,217 @@
+<?php
+
+/**
+ * @file
+ * Contains the Hydra API calls used by the other TAPAS modules.
+ */
+
+define('TAPASHYDRA_POST_COLLECTION_URL', 'https://rails_api.localhost:8080/communities');
+define('TAPASHYDRA_POST_PROJECT_URL', 'https://rails_api.localhost:8080/collections');
+define('TAPASHYDRA_POST_TEI_URL', 'https://rails_api.localhost:8080/files');
+define('TAPASHYDRA_GET_BASE_URL', 'https://rails_api.localhost:8080/');
+
+define("TAPASRECORD_HYDRA_GET_RAW", "tei");
+define("TAPASRECORD_HYDRA_GET_BP", "teibp");
+define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
+
+
+// ====================================================================================
+// Creating, Updating, and Deleting Hydra records.
+// ====================================================================================
+
+
+/**
+ * Post new or updated project.
+ *
+ * @param $node: The Drupal project node to use for this POST request.
+ * @param $members: The members list.
+ * @return string: The Hydra return code, if any.
+ */
+
+function tapashydra_post_project($node, $members) {
+	$data = _tapashydra_projcol_data($node, 'members', $members);
+	$files = _tapashydra_projcol_thumb($node);
+
+	return _tapashydra_post_hydra(TAPASHYDRA_POST_PROJECT_URL, $data, $files);
+}
+
+/**
+ * Post new or updated collection.
+ *
+ * @param $node: The Drupal collection ndoe to use for this POST request.
+ * @return string: The Hydra return code, if any.
+ */
+
+function tapashydra_post_collection($node) {
+	$proj_slug = _tapashydra_simple_fieldvalue($node, 'tc_field_slug');
+	$data = _tapashydra_projcol_data($node, 'project_did', $proj_slug);
+	$files = _tapashydra_projcol_thumb($node);
+
+	return _tapashydra_post_hydra(TAPASHYDRA_POST_COLLECTION_URL, $data, $files);
+}
+
+
+/**
+ * Delete a project from Hydra.
+ *
+ * TODO: handle the case where the proj-to-delte still has collections attached.
+ */
+
+function tapashydra_delete_project($node) {
+	return tapashydra_delete(TAPASHYDRA_POST_PROJECT_URL, $node);
+}
+
+/**
+ * Delete a collection from Hydra.
+ *
+ * TODO: handle the case where the collection-to-delete still has files attatched.
+ */
+
+function tapashydra_delete_collection($node) {
+	return tapashydra_delete(TAPASHYDRA_POST_COLLECTION_URL, $node);
+}
+
+// ====================================================================================
+// Retrieving and displaying TEI records from Hydra
+// ====================================================================================
+
+
+
+// ====================================================================================
+// Helper functions: Perform the curl HTTP call.
+// ====================================================================================
+
+/**
+ * Internal. Makes a POST call to the Hydra API using curl. 
+ *
+ * The $data parameter contains fields in the format needed by the php call http_build_query, 
+ * with an additional entry with an additional entry with the key 'uid', contaning the unique
+ * identifier for the record.
+ *
+ * @param: $base. The Hydra POST URL to use. The slug will be appended to this.
+ * @param: $data. The data fields, plus a 'slug' field for the identifier to build the URL.
+ * @param: $files. The file fields (for project and collection this is the thumbnail,
+ *            if any, while for tapasrecord it is the TEI and optionally any additional files 
+ *            zipped up.
+ *
+ * @returns: The Hydra return code, if any.
+ */
+
+function _tapashydra_post_hydra($base, $data, $files) {
+
+	$query = http_build_query($data, '', '&amp;');
+	drupal_set_message("posting query: $query");
+
+	$ch = curl_init("$base" . $data['uid'] . "?$query");
+	curl_setopt($ch, CURLOPT_POST, TRUE);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER);
+	$result = curl_exec($ch);
+	curl_close($ch);
+
+	return $result;
+}
+
+
+/**
+ * Internal. Performs a Hydra project or collection DELETE api command.
+ *
+ * Extracts the slug from $node, appends it to the end of $base_url, and sends a DELETE http
+ *   request to the resulting URL.
+ *
+ * @param $base_url: The API URL (without the slug)
+ * @param $node: the project or collection node to be deleted.
+ * @return string: The return code returned by the API.
+ */
+
+function tapashydra_delete($base_url, $node) {
+	
+	$slug = $node->tc_field_slug[und][0]['value'];
+
+	return '(http_request DELETE commented out)';
+	//return http_request('DELETE', $url);
+
+	$ch = curl_init("$base_url$slug");
+	curl_setopt($ch, CULROPT_CUSTOMREQUEST, 'DELETE');
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER);
+	$result = curl_exec($ch);
+	curl_close($ch);
+	
+	return $result;
+}
+// ====================================================================================
+// Other helper functions.
+// ====================================================================================
+
+/**
+ * Internal. Syntactic sugar to get the value of a Drupal node field.
+ *
+ * Only works for fields that have a simple string or numeric value. Not for
+ * use with fields that contain a file, etc.
+ *
+ * @param $node: The Drupal node who's field value we are checking.
+ * @param $field_name: The name of the field.
+ * @param $val_if_unset: The string to return if the field value is unset. (default '')
+ * @param $delta: If the field has more than one value, which to return (default 0)
+ *
+ * @return string or number: The value of the field.
+ */
+
+function _tapashydra_simple_fieldvalue($node, $field_name, $val_if_unset='', $delta=0) {
+
+	$array = field_get_items('node', $node, $field_name);
+
+	if ($array == FALSE) {
+		return $val_if_unset;
+	}
+	else {
+		return $array[$delta]['value'];
+	}
+
+}
+
+
+/**
+ * Internal. Returns an array for proj and collection creation/updates
+ *
+ * This function returns an data array with the information that is common
+ *   both to creating or updating a project, and to creating or updating a
+ *   collection.
+ *
+ * @param $node: The project or collection node to add or update
+ * @param $extra_key: Optional. The key for an additional value to add to the array.
+ * @param $extra_value: Optional. The value of an additional item for the array.
+ * @return array: common data elements.
+ */
+
+function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
+	
+	$data = array(
+		'depositor' => $node->uid,
+		'access' => $node->group_access['und'][0]['value']?'private':'public',
+		'title' => $node->title,
+		'description' => _tapashydra_simple_fieldval($node, 'tc_field_description', 'description null value', TRUE),
+		'uid' => $node->tc_field_slug['und'][0]['value'],
+	);
+
+	if (isset($extra_key)) {
+		$data[$extra_key] = $extra_value;
+	}
+
+	return $data;
+}
+
+
+/**
+ * Internal. Gets the thumbnail file info for the POST call.
+ *
+ * @param $node: The project or collection node with the thumbnail to extract.
+ *
+ * @return array: The file info as needed by the POST api call.
+ */
+
+function tapashydra_projcol_thumb($node) {
+
+
+}
+
+

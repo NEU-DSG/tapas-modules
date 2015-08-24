@@ -1,24 +1,24 @@
 <?php
 
+/**
+ * @file
+ *
+ * The Tapasrecord module handles the upload and display of TEI records.
+ *
+ * TODO: make TEI field mandatory for NEW records, but not UPDATED.
+ */
+
 //define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
 define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
 
 
-define("TAPASRECORD_HYDRA_POST_URL", "https://rails_api.localhost:8080/files");
-
-define("TAPASRECORD_HYDRA_BASE_GET", "https://rails_api.localhost:8080/");
-define("TAPASRECORD_HYDRA_GET_RAW", "tei");
-define("TAPASRECORD_HYDRA_GET_BP", "teibp");
-define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
 
 // TODO: Make TEI field mandatory for new (NOT updated) TAPAS Record nodes
 
-/**
- * @file
- * tapasrecord.module TAPAS TEI upload and transformation
- * 
- * defines tapas_record conent type, 
- */
+
+// ====================================================================================
+// Functions implementing hooks
+// ====================================================================================
 
 /**
  * implements hook_node_info()
@@ -140,30 +140,24 @@ function tapasrecord_node_delete($node) {
 			break;
 	}
 }
+
+// ====================================================================================
+// Internal helper functions
+// ====================================================================================
+
 /**
  * Internal. Returns the data array for Hydra post new.
  */
 
 function _tapasrecord_data($node) {
-//collection_dids : An array of Drupal IDs that this CoreFile should be associated with. To update this, pass in a new array that will entirely replace the previous collection relationships.
-
-//tei : The literal TEI file associated with this record. Reading interface versions of this file will be generated.
-
-//display_author : A sanitized version of the principle author of this document's name.
-
-//display_contributors : An array listing sanitized contributor names.
-
-//display_date : A date. For any TEI record there are several dates associated with it that may be considered significant, but for our 1.0 launch we're just asking for a single date that will be used everywhere. Must be in the ISO-8601 format.
-
-//support_files : A .zip file containing all of the files associated with this TEI record. When support file updates are required, every support file still attached to this TEI record must be sent in this zip; preexisting support type files are purged before adding new ones. Currently the only supported files are page images that are embedded in the TEI document and the thumbnail associated with this record. The expected zip file structure is this:
 
 	return array(
-		'collection_dids' => '',
-		'tei' => '',
+		'collection_dids' => _tapasrecord_get_collections_for_hydra($node),
+		'tei' => _tapasrecord_get_tei_for_hydra($node),
 		'display_author' => '',
 		'display_contributors' => '',
 		'display_date' => '',
-		'support_files' => NULL,
+		'support_files' => _tapasrecord_get_support_files_for_hydra($node),
 	);
 
 }	
@@ -171,6 +165,8 @@ function _tapasrecord_data($node) {
 
 /**
  * Internal. Makes the POST api calls to Hydra.
+ *
+ * TODO: redundant with tapascollection. Combine somehow.
  */
 function _tapasrecord_post($base, $data) {
 	$query = http_build_query($data, '', '&amp;');
@@ -181,5 +177,54 @@ function _tapasrecord_post($base, $data) {
 	curl_exec($ch);
 	curl_close($ch);
 
+}
+
+/**
+ * Internal. Gets the TEI file as needed by hydra.
+ */
+
+function _tapasrecord_get_tei_for_hydra($node) {
+
+	return NULL;
+}
+
+/**
+ * Internal. Get list of collection slugs for hydra.
+ */
+
+function _tapasrecord_get_collections_for_hydra($node) {
+
+
+	return NULL;
+}
+
+
+/**
+ * Internal. Get zipped support files for hydra.
+ */
+
+function _tapasrecord_get_support_files_for_hydra($node) {
+
+	return NULL;
+
+}
+
+/**
+ * Internal. Get value of field.
+ *
+ * TODO: redundant with tapascollection. Combine somehow.
+ */
+
+function _tapasrecord_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
+
+	$array = field_get_items('node', $node, $field_name);
+
+	if ($array == FALSE) {
+		return $val_if_unset;
+	}
+	else {
+		//TODO: Only works for text-like fields. Image fields don't have ['value'] and need different treatment.
+		return $array[0]['value'];
+	}
 }
 
