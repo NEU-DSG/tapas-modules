@@ -140,8 +140,8 @@ function tapascollection_node_insert($node) {
 				TAPASCOLLECTION_HYDRA_PROJECT_URL, $data);
 			break;
 		case 'tapascollection_collection':
-			$data = _tapascollection_projcol_data($node, 'project_did', '');
-			//$data['project_did'] = ''; // TODO: First, make a text-string field for this, to make this easier.
+			$data = _tapascollection_projcol_data($node, 'project_did', 
+				_tapascollection_fieldval($node, 'tc_field_slug'));
 			$result = _tapascollection_post(
 				TAPASCOLLECTION_HYDRA_COLLECTION_URL, $data);
 			break;
@@ -169,6 +169,7 @@ function tapascollection_node_update($node) {
 				_tapascollection_projcol_data($node, 'members', $members));
 			break;
 		case 'tapascollection_collection':
+			$projslug = 
 			$result = _tapascollection_post(
 				TAPASCOLLECTION_HYDRA_COLLECTION_URL,
 				_tapascollection_projcol_data($node));
