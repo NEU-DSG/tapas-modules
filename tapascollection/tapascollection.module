@@ -1,9 +1,15 @@
 <?php
+
 /**
  * @file
  * Code for the tapascollection module
+ *
+ * TODO: Prevent edit from changing the slug.
  */
 
+// ====================================================================================
+// Functions implementing hooks
+// ====================================================================================
 
 /**
  * Implements hook_node_info().
@@ -48,4 +54,90 @@ function tapascollection_form($node, $form_state) {
   return node_content_form($node, $form_state);
 }
 
+
+/**
+ * Implements hook_node_insert()
+ */
+
+function tapascollection_node_insert($node) {
+	//global $user;
+
+	switch($node->type) {
+		case 'tapascollection_project':
+			$result = tapashydra_post_project($node, $node->uid);
+			break;
+		case 'tapascollection_collection':
+			$result = tapashydra_post_collection($node);
+			break;
+	}
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
+	}
+}
+
+/** 
+ * Implements hook_node_update().
+ */
+
+function tapascollection_node_update($node) {
+
+	switch($node->type) {
+		case 'tapascollection_project':
+			$members = _tapascollection_get_group_members();
+			$result = tapashydra_post_projec($node, $members);
+			break;
+		case 'tapascollection_collection':
+			$result = tapashydra_post_collection($node);
+			break;
+	}
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
+	}
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+
+function tapascollection_node_delete($node) {
+	$result = "";
+	switch($node->type) {
+		case 'tapascollection_project':
+			$result = tapashydra_delete_project($node);
+			break;
+		case 'tapascollection_collection':
+			$result = tapashydra_delete_collection($node);
+			break;
+	}
+	if ($result) {
+		drupal_set_message("Hydra return code: $result");
+	}
+	else {
+		drupal_set_message("No hydra return code.");
+	}
+}
+
+
+// ====================================================================================
+// Internal Helper Functions
+// ====================================================================================
+
+/**
+ * Internal. Returns a list of user-ids that are a member of the given project or collection.
+ *
+ * @param $node: The project or collection node
+ * @return array: A list of user-ids of users who are members of the group represented by $node
+ */
+
+function _tapascollection_get_group_members($node) {
+	//return og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+	return $node->uid;
+
+}
 
