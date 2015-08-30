@@ -116,19 +116,16 @@ function _tapashydra_post_hydra($base, $data, $files) {
 	
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
-		CURLOPT_RETURNTRANSFER => TRUE,		// Needed for CULROPT_HEADER_OUT
+		//CURLOPT_RETURNTRANSFER => TRUE,		// Needed for CULROPT_HEADER_OUT
 		CURLOPT_POSTFIELDS => $data_string,
 		CURLOPT_HTTPHEADER => $header,
-		CURLOPT_VERBOSE => TRUE,
-		CURLINFO_HEADER_OUT => TRUE,       // So I can see the hdeader I sent using curl_getinfo().
-		CURLOPT_HEADER => TRUE,						// Includes the header of the response in the return value.
-		//CURLOPT_FRESH_CONNECT => TRUE,			// I admit, I'm grasping at straws here.
-		//CURLOPT_SSL_VERIFYPEER => FALSE,	// even more so with this one.
-		//CURLOPT_HTTPAUTH => CURLAUTH_ANY,
+		//CURLOPT_VERBOSE => TRUE,
+		//CURLINFO_HEADER_OUT => TRUE,       // So I can see the hdeader I sent using curl_getinfo().
+		//CURLOPT_HEADER => TRUE,						// Includes the header of the response in the return value.
 	);
 
 	$ch = curl_init("$base/" . $data['uid']);
-	drupal_set_message("Initiated URL is: $base/" . $data['uid']);
+	//drupal_set_message("Initiated URL is: $base/" . $data['uid']);
 	$success = curl_setopt_array($ch, $curl_options);
 	if ($success) {
 		drupal_set_message("The options were set without error.");
@@ -141,35 +138,15 @@ function _tapashydra_post_hydra($base, $data, $files) {
 	$return_header = substr($result, 0, $header_size);
 	$body = substr($result, $header_size);
 
-	drupal_set_message("### Header ### " . $return_header);
-	drupal_set_message("### Body ### " . $body);
+	//drupal_set_message("### Header ### " . $return_header);
+	//drupal_set_message("### Body ### " . $body);
 
-	drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
+	//drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
 	//drupal_set_message("Hydra result: $result");
 	//drupal_set_message(curl_getinfo($ch, CURLINFO_HEADER_OUT ));
-	drupal_set_message("### _POST ### " . http_build_query($_POST, '', ' | '));
+	//drupal_set_message("### _POST ### " . http_build_query($_POST, '', ' | '));
 	curl_close($ch);
 	return $result;
-
-
-	//$ch = curl_init("$base/" . $data['uid']);
-	//drupal_set_message("Initiated URL is: $base/" . $data['uid']);
-	//curl_setopt($ch, CURLOPT_POST, TRUE);
-	//curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-	//curl_setopt($ch, CURLOPT_POSTFIELDS, $data); 
-	//drupal_set_message("The data array is: " . http_build_query($data, '', ' | '));
-	//curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-	//curl_setopt($ch, CURLINFO_HEADER_OUT, true); 
-	//curl_setopt($ch, CURLOPT_HEADER, TRUE);
-
-	//drupal_set_message(".");
-	//$result = curl_exec($ch);
-	//drupal_set_message(".");
-	//drupal_set_message("What was sent:");
-	//drupal_set_message(curl_getinfo($ch, CURLINFO_HEADER_OUT ));
-	//curl_close($ch);
-	
-	//return $result;
 }
 
 // CURLOPT_POSTFIELDS **
