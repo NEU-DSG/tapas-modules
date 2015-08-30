@@ -48,7 +48,7 @@ function tapashydra_post_project($node, $members) {
 
 function tapashydra_post_collection($node) {
 	drupal_set_message("entering tapashydra_post_collection");
-	$proj_slug = _tapashydra_simple_fieldvalue($node, 'tc_field_slug');
+	$proj_slug = _tapashydra_simple_fieldval($node, 'tc_field_slug');
 	$data = _tapashydra_projcol_data($node, 'project_did', $proj_slug);
 	$files = _tapashydra_projcol_thumb($node);
 
