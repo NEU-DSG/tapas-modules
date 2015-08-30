@@ -68,6 +68,39 @@ function _tapasrecord_extract_tei_metadata($teiDOM) {
 	return "The metadata extraction function returned successfully.";
 }
 
+/**
+ * Create the TFC from the uploaded TEI file.
+ *
+ * @param $teiDOM: the DOMDocument object containing the TEI file to transform
+ * @param $file: the Drupal file object, so we can get the non-temp name.
+ *
+ * @return: an array of strings containing any errors found (an empty array if none)
+ */
+
+function _tapasrecord_run_transform($teiDOM, $file) {
+
+	$transform_path = drupal_get_path('module', 'tapasrecord') . '/' . TAPAS_TFC_TRANSFORM_FILENAME;
+	$errors = array();
+	$tfc_result = tapasrecord_apply_stylesheet($transform_path, $teiDOM, $errors);
+
+	if ($errors || !$tfc_result) {
+		$errors[] = TAPASRECORD_ERROR_MESSAGE_UNKNWON;
+		return $errors;
+	}
+
+	$basename = preg_replace('/\.[^.]+$/','',$file->filename);
+	$tfc_saveloc = _tapasrecord_get_file_upload_location() . '/' . $basename . "_TFC.xml";
+
+	file_unmanaged_save_data($tfc_result, $tfc_saveloc, FILE_EXISTS_REPLACE);
+
+	return $errors;
+
+}
+
+
+
+
+
 // ----------------------------------------------
 // XSLT Helpers
 // ----------------------------------------------

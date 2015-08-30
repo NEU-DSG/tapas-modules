@@ -10,7 +10,6 @@ function _tapascollection_field_bases() {
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text_long',
-			'default_value' => '',
 		),
 		'image' => array(
 			'field_name' => $prefix . '_image',
