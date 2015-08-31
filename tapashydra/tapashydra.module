@@ -34,9 +34,9 @@ define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
 function tapashydra_post_project($node, $members) {
 	drupal_set_message("entering tapashydra_post_project");
 	$data = _tapashydra_projcol_data($node, 'members', $members);
-	$files = _tapashydra_projcol_thumb($node);
+	//$files = _tapashydra_projcol_thumb($node);
 
-	return _tapashydra_post_hydra(TAPASHYDRA_POST_PROJECT_URL, $data, $files);
+	return _tapashydra_post_hydra(TAPASHYDRA_POST_PROJECT_URL, $data); //, $files);
 }
 
 /**
@@ -48,11 +48,11 @@ function tapashydra_post_project($node, $members) {
 
 function tapashydra_post_collection($node) {
 	drupal_set_message("entering tapashydra_post_collection");
-	$proj_slug = _tapashydra_simple_fieldval($node, 'tc_field_slug');
+	$proj_slug = _tapashydra_simple_fieldvale($node, 'tc_field_slug');
 	$data = _tapashydra_projcol_data($node, 'project_did', $proj_slug);
-	$files = _tapashydra_projcol_thumb($node);
+	//$files = _tapashydra_projcol_thumb($node);
 
-	return _tapashydra_post_hydra(TAPASHYDRA_POST_COLLECTION_URL, $data, $files);
+	return _tapashydra_post_hydra(TAPASHYDRA_POST_COLLECTION_URL, $data); //, $files);
 }
 
 
@@ -104,11 +104,10 @@ function tapashydra_delete_collection($node) {
  * @returns: The Hydra return code, if any.
  */
 
-function _tapashydra_post_hydra($base, $data, $files) {
+function _tapashydra_post_hydra($base, $data) { //, $files) {
 
 	$header = array(
 		'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
-		//'Content-Type: application/json' //; charset=utf-8'
 		'Content-Type: application/x-www-form-urlencoded',
 	);
 
@@ -116,7 +115,7 @@ function _tapashydra_post_hydra($base, $data, $files) {
 	
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
-		//CURLOPT_RETURNTRANSFER => TRUE,		// Needed for CULROPT_HEADER_OUT
+		CURLOPT_RETURNTRANSFER => TRUE,		// Needed for CULROPT_HEADER_OUT
 		CURLOPT_POSTFIELDS => $data_string,
 		CURLOPT_HTTPHEADER => $header,
 		//CURLOPT_VERBOSE => TRUE,
@@ -125,7 +124,7 @@ function _tapashydra_post_hydra($base, $data, $files) {
 	);
 
 	$ch = curl_init("$base/" . $data['uid']);
-	//drupal_set_message("Initiated URL is: $base/" . $data['uid']);
+	drupal_set_message("Initiated URL is: $base/" . $data['uid']);
 	$success = curl_setopt_array($ch, $curl_options);
 	if ($success) {
 		drupal_set_message("The options were set without error.");
@@ -140,20 +139,12 @@ function _tapashydra_post_hydra($base, $data, $files) {
 
 	//drupal_set_message("### Header ### " . $return_header);
 	//drupal_set_message("### Body ### " . $body);
-
 	//drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
-	//drupal_set_message("Hydra result: $result");
-	//drupal_set_message(curl_getinfo($ch, CURLINFO_HEADER_OUT ));
 	//drupal_set_message("### _POST ### " . http_build_query($_POST, '', ' | '));
 	curl_close($ch);
 	return $result;
 }
 
-// CURLOPT_POSTFIELDS **
-// CURLOPT_REFERRER
-// CURLOPT_USERAGENT
-// CURLOPT_HTTPHEADER **
-// CURLOPT_HEADERFUNCTION
 /**
  * Internal. Performs a Hydra project or collection DELETE api command.
  *
@@ -170,9 +161,15 @@ function tapashydra_delete($base_url, $node) {
 	
 	$slug = $node->tc_field_slug['und'][0]['value'];
 
-	$ch = curl_init("$base_url$slug");
-	curl_setopt($ch, CULROPT_CUSTOMREQUEST, 'DELETE');
+	$header = array(
+		'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
+		'Content-Type: application/x-www-form-urlencoded',
+	);
+	$ch = curl_init("$base_url/$slug");
+	drupal_set_message("Sending a delete to $base_url/$slug");
+	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
 	$result = curl_exec($ch);
 	curl_close($ch);
 	
@@ -212,6 +209,27 @@ function _tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delt
 
 
 /**
+ * Given a node and a field-name, gets the filestring for posting the file in that field.
+ *
+ * Note: this way of passing a file is depricated in newer versions of PHP, but we have
+ *    an older version that doesn't have the new, object-based way available yet.
+ */
+function _tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
+
+	drupal_set_message("Entering tapashydra_filestring for $field_name");
+
+	$array = field_get_items('node', $node, $field_name);
+
+	if ($array) {
+		$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
+		return '@' . drupal_realpath($thumb_file->uri);
+	} else {
+		return $val_if_unset;
+	}
+
+}	
+
+/**
  * Internal. Returns an array for proj and collection creation/updates
  *
  * This function returns an data array with the information that is common
@@ -233,11 +251,13 @@ function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
 	$access = $node->group_access['und'][0]['value']?'private':'public';
 	$title = $node->title;
 	$description = _tapashydra_simple_fieldval($node, 'tc_field_description');
+	//$thumbnail = _tapashydra_projcol_thumb($node);
+	$thumbnail = _tapashydra_filestring($node, 'tc_field_image');
 
-	drupal_set_message("DEPOSITOR: $depositor");
-	drupal_set_message("ACCESS: $access");
-	drupal_set_message("TITLE: $title");
-	drupal_set_message("DESCRIPTION: $description");
+	//drupal_set_message("DEPOSITOR: $depositor");
+	//drupal_set_message("ACCESS: $access");
+	//drupal_set_message("TITLE: $title");
+	//drupal_set_message("DESCRIPTION: $description");
 
 
 
@@ -248,6 +268,10 @@ function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
 		'description' => $description,
 		'uid' =>  $uid, 
 	);
+
+	if ($thumbnail) {
+		$data['thumbnail'] = $thumbnail;
+	}
 
 	if (isset($extra_key)) {
 		$data[$extra_key] = "$extra_value";
@@ -265,31 +289,31 @@ function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
  * @return array: The file info as needed by the POST api call.
  */
 
-function _tapashydra_projcol_thumb($node) {
-	drupal_set_message("entering tapashydra_projcol_thumb");
+//function _tapashydra_projcol_thumb($node) {
+	//drupal_set_message("entering tapashydra_projcol_thumb");
 
 
-	if (!isset($node->tc_field_image['und'][0])) {
-		drupal_set_message("There is no thumbnail.");
-		return NULL;
-	}
+	//if (!isset($node->tc_field_image['und'][0])) {
+		//drupal_set_message("There is no thumbnail.");
+		//return NULL;
+	//}
 
-	$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
-	$thumb_uri = $thumb_file->uri;
+	//$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
+	//$thumb_uri = $thumb_file->uri;
 
-	$files = array(
-		array(
-			'name' => 'thumbnail',
-			'type' => file_get_mimetype($thumb_uri),
-			'file' => drupal_realpath($thumb_uri),
-		)
-	);
+	//$files = array(
+		//array(
+			//'name' => 'thumbnail',
+			//'type' => file_get_mimetype($thumb_uri),
+			//'file' => drupal_realpath($thumb_uri),
+		//)
+	//);
 
-	drupal_set_message("Returning this files array: " . implode($files[0], '|'));
+	//drupal_set_message("Returning this files array: " . implode($files[0], '|'));
 
-	return $files;
+	//return $files;
 
 
-}
+//}
 
 
