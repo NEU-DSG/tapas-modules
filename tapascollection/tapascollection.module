@@ -5,9 +5,9 @@
  * Code for the tapascollection module
  *
  * TODO: Prevent edit from changing the slug.
+ * TODO: Enforce slug uniqueness and character limitations
  */
 
-//include_once "../tapashydra/tapashydra.module";
 
 // ====================================================================================
 // Functions implementing hooks
@@ -66,10 +66,13 @@ function tapascollection_node_insert($node) {
 
 	switch($node->type) {
 		case 'tapascollection_project':
-			$result = tapashydra_post_project($node, $node->uid);
+			$data = _tapascollection_post_data($node, 'members', $node->uid);
+			$result = tapashydra_post_project($node, $data);
 			break;
 		case 'tapascollection_collection':
-			$result = tapashydra_post_collection($node);
+			$parent_slug = _tapashydra_simpleval($node, 'tc_field_slug');
+			$data = _tapascollection_post_data($node, 'proj_did', $parent_slug);
+			$result = tapashydra_post_project($node, $data);
 			break;
 	}
 	if (isset($result)) {
@@ -89,10 +92,13 @@ function tapascollection_node_update($node) {
 	switch($node->type) {
 		case 'tapascollection_project':
 			$members = _tapascollection_get_group_members();
-			$result = tapashydra_post_projec($node, $members);
+			$data = _tapascollection_post_data($node, 'members', $members);
+			$result = tapashydra_post_project($node, $data);
 			break;
 		case 'tapascollection_collection':
-			$result = tapashydra_post_collection($node);
+			$parent_slug = _tapashydra_simpleval($node, 'tc_field_slug');
+			$data = _tapascollection_post_data($node, 'proj_did', $parent_slug);
+			$result = tapashydra_post_project($node, $data);
 			break;
 	}
 	if (isset($result)) {
@@ -102,6 +108,7 @@ function tapascollection_node_update($node) {
 		drupal_set_message("No hydra return vaue.");
 	}
 }
+
 
 /**
  * Implements hook_node_delete().
@@ -118,14 +125,7 @@ function tapascollection_node_delete($node) {
 			tapashydra_delete_hydrarec(TAPASHYDRA_POST_COLLECTION_URL, $node);
 			break;
 	}
-	//switch($node->type) {
-		//case 'tapascollection_project':
-			//$result = tapashydra_delete_project($node);
-			//break;
-		//case 'tapascollection_collection':
-			//$result = tapashydra_delete_collection($node);
-			//break;
-	//}
+
 	if ($result) {
 		drupal_set_message("Hydra return code: $result");
 	}
@@ -152,3 +152,43 @@ function _tapascollection_get_group_members($node) {
 
 }
 
+/**
+ * Internal. Builds $data string for tapashydra POST calls.
+ * @param $node: The Drupal node to post.
+ * @param $extra_key: key specific to collection or project, not both
+ * @param $extra_value: the value associated with said key.
+ *
+ * @return: Array. The 
+ *
+ * In practice, the extra_key/extra_value is for passing a member list
+ *   when a project is being added or updated, and for posting the 
+ *   parent project's slug when a collection is being updated.
+ */
+
+function _tapascollection_post_data($node, $extra_key, $extra_value) {
+
+	$uid = $node->tc_field_slug['und'][0]['value'];
+	$depositor = $node->uid;
+	$access = $node->group_access['und'][0]['value']?'private':'public';
+	$title = $node->title;
+	$description = _tapashydra_simple_fieldval($node, 'tc_field_description');
+	$thumbnail = _tapashydra_filestring($node, 'tc_field_image');
+
+	$data = array(
+		'depositor' => $depositor,
+		'access' =>  $access,
+		'title' =>  $title,
+		'description' => $description,
+		'uid' =>  $uid, 
+	);
+
+	if ($thumbnail) {
+		$data['thumbnail'] = $thumbnail;
+	}
+
+	if (isset($extra_key)) {
+		$data[$extra_key] = "$extra_value";
+	}
+
+	return $data;
+}

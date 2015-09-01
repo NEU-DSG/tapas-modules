@@ -34,9 +34,9 @@ define("TAPASRECORD_INCLUDE_CURL_DEBUG", TRUE);
  * @return string: The Hydra return code, if any.
  */
 
-function tapashydra_post_project($node, $members) {
+function tapashydra_post_project($node, $data) {
 
-	$data = _tapashydra_projcol_data($node, 'members', $members);
+	//$data = _tapashydra_projcol_data($node, 'members', $members);
 	$url= TAPASHYDRA_POST_PROJECT_URL . "/" . $data['uid'];
 
 	$curl_options = array(
@@ -55,10 +55,10 @@ function tapashydra_post_project($node, $members) {
  * @return string: The Hydra return code, if any.
  */
 
-function tapashydra_post_collection($node) {
+function tapashydra_post_collection($node, $data) {
 
 
-	$data = _tapashydra_projcol_data($node, 'project_did', $proj_slug);
+	//$data = _tapashydra_projcol_data($node, 'project_did', $proj_slug);
 	$url= TAPASHUDRA_POST_COLLECTION_URL . '/' . $data['uid'];
 	$proj_slug = _tapashydra_simple_fieldvale($node, 'tc_field_slug');
 
@@ -244,47 +244,4 @@ function _tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) 
 	}
 
 }	
-
-/**
- * Internal. Returns an array for proj and collection creation/updates
- *
- * This function returns an data array with the information that is common
- *   both to creating or updating a project, and to creating or updating a
- *   collection.
- *
- * @param $node: The project or collection node to add or update
- * @param $extra_key: Optional. The key for an additional value to add to the array.
- * @param $extra_value: Optional. The value of an additional item for the array.
- * @return array: common data elements.
- */
-
-function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
-
-	$uid = $node->tc_field_slug['und'][0]['value'];
-	
-	$depositor = $node->uid;
-	$access = $node->group_access['und'][0]['value']?'private':'public';
-	$title = $node->title;
-	$description = _tapashydra_simple_fieldval($node, 'tc_field_description');
-	$thumbnail = _tapashydra_filestring($node, 'tc_field_image');
-
-	$data = array(
-		'depositor' => $depositor,
-		'access' =>  $access,
-		'title' =>  $title,
-		'description' => $description,
-		'uid' =>  $uid, 
-	);
-
-	if ($thumbnail) {
-		$data['thumbnail'] = $thumbnail;
-	}
-
-	if (isset($extra_key)) {
-		$data[$extra_key] = "$extra_value";
-	}
-
-	return $data;
-}
-
 
