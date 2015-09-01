@@ -39,14 +39,10 @@ function tapashydra_post_project($node, $members) {
 	$data = _tapashydra_projcol_data($node, 'members', $members);
 	$url= TAPASHYDRA_POST_PROJECT_URL . "/" . $data['uid'];
 
-	//drupal_set_message("##Query string: " . http_build_query($data, '', ' | '));
-	
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
-		CURLOPT_POSTFIELDS => http_build_query($data, '', '&amp;'),
+		CURLOPT_POSTFIELDS => $data //http_build_query($data, '', '&amp;'),
 	);
-
-	//drupal_set_message("## Post options before curl_call: " . http_build_query($curl_options, '', ' | '));
 
 	$result = _tapashydra_curl_call($url, $curl_options);
 	return $result;
@@ -66,11 +62,11 @@ function tapashydra_post_collection($node) {
 	$url= TAPASHUDRA_POST_COLLECTION_URL . '/' . $data['uid'];
 	$proj_slug = _tapashydra_simple_fieldvale($node, 'tc_field_slug');
 
-	//drupal_set_message("##Query string: " . http_build_query($data, '', '&amp;'));
+	drupal_set_message("##Query data: " . http_build_query($data, '', '|'));
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
-		CURLOPT_POSTFIELDS => http_build_query($data, '', '&amp;'),
+		CURLOPT_POSTFIELDS => $data //http_build_query($data, '', '&amp;'),
 	);
 
 	$result = _tapashydra_curl_call($data['uid'], $curl_options);
@@ -127,7 +123,6 @@ function _tapashydra_curl_debug_opts() {
 		$result = array();
 	}
 
-	//drupal_set_message("##debug_opts routine: " . http_build_query($result, '', ' | '));
 	return $result;
 
 }
@@ -149,12 +144,7 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 
 	$header = array(
 		'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
-		'Content-Type: application/x-www-form-urlencoded',
 	);
-
-
-	//drupal_set_message("##URL: $url");
-
 
 	$common_opts = array(
 		CURLOPT_URL => $url,
@@ -165,8 +155,6 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 	// Debugging note: if array_merge is used, the keys change to 0, 1, 2, etc, and
 	// everything breaks.
 	$curlopt = $additional_options + _tapashydra_curl_debug_opts() + $common_opts;
-
-	//drupal_set_message("##curlopt_array (post-merge) " . http_build_query($curlopt, '', ' | '));
 
 	$ch = curl_init($url);
 
@@ -179,8 +167,6 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 	}
 
 	$result = curl_exec($ch);
-
-	//drupal_set_message("## raw result: $result");
 
 	if (TAPASRECORD_INCLUDE_CURL_DEBUG) {
 		_tapashydra_curl_messages($ch, $result);
