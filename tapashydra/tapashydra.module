@@ -14,18 +14,9 @@ define('TAPASHYDRA_POST_PROJECT_URL', TAPASHYDRA_BASE_API_URL . "/communities");
 define('TAPASHYDRA_POST_COLLECTION_URL', TAPASHYDRA_BASE_API_URL . "/collections");
 define('TAPASHYDRA_POST_TEI_URL', TAPASHYDRA_BASE_API_URL . "/files");
 
-//define('TAPASHYDRA_POST_COLLECTION_URL', 'http://rails_api.localhost:8080/collections');
-//define('TAPASHYDRA_POST_PROJECT_URL', 'http://rails_api.localhost:8080/communities');
-//define('TAPASHYDRA_POST_TEI_URL', 'http://rails_api.localhost:8080/files');
-//define('TAPASHYDRA_GET_BASE_URL', 'http://rails_api.localhost:8080/');
-
 define('TAPASHYDRA_GET_RAW', 'tei');
 define('TAPASHYDRA_GET_BP', 'teibp');
 define('TAPASHYDRA_GET_GENERIC', 'tapas_generic');
-
-//define("TAPASRECORD_HYDRA_GET_RAW", "tei");
-//define("TAPASRECORD_HYDRA_GET_BP", "teibp");
-//define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
 
 define("TAPASRECORD_INCLUDE_CURL_DEBUG", TRUE);
 
@@ -48,14 +39,14 @@ function tapashydra_post_project($node, $members) {
 	$data = _tapashydra_projcol_data($node, 'members', $members);
 	$url= TAPASHYDRA_POST_PROJECT_URL . "/" . $data['uid'];
 
-	drupal_set_message("##Query string: " . http_build_query($data, '', ' | '));
+	//drupal_set_message("##Query string: " . http_build_query($data, '', ' | '));
 	
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
 		CURLOPT_POSTFIELDS => http_build_query($data, '', '&amp;'),
 	);
 
-	drupal_set_message("## Post options before curl_call: " . http_build_query($curl_options, '', ' | '));
+	//drupal_set_message("## Post options before curl_call: " . http_build_query($curl_options, '', ' | '));
 
 	$result = _tapashydra_curl_call($url, $curl_options);
 	return $result;
@@ -75,7 +66,7 @@ function tapashydra_post_collection($node) {
 	$url= TAPASHUDRA_POST_COLLECTION_URL . '/' . $data['uid'];
 	$proj_slug = _tapashydra_simple_fieldvale($node, 'tc_field_slug');
 
-	drupal_set_message("##Query string: " . http_build_query($data, '', '&amp;'));
+	//drupal_set_message("##Query string: " . http_build_query($data, '', '&amp;'));
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
@@ -117,105 +108,7 @@ function tapashydra_delete_hydrarec($base, $node) {
 // Helper functions: Perform the curl HTTP call.
 // ====================================================================================
 
-/**
- * Internal. Makes a POST call to the Hydra API using curl. 
- *
- * The $data parameter contains fields in the format needed by the php call http_build_query, 
- * with an additional entry with an additional entry with the key 'uid', contaning the unique
- * identifier for the record.
- *
- * @param: $base. The Hydra POST URL to use. The slug will be appended to this.
- * @param: $data. The data fields, plus a 'slug' field for the identifier to build the URL.
- * @param: $files. The file fields (for project and collection this is the thumbnail,
- *            if any, while for tapasrecord it is the TEI and optionally any additional files 
- *            zipped up.
- *
- * @returns: The Hydra return code, if any.
- */
 
-//function _tapashydra_post_hydra($base, $data) { //, $files) {
-
-	////$header = array(
-		////'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
-		////'Content-Type: application/x-www-form-urlencoded',
-	////);
-
-	//$data_string = http_build_query($data, '', "&amp;");
-	
-	//$curl_options = array(
-		//CURLOPT_POST => TRUE,
-		////CURLOPT_RETURNTRANSFER => TRUE,		// Needed for CULROPT_HEADER_OUT
-		//CURLOPT_POSTFIELDS => $data_string,
-		////CURLOPT_HTTPHEADER => $header,
-		////CURLOPT_VERBOSE => TRUE,
-		////CURLINFO_HEADER_OUT => TRUE,       // So I can see the hdeader I sent using curl_getinfo().
-		////CURLOPT_HEADER => TRUE,						// Includes the header of the response in the return value.
-	//);
-
-	//$result = _tapashydra_curl_call($data['uid'], $curl_options);
-
-
-	////$ch = curl_init("$base/" . $data['uid']);
-	//////htmlentities($ch, ENT_QUOTES,'ISO-8859-1' );
-	////drupal_set_message("Initiated URL is: $base/" . $data['uid']);
-	////$success = curl_setopt_array($ch, $curl_options);
-	////if ($success) {
-		////drupal_set_message("The options were set without error.");
-	////} else {
-		////drupal_set_message("One or more of the options failed on set.");
-	////}
-	////$result = curl_exec($ch);
-
-	////$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-	////$return_header = substr($result, 0, $header_size);
-	////$body = substr($result, $header_size);
-
-	////drupal_set_message("### Header ### " . $return_header);
-	////drupal_set_message("### Body ### " . $body);
-	////drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
-	////drupal_set_message("### Header Out ### " . curl_getinfo($ch, CURLINFO_HEADER_OUT));
-	////curl_close($ch);
-	////return $result;
-//}
-
-/**
- * Internal. Performs a Hydra project or collection DELETE api command.
- *
- * Extracts the slug from $node, appends it to the end of $base_url, and sends a DELETE http
- *   request to the resulting URL.
- *
- * @param $base_url: The API URL (without the slug)
- * @param $node: the project or collection node to be deleted.
- * @return string: The return code returned by the API.
- */
-
-//function tapashydra_delete($base_url, $node) {
-
-  //$url_suffix = $node->tc_field_slug['und'][0]['value']
-
-	//$curlopts = array(
-		//'CURLOPT_CUSTOMREQUEST', 'DELETE');
-
-	//return _tapashydra_curl_call($url_suffix, $curlopts);
-
-
-
-	//$curlopts = _tapashydra_base_curl_options(
-		//$node->tc_field_slug['und'][0]['value']);
-
-	//$ch = curl_init();
-
-
-	////$ch = curl_init("$base_url/$slug");
-	////drupal_set_message("Sending a delete to $base_url/$slug");
-	////curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-	////curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-	////curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-	////$result = curl_exec($ch);
-	////curl_close($ch);
-	
-	//return array($result);
-//}
 
 /**
  * Provdes an array of curloptions used for debugging.
@@ -234,7 +127,7 @@ function _tapashydra_curl_debug_opts() {
 		$result = array();
 	}
 
-	drupal_set_message("##debug_opts routine: " . http_build_query($result, '', ' | '));
+	//drupal_set_message("##debug_opts routine: " . http_build_query($result, '', ' | '));
 	return $result;
 
 }
@@ -260,7 +153,7 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 	);
 
 
-	drupal_set_message("##URL: $url");
+	//drupal_set_message("##URL: $url");
 
 
 	$common_opts = array(
@@ -269,9 +162,11 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 	);
 
 
+	// Debugging note: if array_merge is used, the keys change to 0, 1, 2, etc, and
+	// everything breaks.
 	$curlopt = $additional_options + _tapashydra_curl_debug_opts() + $common_opts;
 
-	drupal_set_message("##curlopt_array (post-merge) " . http_build_query($curlopt, '', ' | '));
+	//drupal_set_message("##curlopt_array (post-merge) " . http_build_query($curlopt, '', ' | '));
 
 	$ch = curl_init($url);
 
@@ -285,7 +180,7 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 
 	$result = curl_exec($ch);
 
-	drupal_set_message("## raw result: $result");
+	//drupal_set_message("## raw result: $result");
 
 	if (TAPASRECORD_INCLUDE_CURL_DEBUG) {
 		_tapashydra_curl_messages($ch, $result);
@@ -309,7 +204,6 @@ function _tapashydra_curl_messages($ch, $result) {
 
 		drupal_set_message("### Header ### " . $return_header);
 		drupal_set_message("### Body ### " . $body);
-		//drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
 		drupal_set_message("### Header Out ### " . curl_getinfo($ch, CURLINFO_HEADER_OUT));
 
 }
@@ -354,8 +248,6 @@ function _tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delt
  */
 function _tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
 
-	drupal_set_message("Entering tapashydra_filestring for $field_name");
-
 	$array = field_get_items('node', $node, $field_name);
 
 	if ($array) {
@@ -381,7 +273,6 @@ function _tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) 
  */
 
 function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
-	drupal_set_message("entering tapashydra_projcol_data");
 
 	$uid = $node->tc_field_slug['und'][0]['value'];
 	
@@ -389,15 +280,7 @@ function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
 	$access = $node->group_access['und'][0]['value']?'private':'public';
 	$title = $node->title;
 	$description = _tapashydra_simple_fieldval($node, 'tc_field_description');
-	//$thumbnail = _tapashydra_projcol_thumb($node);
 	$thumbnail = _tapashydra_filestring($node, 'tc_field_image');
-
-	//drupal_set_message("DEPOSITOR: $depositor");
-	//drupal_set_message("ACCESS: $access");
-	//drupal_set_message("TITLE: $title");
-	//drupal_set_message("DESCRIPTION: $description");
-
-
 
 	$data = array(
 		'depositor' => $depositor,
@@ -417,41 +300,5 @@ function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
 
 	return $data;
 }
-
-
-/**
- * Internal. Gets the thumbnail file info for the POST call.
- *
- * @param $node: The project or collection node with the thumbnail to extract.
- *
- * @return array: The file info as needed by the POST api call.
- */
-
-//function _tapashydra_projcol_thumb($node) {
-	//drupal_set_message("entering tapashydra_projcol_thumb");
-
-
-	//if (!isset($node->tc_field_image['und'][0])) {
-		//drupal_set_message("There is no thumbnail.");
-		//return NULL;
-	//}
-
-	//$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
-	//$thumb_uri = $thumb_file->uri;
-
-	//$files = array(
-		//array(
-			//'name' => 'thumbnail',
-			//'type' => file_get_mimetype($thumb_uri),
-			//'file' => drupal_realpath($thumb_uri),
-		//)
-	//);
-
-	//drupal_set_message("Returning this files array: " . implode($files[0], '|'));
-
-	//return $files;
-
-
-//}
 
 
