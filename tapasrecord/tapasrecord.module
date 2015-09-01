@@ -1,35 +1,5 @@
 <?php
 
-define("TAPAS_VALIDATION_XSLT_SUBDIRECTORY", "/validate/");
-define("TAPAS_SAVE_FILE_ROOT_DIRECTORY", "public://tapasrecord");
-define("TAPAS_TFC_TRANSFORM_FILENAME", "transform/tfc_transform.xsl");
-
-define("TAPAS_ERROR_KNOWN_FILE_ERROR", 
-	t("We found problems with the tei file which prevent us from being able " .
-	"to load it. Please double-check the file, or contact us with any questions."));
-
-define("TAPAS_ERROR_UNSUPPORTED_ERROR", 
-	t("We were unable to process the tei file. This may be due to a problem in " .
-	"the file, or it may be that while the tei is valid, we are not yet equipped to deal with all the elements. If " .
-	"you are confident your file is valid, please open a support ticket, to allow us to improve our system."));
-
-define("TAPAS_ERROR_OUR_END", 
-	t("There appears to be an error at our end. Please open a support ticket, " .
-	"copy-and-pasting all error messages, and we'll fix it as soon as possible."));
-
-define("TAPAS_ERROR_UNKNOWN", 
-	t("An unknown error occured. If you are confident that the tei file you are " .
-	"uploading is valid, please open a support ticket so that we can figure out what happened."));
-
-// TODO: Use private file system rather than public
-// TODO: Make TEI field mandatory for new (NOT updated) TAPAS Record nodes
-// TODO: REmove the TFC field, since we don't need that to be a field.
-// TODO: Handle TEI upload name collisions
-// TODO: When there is a failed upload attempt, clear out errors from screen before next
-//       upload attempt, to prevent confusion.
-// TODO: Fix XML-prefix error warning to say this on it's own won't prevent upload
-// TODO: Change known errors that DO prevent upload from warnings back into errors.
-
 /**
  * @file
  * tapasrecord.module TAPAS TEI upload and transformation
@@ -37,6 +7,11 @@ define("TAPAS_ERROR_UNKNOWN",
  * defines tapas_record conent type, performs
  * TEI upload and validation, calls TFC transform.
  */
+
+
+// ====================================================================================
+// Functions Implementing Hooks
+// ====================================================================================
 
 /**
  * implements hook_node_info()
@@ -74,6 +49,79 @@ function tapasrecordnode_form($node, $form_state) {
   return node_content_form($node, $form_state);
 }
 
+
+/**
+ * implements hook_node_insert().
+ */
+
+function tapasrecordnode_node_insert($node) {
+/*On CREATE of a new TEI document, the following fields are required: collection_dids, tei, depositor, and file_types.*/
+
+//On UPDATE no fields are required and the following fields are forbidden: depositor.
+
+//The http fields that this endpoint expects are:
+
+//collection_dids : An array of Drupal IDs that this CoreFile should be associated with. To update this, pass in a new array that will entirely replace the previous collection relationships.
+//tei : The literal TEI file associated with this record. Reading interface versions of this file will be generated.
+//display_author : A sanitized version of the principle author of this document's name.
+//display_contributors : An array listing sanitized contributor names.
+//display_date : A date. For any TEI record there are several dates associated with it that may be considered significant, but for our 1.0 launch we're just asking for a single date that will be used everywhere. Must be in the ISO-8601 format.
+/*support_files : A .zip file containing all of the files associated with this TEI record. When support file updates are required, every support file still attached to this TEI record must be sent in this zip; preexisting support type files are purged before adding new ones. Currently the only supported files are page images that are embedded in the TEI document and the thumbnail associated with this record. The expected zip file structure is this:*/
+
+	$uid = "TEI" . $node->uid;
+
+
+	$data = array(
+		'collection_dids' => '',
+		'depositor' => '',
+		'file_types' => '',
+		'display_author' => '',
+		'display_contributors' => '',
+		'display_date' => '', // I thought we weren't sending this to Hydra?
+	);
+
+	$files = array(
+		'tei:'=> '',
+		'support_files' => '',
+	);
+
+
+	$uid = "TEI" . $node->$uid;
+	// Generate Data array.
+	// Generate Files array.
+	// Make the Hydra API call. 
+}
+
+
+/**
+ * implements hook_node_update().
+ */
+
+function tapasrecordnode_node_update($node) {
+
+
+}
+
+/**
+ * implements hook_node_delete().
+ */
+
+function tapasrecordnode_node_delete($node) {
+
+
+}
+
+
+// ====================================================================================
+// Helper Functions
+// ====================================================================================
+
+
+
+
+// ==========================================================
+// Old functions, probably to remove.
+// ==========================================================
 /** 
  * Implements hook_form_FORM_ID_alter().
  */
