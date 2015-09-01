@@ -109,14 +109,23 @@ function tapascollection_node_update($node) {
 
 function tapascollection_node_delete($node) {
 	$result = "";
+
 	switch($node->type) {
 		case 'tapascollection_project':
-			$result = tapashydra_delete_project($node);
+			tapashydra_delete_hydrarec(TAPASHYDRA_POST_PROJECT_URL, $node);
 			break;
 		case 'tapascollection_collection':
-			$result = tapashydra_delete_collection($node);
+			tapashydra_delete_hydrarec(TAPASHYDRA_POST_COLLECTION_URL, $node);
 			break;
 	}
+	//switch($node->type) {
+		//case 'tapascollection_project':
+			//$result = tapashydra_delete_project($node);
+			//break;
+		//case 'tapascollection_collection':
+			//$result = tapashydra_delete_collection($node);
+			//break;
+	//}
 	if ($result) {
 		drupal_set_message("Hydra return code: $result");
 	}

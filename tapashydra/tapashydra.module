@@ -8,14 +8,26 @@
 define('TAPASHYDRA_AUTH_TOKEN', 'tapas12345'); // Dev server token
 // TODO: We're not going to want the real one in the clear on a publically viewable php file, so I'll need to set up a config to pull the live one from.)
 
-define('TAPASHYDRA_POST_COLLECTION_URL', 'http://rails_api.localhost:8080/collections');
-define('TAPASHYDRA_POST_PROJECT_URL', 'http://rails_api.localhost:8080/communities');
-define('TAPASHYDRA_POST_TEI_URL', 'http://rails_api.localhost:8080/files');
-define('TAPASHYDRA_GET_BASE_URL', 'http://rails_api.localhost:8080/');
+define('TAPASHYDRA_BASE_API_URL', 'http://rails_api.localhost:8080');
 
-define("TAPASRECORD_HYDRA_GET_RAW", "tei");
-define("TAPASRECORD_HYDRA_GET_BP", "teibp");
-define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
+define('TAPASHYDRA_POST_PROJECT_URL', TAPASHYDRA_BASE_API_URL . "/communities");
+define('TAPASHYDRA_POST_COLLECTION_URL', TAPASHYDRA_BASE_API_URL . "/collections");
+define('TAPASHYDRA_POST_TEI_URL', TAPASHYDRA_BASE_API_URL . "/files");
+
+//define('TAPASHYDRA_POST_COLLECTION_URL', 'http://rails_api.localhost:8080/collections');
+//define('TAPASHYDRA_POST_PROJECT_URL', 'http://rails_api.localhost:8080/communities');
+//define('TAPASHYDRA_POST_TEI_URL', 'http://rails_api.localhost:8080/files');
+//define('TAPASHYDRA_GET_BASE_URL', 'http://rails_api.localhost:8080/');
+
+define('TAPASHYDRA_GET_RAW', 'tei');
+define('TAPASHYDRA_GET_BP', 'teibp');
+define('TAPASHYDRA_GET_GENERIC', 'tapas_generic');
+
+//define("TAPASRECORD_HYDRA_GET_RAW", "tei");
+//define("TAPASRECORD_HYDRA_GET_BP", "teibp");
+//define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
+
+define("TAPASRECORD_INCLUDE_CURL_DEBUG", TRUE);
 
 
 // ====================================================================================
@@ -32,11 +44,21 @@ define("TAPASRECORD_HYDRA_GET_GENERIC", "tapas_generic");
  */
 
 function tapashydra_post_project($node, $members) {
-	drupal_set_message("entering tapashydra_post_project");
-	$data = _tapashydra_projcol_data($node, 'members', $members);
-	//$files = _tapashydra_projcol_thumb($node);
 
-	return _tapashydra_post_hydra(TAPASHYDRA_POST_PROJECT_URL, $data); //, $files);
+	$data = _tapashydra_projcol_data($node, 'members', $members);
+	$url= TAPASHYDRA_POST_PROJECT_URL . "/" . $data['uid'];
+
+	drupal_set_message("##Query string: " . http_build_query($data, '', ' | '));
+	
+	$curl_options = array(
+		CURLOPT_POST => TRUE,
+		CURLOPT_POSTFIELDS => http_build_query($data, '', '&amp;'),
+	);
+
+	drupal_set_message("## Post options before curl_call: " . http_build_query($curl_options, '', ' | '));
+
+	$result = _tapashydra_curl_call($url, $curl_options);
+	return $result;
 }
 
 /**
@@ -47,35 +69,42 @@ function tapashydra_post_project($node, $members) {
  */
 
 function tapashydra_post_collection($node) {
-	drupal_set_message("entering tapashydra_post_collection");
-	$proj_slug = _tapashydra_simple_fieldvale($node, 'tc_field_slug');
+
+
 	$data = _tapashydra_projcol_data($node, 'project_did', $proj_slug);
-	//$files = _tapashydra_projcol_thumb($node);
+	$url= TAPASHUDRA_POST_COLLECTION_URL . '/' . $data['uid'];
+	$proj_slug = _tapashydra_simple_fieldvale($node, 'tc_field_slug');
 
-	return _tapashydra_post_hydra(TAPASHYDRA_POST_COLLECTION_URL, $data); //, $files);
+	drupal_set_message("##Query string: " . http_build_query($data, '', '&amp;'));
+
+	$curl_options = array(
+		CURLOPT_POST => TRUE,
+		CURLOPT_POSTFIELDS => http_build_query($data, '', '&amp;'),
+	);
+
+	$result = _tapashydra_curl_call($data['uid'], $curl_options);
+	return $result;
 }
 
 
 /**
- * Delete a project from Hydra.
+ * Delete a record from Hydra.
  *
- * TODO: handle the case where the proj-to-delte still has collections attached.
+ * @param: The base url to use.
+ * @param: The node to be deleted.
+ * @return: value returned by Hydra.
  */
 
-function tapashydra_delete_project($node) {
-	drupal_set_message("entering tapashydra_delete_project");
-	return tapashydra_delete(TAPASHYDRA_POST_PROJECT_URL, $node);
-}
+function tapashydra_delete_hydrarec($base, $node) {
 
-/**
- * Delete a collection from Hydra.
- *
- * TODO: handle the case where the collection-to-delete still has files attatched.
- */
+	$slug = $node->tc_field_slug['und'][0]['value'];
+	$url = "$base/$slug";
 
-function tapashydra_delete_collection($node) {
-	drupal_set_message("entering tapashydra_delete_collection");
-	return tapashydra_delete(TAPASHYDRA_POST_COLLECTION_URL, $node);
+	$curlopts = array(
+		'CURLOPT_CUSTOMREQUEST', 'DELETE');
+
+	return _tapashydra_curl_call($url, $curlopts);
+
 }
 
 // ====================================================================================
@@ -104,46 +133,50 @@ function tapashydra_delete_collection($node) {
  * @returns: The Hydra return code, if any.
  */
 
-function _tapashydra_post_hydra($base, $data) { //, $files) {
+//function _tapashydra_post_hydra($base, $data) { //, $files) {
 
-	$header = array(
-		'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
-		'Content-Type: application/x-www-form-urlencoded',
-	);
+	////$header = array(
+		////'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
+		////'Content-Type: application/x-www-form-urlencoded',
+	////);
 
-	$data_string = http_build_query($data, '', "&amp;");
+	//$data_string = http_build_query($data, '', "&amp;");
 	
-	$curl_options = array(
-		CURLOPT_POST => TRUE,
-		CURLOPT_RETURNTRANSFER => TRUE,		// Needed for CULROPT_HEADER_OUT
-		CURLOPT_POSTFIELDS => $data_string,
-		CURLOPT_HTTPHEADER => $header,
-		//CURLOPT_VERBOSE => TRUE,
-		//CURLINFO_HEADER_OUT => TRUE,       // So I can see the hdeader I sent using curl_getinfo().
-		//CURLOPT_HEADER => TRUE,						// Includes the header of the response in the return value.
-	);
+	//$curl_options = array(
+		//CURLOPT_POST => TRUE,
+		////CURLOPT_RETURNTRANSFER => TRUE,		// Needed for CULROPT_HEADER_OUT
+		//CURLOPT_POSTFIELDS => $data_string,
+		////CURLOPT_HTTPHEADER => $header,
+		////CURLOPT_VERBOSE => TRUE,
+		////CURLINFO_HEADER_OUT => TRUE,       // So I can see the hdeader I sent using curl_getinfo().
+		////CURLOPT_HEADER => TRUE,						// Includes the header of the response in the return value.
+	//);
 
-	$ch = curl_init("$base/" . $data['uid']);
-	drupal_set_message("Initiated URL is: $base/" . $data['uid']);
-	$success = curl_setopt_array($ch, $curl_options);
-	if ($success) {
-		drupal_set_message("The options were set without error.");
-	} else {
-		drupal_set_message("One or more of the options failed on set.");
-	}
-	$result = curl_exec($ch);
+	//$result = _tapashydra_curl_call($data['uid'], $curl_options);
 
-	$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-	$return_header = substr($result, 0, $header_size);
-	$body = substr($result, $header_size);
 
-	//drupal_set_message("### Header ### " . $return_header);
-	//drupal_set_message("### Body ### " . $body);
-	//drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
-	//drupal_set_message("### _POST ### " . http_build_query($_POST, '', ' | '));
-	curl_close($ch);
-	return $result;
-}
+	////$ch = curl_init("$base/" . $data['uid']);
+	//////htmlentities($ch, ENT_QUOTES,'ISO-8859-1' );
+	////drupal_set_message("Initiated URL is: $base/" . $data['uid']);
+	////$success = curl_setopt_array($ch, $curl_options);
+	////if ($success) {
+		////drupal_set_message("The options were set without error.");
+	////} else {
+		////drupal_set_message("One or more of the options failed on set.");
+	////}
+	////$result = curl_exec($ch);
+
+	////$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+	////$return_header = substr($result, 0, $header_size);
+	////$body = substr($result, $header_size);
+
+	////drupal_set_message("### Header ### " . $return_header);
+	////drupal_set_message("### Body ### " . $body);
+	////drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
+	////drupal_set_message("### Header Out ### " . curl_getinfo($ch, CURLINFO_HEADER_OUT));
+	////curl_close($ch);
+	////return $result;
+//}
 
 /**
  * Internal. Performs a Hydra project or collection DELETE api command.
@@ -156,24 +189,129 @@ function _tapashydra_post_hydra($base, $data) { //, $files) {
  * @return string: The return code returned by the API.
  */
 
-function tapashydra_delete($base_url, $node) {
-	drupal_set_message("entering tapashydra_delete");
+//function tapashydra_delete($base_url, $node) {
+
+  //$url_suffix = $node->tc_field_slug['und'][0]['value']
+
+	//$curlopts = array(
+		//'CURLOPT_CUSTOMREQUEST', 'DELETE');
+
+	//return _tapashydra_curl_call($url_suffix, $curlopts);
+
+
+
+	//$curlopts = _tapashydra_base_curl_options(
+		//$node->tc_field_slug['und'][0]['value']);
+
+	//$ch = curl_init();
+
+
+	////$ch = curl_init("$base_url/$slug");
+	////drupal_set_message("Sending a delete to $base_url/$slug");
+	////curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+	////curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	////curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+	////$result = curl_exec($ch);
+	////curl_close($ch);
 	
-	$slug = $node->tc_field_slug['und'][0]['value'];
+	//return array($result);
+//}
+
+/**
+ * Provdes an array of curloptions used for debugging.
+ */
+
+function _tapashydra_curl_debug_opts() {
+
+	if (TAPASRECORD_INCLUDE_CURL_DEBUG) {
+		$result = array(
+			CURLOPT_RETURNTRANSFER => TRUE,
+			CURLOPT_VERBOSE => TRUE,
+			CURLINFO_HEADER_OUT => TRUE,
+			CURLOPT_HEADER => TRUE,
+		);
+	} else {
+		$result = array();
+	}
+
+	drupal_set_message("##debug_opts routine: " . http_build_query($result, '', ' | '));
+	return $result;
+
+}
+
+/**
+ * makes a curl call
+ *
+ * @param $url: The url to call.
+ * @param $additional_options: options that aren't common to all calls.
+ *
+ * The only options 'common to all calls' are CURLOPT_URL (built from the
+ *   $url_suffix provided), CURLOPT_HTTPHEADER (hardcoded) and, if debugging
+ *   is turned on, several debugging settings.
+ *
+ * @return The Hydra return code, if any.
+ */
+
+function _tapashydra_curl_call($url, $additional_options=array()) {
 
 	$header = array(
 		'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
 		'Content-Type: application/x-www-form-urlencoded',
 	);
-	$ch = curl_init("$base_url/$slug");
-	drupal_set_message("Sending a delete to $base_url/$slug");
-	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+
+	drupal_set_message("##URL: $url");
+
+
+	$common_opts = array(
+		CURLOPT_URL => $url,
+		CURLOPT_HTTPHEADER => $header,	
+	);
+
+
+	$curlopt = $additional_options + _tapashydra_curl_debug_opts() + $common_opts;
+
+	drupal_set_message("##curlopt_array (post-merge) " . http_build_query($curlopt, '', ' | '));
+
+	$ch = curl_init($url);
+
+	$success = curl_setopt_array($ch, $curlopt);
+	if (!$success) {
+		drupal_set_message("##One or more of the options failed on set.");
+		return FALSE;
+	} else {
+		drupal_set_message("##Options set without error.");
+	}
+
 	$result = curl_exec($ch);
+
+	drupal_set_message("## raw result: $result");
+
+	if (TAPASRECORD_INCLUDE_CURL_DEBUG) {
+		_tapashydra_curl_messages($ch, $result);
+	}
 	curl_close($ch);
-	
 	return $result;
+}
+
+/**
+ * Prints curl debugging information to the message area.
+ *
+ * @param $ch, the curl-handle we are printing results from.
+ * @param $result, the result passed back from hydra.
+ */
+
+function _tapashydra_curl_messages($ch, $result) {
+
+		$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+		$return_header = substr($result, 0, $header_size);
+		$body = substr($result, $header_size);
+
+		drupal_set_message("### Header ### " . $return_header);
+		drupal_set_message("### Body ### " . $body);
+		//drupal_set_message("### Data ### " . http_build_query($data, '', '|'));
+		drupal_set_message("### Header Out ### " . curl_getinfo($ch, CURLINFO_HEADER_OUT));
+
 }
 // ====================================================================================
 // Other helper functions.
