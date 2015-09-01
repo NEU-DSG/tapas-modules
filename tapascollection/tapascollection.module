@@ -5,9 +5,9 @@
  * Code for the tapascollection module
  *
  * TODO: Prevent edit from changing the slug.
+ * TODO: Enforce slug uniqueness and character limitations
  */
 
-//include_once "../tapashydra/tapashydra.module";
 
 // ====================================================================================
 // Functions implementing hooks
@@ -62,22 +62,7 @@ function tapascollection_form($node, $form_state) {
  */
 
 function tapascollection_node_insert($node) {
-	//global $user;
-
-	switch($node->type) {
-		case 'tapascollection_project':
-			$result = tapashydra_post_project($node, $node->uid);
-			break;
-		case 'tapascollection_collection':
-			$result = tapashydra_post_collection($node);
-			break;
-	}
-	if (isset($result)) {
-		drupal_set_message("Hydra Return Value: $result");
-	}
-	else {
-		drupal_set_message("No hydra return vaue.");
-	}
+	_tapascollection_node_post($node);
 }
 
 /** 
@@ -85,23 +70,9 @@ function tapascollection_node_insert($node) {
  */
 
 function tapascollection_node_update($node) {
-
-	switch($node->type) {
-		case 'tapascollection_project':
-			$members = _tapascollection_get_group_members();
-			$result = tapashydra_post_projec($node, $members);
-			break;
-		case 'tapascollection_collection':
-			$result = tapashydra_post_collection($node);
-			break;
-	}
-	if (isset($result)) {
-		drupal_set_message("Hydra Return Value: $result");
-	}
-	else {
-		drupal_set_message("No hydra return vaue.");
-	}
+	_tapascollection_node_post($node);
 }
+
 
 /**
  * Implements hook_node_delete().
@@ -118,14 +89,7 @@ function tapascollection_node_delete($node) {
 			tapashydra_delete_hydrarec(TAPASHYDRA_POST_COLLECTION_URL, $node);
 			break;
 	}
-	//switch($node->type) {
-		//case 'tapascollection_project':
-			//$result = tapashydra_delete_project($node);
-			//break;
-		//case 'tapascollection_collection':
-			//$result = tapashydra_delete_collection($node);
-			//break;
-	//}
+
 	if ($result) {
 		drupal_set_message("Hydra return code: $result");
 	}
@@ -152,3 +116,80 @@ function _tapascollection_get_group_members($node) {
 
 }
 
+/**
+ * Internal. Calls tapashydra post on a proect or a collection.
+ * 
+ * @param $node: The Drupal node to post.
+ * @param $extra_key: key specific to collection or project, not both
+ * @param $extra_value: the value associated with said key.
+ * @param $url: Which POST url to post to. See constants in tapashydra.
+ *
+ * @return: Array. The 
+ *
+ * In practice, the extra_key/extra_value is for passing a member list
+ *   when a project is being added or updated, and for posting the 
+ *   parent project's slug when a collection is being updated.
+ */
+
+function _tapascollection_posthydra($node, $extra_key, $extra_value, $url) {
+
+	$uid = $node->tc_field_slug['und'][0]['value'];
+	$depositor = $node->uid;
+	$access = $node->group_access['und'][0]['value']?'private':'public';
+	$title = $node->title;
+	$description = tapashydra_simple_fieldval($node, 'tc_field_description');
+	$thumbnail = tapashydra_filestring($node, 'tc_field_image');
+
+	$data = array(
+		'depositor' => $depositor,
+		'access' =>  $access,
+		'title' =>  $title,
+		'description' => $description,
+		'uid' =>  $uid, 
+	);
+
+	if ($thumbnail) {
+		$data['thumbnail'] = $thumbnail;
+	}
+
+	if (isset($extra_key)) {
+		$data[$extra_key] = "$extra_value";
+	}
+
+	return tapashydra_posthydra($data, $url);
+}
+
+/**
+ * Handles POST for insert and update
+ *
+ * @param $node: The node to post to hydra
+ * @return: The hydra return code, if any. Usually a string message.
+ */
+function _tapascollection_node_post($node) {
+
+	switch($node->type) {
+		case 'tapascollection_project':
+			$result = _tapascollection_posthydra(
+				$node,
+				'members',
+				_tapascollection_get_group_members($node),
+				TAPASHYDRA_POST_PROJECT_URL);
+			break;
+		case 'tapascollection_collection':
+			$result = _tapascollection_posthydra(
+				$node,
+				'proj_did',
+				_tapashydra_simpleval($node, 'tc_field_slug'),
+				TAPASHYDRA_POST_COLLECTION_URL);
+			break;
+	}
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
+	}
+	
+	return $result;
+
+}

@@ -5,8 +5,15 @@
  * Contains the Hydra API calls used by the other TAPAS modules.
  */
 
-define('TAPASHYDRA_AUTH_TOKEN', 'tapas12345'); // Dev server token
-// TODO: We're not going to want the real one in the clear on a publically viewable php file, so I'll need to set up a config to pull the live one from.)
+include_once '/var/www/hydratoken.php';
+define ('TAPASHYDRA_AUTH_TOKEN', HYDRA_APIKEY);
+//NOTE: you will need to have a php file, not included in the git repo, at /var/www/hydratoken.php on
+// the machine where the website is hosted. This will need to contain the following text:
+//   <?php
+//   define('HYDRA_APIKEY', 'YOUR_KEY_HERE');
+
+
+//define('TAPASHYDRA_AUTH_TOKEN', 'tapas12345'); // VM token
 
 define('TAPASHYDRA_BASE_API_URL', 'http://rails_api.localhost:8080');
 
@@ -25,54 +32,27 @@ define("TAPASRECORD_INCLUDE_CURL_DEBUG", TRUE);
 // Creating, Updating, and Deleting Hydra records.
 // ====================================================================================
 
-
 /**
- * Post new or updated project.
+ * POST new or updated project or collection to Hydra.
  *
- * @param $node: The Drupal project node to use for this POST request.
- * @param $members: The members list.
- * @return string: The Hydra return code, if any.
+ * @param $data: The curl data fields to post.
+ * @param $url_base: Which api URL to post to.
+ *
+ * @return: the message string returned by Hydra.
  */
 
-function tapashydra_post_project($node, $members) {
+function tapashydra_posthydra($data, $url_base) {
 
-	$data = _tapashydra_projcol_data($node, 'members', $members);
-	$url= TAPASHYDRA_POST_PROJECT_URL . "/" . $data['uid'];
+	$url = "$url_base/" . $data['uid'];
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
-		CURLOPT_POSTFIELDS => $data //http_build_query($data, '', '&amp;'),
+		CURLOPT_POSTFIELDS => $data,
 	);
 
-	$result = _tapashydra_curl_call($url, $curl_options);
-	return $result;
+	return _tapashydra_curl_call($url, $curl_options);
+
 }
-
-/**
- * Post new or updated collection.
- *
- * @param $node: The Drupal collection ndoe to use for this POST request.
- * @return string: The Hydra return code, if any.
- */
-
-function tapashydra_post_collection($node) {
-
-
-	$data = _tapashydra_projcol_data($node, 'project_did', $proj_slug);
-	$url= TAPASHUDRA_POST_COLLECTION_URL . '/' . $data['uid'];
-	$proj_slug = _tapashydra_simple_fieldvale($node, 'tc_field_slug');
-
-	drupal_set_message("##Query data: " . http_build_query($data, '', '|'));
-
-	$curl_options = array(
-		CURLOPT_POST => TRUE,
-		CURLOPT_POSTFIELDS => $data //http_build_query($data, '', '&amp;'),
-	);
-
-	$result = _tapashydra_curl_call($data['uid'], $curl_options);
-	return $result;
-}
-
 
 /**
  * Delete a record from Hydra.
@@ -211,8 +191,7 @@ function _tapashydra_curl_messages($ch, $result) {
  * @return string or number: The value of the field.
  */
 
-function _tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
-	drupal_set_message("entering tapashydra_simple_fieldval for $field_name");
+function tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
 
 	$array = field_get_items('node', $node, $field_name);
 
@@ -232,7 +211,7 @@ function _tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delt
  * Note: this way of passing a file is depricated in newer versions of PHP, but we have
  *    an older version that doesn't have the new, object-based way available yet.
  */
-function _tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
+function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
 
 	$array = field_get_items('node', $node, $field_name);
 
@@ -244,47 +223,4 @@ function _tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) 
 	}
 
 }	
-
-/**
- * Internal. Returns an array for proj and collection creation/updates
- *
- * This function returns an data array with the information that is common
- *   both to creating or updating a project, and to creating or updating a
- *   collection.
- *
- * @param $node: The project or collection node to add or update
- * @param $extra_key: Optional. The key for an additional value to add to the array.
- * @param $extra_value: Optional. The value of an additional item for the array.
- * @return array: common data elements.
- */
-
-function _tapashydra_projcol_data($node, $extra_key, $extra_value) {
-
-	$uid = $node->tc_field_slug['und'][0]['value'];
-	
-	$depositor = $node->uid;
-	$access = $node->group_access['und'][0]['value']?'private':'public';
-	$title = $node->title;
-	$description = _tapashydra_simple_fieldval($node, 'tc_field_description');
-	$thumbnail = _tapashydra_filestring($node, 'tc_field_image');
-
-	$data = array(
-		'depositor' => $depositor,
-		'access' =>  $access,
-		'title' =>  $title,
-		'description' => $description,
-		'uid' =>  $uid, 
-	);
-
-	if ($thumbnail) {
-		$data['thumbnail'] = $thumbnail;
-	}
-
-	if (isset($extra_key)) {
-		$data[$extra_key] = "$extra_value";
-	}
-
-	return $data;
-}
-
 
