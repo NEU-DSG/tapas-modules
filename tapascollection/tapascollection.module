@@ -62,25 +62,7 @@ function tapascollection_form($node, $form_state) {
  */
 
 function tapascollection_node_insert($node) {
-	//global $user;
-
-	switch($node->type) {
-		case 'tapascollection_project':
-			$data = _tapascollection_post_data($node, 'members', $node->uid);
-			$result = tapashydra_post_project($node, $data);
-			break;
-		case 'tapascollection_collection':
-			$parent_slug = _tapashydra_simpleval($node, 'tc_field_slug');
-			$data = _tapascollection_post_data($node, 'proj_did', $parent_slug);
-			$result = tapashydra_post_project($node, $data);
-			break;
-	}
-	if (isset($result)) {
-		drupal_set_message("Hydra Return Value: $result");
-	}
-	else {
-		drupal_set_message("No hydra return vaue.");
-	}
+	_tapascollection_node_post($node);
 }
 
 /** 
@@ -88,25 +70,7 @@ function tapascollection_node_insert($node) {
  */
 
 function tapascollection_node_update($node) {
-
-	switch($node->type) {
-		case 'tapascollection_project':
-			$members = _tapascollection_get_group_members();
-			$data = _tapascollection_post_data($node, 'members', $members);
-			$result = tapashydra_post_project($node, $data);
-			break;
-		case 'tapascollection_collection':
-			$parent_slug = _tapashydra_simpleval($node, 'tc_field_slug');
-			$data = _tapascollection_post_data($node, 'proj_did', $parent_slug);
-			$result = tapashydra_post_project($node, $data);
-			break;
-	}
-	if (isset($result)) {
-		drupal_set_message("Hydra Return Value: $result");
-	}
-	else {
-		drupal_set_message("No hydra return vaue.");
-	}
+	_tapascollection_node_post($node);
 }
 
 
@@ -153,10 +117,12 @@ function _tapascollection_get_group_members($node) {
 }
 
 /**
- * Internal. Builds $data string for tapashydra POST calls.
+ * Internal. Calls tapashydra post on a proect or a collection.
+ * 
  * @param $node: The Drupal node to post.
  * @param $extra_key: key specific to collection or project, not both
  * @param $extra_value: the value associated with said key.
+ * @param $url: Which POST url to post to. See constants in tapashydra.
  *
  * @return: Array. The 
  *
@@ -165,14 +131,14 @@ function _tapascollection_get_group_members($node) {
  *   parent project's slug when a collection is being updated.
  */
 
-function _tapascollection_post_data($node, $extra_key, $extra_value) {
+function _tapascollection_posthydra($node, $extra_key, $extra_value, $url) {
 
 	$uid = $node->tc_field_slug['und'][0]['value'];
 	$depositor = $node->uid;
 	$access = $node->group_access['und'][0]['value']?'private':'public';
 	$title = $node->title;
-	$description = _tapashydra_simple_fieldval($node, 'tc_field_description');
-	$thumbnail = _tapashydra_filestring($node, 'tc_field_image');
+	$description = tapashydra_simple_fieldval($node, 'tc_field_description');
+	$thumbnail = tapashydra_filestring($node, 'tc_field_image');
 
 	$data = array(
 		'depositor' => $depositor,
@@ -190,5 +156,40 @@ function _tapascollection_post_data($node, $extra_key, $extra_value) {
 		$data[$extra_key] = "$extra_value";
 	}
 
-	return $data;
+	return tapashydra_posthydra($data, $url);
+}
+
+/**
+ * Handles POST for insert and update
+ *
+ * @param $node: The node to post to hydra
+ * @return: The hydra return code, if any. Usually a string message.
+ */
+function _tapascollection_node_post($node) {
+
+	switch($node->type) {
+		case 'tapascollection_project':
+			$result = _tapascollection_posthydra(
+				$node,
+				'members',
+				_tapascollection_get_group_members($node),
+				TAPASHYDRA_POST_PROJECT_URL);
+			break;
+		case 'tapascollection_collection':
+			$result = _tapascollection_posthydra(
+				$node,
+				'proj_did',
+				_tapashydra_simpleval($node, 'tc_field_slug'),
+				TAPASHYDRA_POST_COLLECTION_URL);
+			break;
+	}
+	if (isset($result)) {
+		drupal_set_message("Hydra Return Value: $result");
+	}
+	else {
+		drupal_set_message("No hydra return vaue.");
+	}
+	
+	return $result;
+
 }
