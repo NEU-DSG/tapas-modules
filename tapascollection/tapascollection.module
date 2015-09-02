@@ -179,7 +179,7 @@ function _tapascollection_node_post($node) {
 			$result = _tapascollection_posthydra(
 				$node,
 				'proj_did',
-				_tapashydra_simpleval($node, 'tc_field_slug'),
+				tapashydra_simpleval($node, 'tc_field_slug'),
 				TAPASHYDRA_POST_COLLECTION_URL);
 			break;
 	}
