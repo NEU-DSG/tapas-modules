@@ -45,7 +45,7 @@ function tapashydra_posthydra($data, $url_base) {
 
 	$url = "$url_base/" . $data['uid'];
 
-	drupal_set_message("data array being used: " . http_build_query($data, '', '\r\n'));
+	drupal_set_message("data array being used: " . http_build_query($data, '', ' | '));
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
@@ -140,7 +140,7 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 	// everything breaks.
 	$curlopt = $additional_options + _tapashydra_curl_debug_opts() + $common_opts;
 
-	drupal_set_message("List of options being called: " . http_build_query($curlopt, '', '\r\n'));
+	drupal_set_message("List of options being called: " . http_build_query($curlopt, '', ' | '));
 
 	$ch = curl_init($url);
 
