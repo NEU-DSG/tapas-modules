@@ -73,7 +73,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
     ),
     'entity_type' => 'node',
     'field_name' => 'og_record_to_collection_ref',
-    'label' => 'Parent Collection',
+    'label' => 'Parent Collections',
     'required' => 0,
     'settings' => array(
       'behaviors' => array(
@@ -155,7 +155,7 @@ function tapas_feature_content_tapasrecord_as_content_field_default_field_instan
   // Translatables
   // Included for use with string extractors like potx.
   t('Original TEI File');
-  t('Parent Collection');
+  t('Parent Collections');
   t('TEI Record Tags');
 
   return $field_instances;
