@@ -45,6 +45,8 @@ function tapashydra_posthydra($data, $url_base) {
 
 	$url = "$url_base/" . $data['uid'];
 
+	drupal_set_message("data array being used: " . http_build_query($data, '', '\r\n\'));
+
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
 		CURLOPT_POSTFIELDS => $data,
@@ -122,6 +124,8 @@ function _tapashydra_curl_debug_opts() {
 
 function _tapashydra_curl_call($url, $additional_options=array()) {
 
+	drupal_set_message("API url being used: $url");
+
 	$header = array(
 		'Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN,
 	);
@@ -135,6 +139,8 @@ function _tapashydra_curl_call($url, $additional_options=array()) {
 	// Debugging note: if array_merge is used, the keys change to 0, 1, 2, etc, and
 	// everything breaks.
 	$curlopt = $additional_options + _tapashydra_curl_debug_opts() + $common_opts;
+
+	drupal_set_message("List of options being called: " . http_build_query($curlopt, '', '\r\n'));
 
 	$ch = curl_init($url);
 
