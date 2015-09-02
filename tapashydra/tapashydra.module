@@ -45,7 +45,7 @@ function tapashydra_posthydra($data, $url_base) {
 
 	$url = "$url_base/" . $data['uid'];
 
-	drupal_set_message("data array being used: " . http_build_query($data, '', '\r\n\'));
+	drupal_set_message("data array being used: " . http_build_query($data, '', '\r\n'));
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
