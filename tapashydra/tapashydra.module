@@ -242,16 +242,40 @@ function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
 
 function tapashydra_drupal_field_to_http_array($node, $field_name) {
 
-	$result = '';
-	$i = 0;
-
 	$value_list = field_get_items('node', $node, $field_name);
 
-	foreach ($value_list as $item) {
-		$result .= $item['value'] . "[]";
-
+	$new_array = array();
+	$i = 0;
+	foreach ($value_list as $value) {
+		$new_array[] = $value_list[$i]['value'];
 	}
 
-	return $result;
+	return tapashydra_php_to_http_array($new_array);
+
+}
+
+/**
+ * Helper. Converts a php array into an HTTP-formatted array.
+ *
+ * @param array(): The array to convert.
+ * @param string: The http parameter receiving the array.
+ *
+ * @return string: The HTTP formatted array. (or FALSE, if the input array was empty).
+ */
+
+function tapashydra_php_to_http_array($array = array(), $param) {
+
+	if (!$array()) {
+		return FALSE;
+	}
+
+	$outstr_arr = '';
+	$i = 0;
+
+	foreach ($array as $item) {
+		$outstr_arr .= "$param\[$i\]=$item";
+	}
+
+	return implode('&amp;', $outstring_arr);
 
 }
