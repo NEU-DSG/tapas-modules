@@ -5,3 +5,4 @@ version = 7.x-0.2
 description = Defines a content type for the TAPAS Record; handles associated XML uploading, validation, and display.
 dependencies[] = file
 dependencies[] = tapashydra
+dependencies[] = og

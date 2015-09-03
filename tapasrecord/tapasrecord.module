@@ -54,7 +54,7 @@ function tapasrecordnode_form($node, $form_state) {
  * implements hook_node_insert().
  */
 
-function tapasrecordnode_node_insert($node) {
+function tapasrecord_node_insert($node) {
 /*On CREATE of a new TEI document, the following fields are required: collection_dids, tei, depositor, and file_types.*/
 
 //On UPDATE no fields are required and the following fields are forbidden: depositor.
@@ -69,27 +69,8 @@ function tapasrecordnode_node_insert($node) {
 /*support_files : A .zip file containing all of the files associated with this TEI record. When support file updates are required, every support file still attached to this TEI record must be sent in this zip; preexisting support type files are purged before adding new ones. Currently the only supported files are page images that are embedded in the TEI document and the thumbnail associated with this record. The expected zip file structure is this:*/
 
 	$uid = "TEI" . $node->uid;
+	drupal_set_message("Get collections: " . http_build_query(_tapasrecord_getcollections($node)), '', '     |     ');
 
-
-	$data = array(
-		'collection_dids' => '',
-		'depositor' => '',
-		'file_types' => '',
-		'display_author' => '',
-		'display_contributors' => '',
-		'display_date' => '', // I thought we weren't sending this to Hydra?
-	);
-
-	$files = array(
-		'tei:'=> '',
-		'support_files' => '',
-	);
-
-
-	$uid = "TEI" . $node->$uid;
-	// Generate Data array.
-	// Generate Files array.
-	// Make the Hydra API call. 
 }
 
 
@@ -97,8 +78,9 @@ function tapasrecordnode_node_insert($node) {
  * implements hook_node_update().
  */
 
-function tapasrecordnode_node_update($node) {
+function tapasrecord_node_update($node) {
 
+	drupal_set_message("Get collections: " . http_build_query(_tapasrecord_getcollections($node)), '', '     |     ');
 
 }
 
@@ -106,7 +88,7 @@ function tapasrecordnode_node_update($node) {
  * implements hook_node_delete().
  */
 
-function tapasrecordnode_node_delete($node) {
+function tapasrecord_node_delete($node) {
 
 
 }
@@ -116,74 +98,86 @@ function tapasrecordnode_node_delete($node) {
 // Helper Functions
 // ====================================================================================
 
-// ==========================================================
-// Old functions, probably to remove.
-// ==========================================================
-/** 
- * Implements hook_form_FORM_ID_alter().
+/**
+ * Internal. Builds the data array to post to hydra on instert/update
+ *
+ * @param $node: The node that will be posted.
  */
-function tapasrecord_form_tapasrecordnode_node_form_alter(&$form, &$form_state, $form_id) {
 
-	// TAPAS TEI field
-	$form['tapas_teifield'][LANGUAGE_NONE][0] = array_merge(
-    $form['tapas_teifield'][LANGUAGE_NONE][0],
-		_tapasrecord_form_teifield($form_id)
+function _tapasrecord_postdata($node) {
+
+
+	$data = array(
+		'collection_dids' => '',
+		'depositor' => $node->uid,
+		'file_types' => '',
+		'display_author' => tapashydra_simple_fieldval($node, 'tc_display_authors'),
+		'display_contributors' => tapashydra_drupal_field_to_http_array($node, 'tc_display_contributors'),
+		'display_date' => tapashydra_simple_fieldval($node, 'tc_timeline_date'), // I thought we weren't sending this to Hydra?
+		'tei:'=> _tapasrecord_tei_culrstring($node),
+		'support_files' => _tapasrecord_auxillary_curlzip($node),
 	);
 
+	drupal_set_message("Tapasrecord data array: " . http_build_query($data, '', ' | '));
 }
 
-function _tapasrecord_form_teifield($form_id) {
-	return array(
-		'#type' => 'managed_file',
-		'#title' => t('TEI file'),
-		'#description' => t('allowed extentions: .tei, .xml'),
-		'#upload_location' => _tapasrecord_get_file_upload_location(),
-		'#upload_validators' => array(
-			'file_validate_extensions' => array('tei xml'),
-			'tapasrecord_validate_tei' => array($form_id),
-		),
-  );
+/**
+ * Internal. Obtains the list of collection slugs to send to hydra.
+ */
+
+function _tapasrecord_getcollections($node) {
+
+	$slug_string = "";
+	$c_array = og_get_entity_groups('node', $node);
+
+	if ($c_array) {
+		drupal_set_message("There is a c_array.");
+		//foreach ($c_array as $item) {
+			//drupal_set_message("Item is $item");
+			//foreach ($item as $subitem) {
+				//drupal_set_message("subitem is $subitem");
+			//}
+		//}
+
+		//drupal_set_message("c_array['node'] is: " . $c_array['node']);
+
+		$result = '';
+		$i = 0;
+		foreach ($c_array['node'] as $item) {
+			drupal_set_message("Item number $i is: $item");
+			$i++;
+		}
+
+	} else {
+		drupal_set_message("c array is blank.");
+		return FALSE;
+	}
 
 }
 
-function _tapasrecord_get_file_upload_location() {
-	// TODO: Project level files will be root/<project slug>
-	// TODO: Record level files will be root/<record persistant id>
-	// TODO: directory_prepare function to set permissions, & create directory
-	//       if it doesn't alreay exist.
-	return TAPAS_SAVE_FILE_ROOT_DIRECTORY;
-}
+/**
+ * Internal. Gets the file-types for hydra.
+ */
 
+function _tapasrecord_curl_filetypes($node) {
+
+
+}
 
 
 /**
- * Callback to run the validation XSLT checks on the TEI file.
+ * Internal. Builds the curl string for the tei file.
  */
-function tapasrecord_validate_tei($file, $form_id) {
 
-	module_load_include('inc', 'tapasrecord', 'tapasrecord.xmlproc');
-	$errors = array();
-
-	$teiDOM = tapasrecord_domdoc_load($file->uri, $errors);
-	if ($errors) {
-		return $errors;
-	}
+function _tapasrecord_tei_curlstring($node) {
 
 
-	$errors = _tapasrecord_validate_xslt($teiDOM);
-	if ($errors) {
-		return $errors;
-	}
-
-	//drupal_set_message(_tapasrecord_extract_tei_metadata($teiDOM));
-	//$errors = _tapasrecord_extract_tei_metadata($teiDOM);
-	//if ($errors) {
-	//  foreach ($errors as $e) {
-	//    drupal_set_message($e, 'warning');
-	//  }
-	//  drupal_set_message(t("There were problems trying to extract metadata from this TEI file."), 'warning');
-	//}
-
-	return _tapasrecord_run_transform($teiDOM, $file);
 }
 
+/** 
+ * Interhal. Assembles the zip file of auxillary files.
+ */
+
+function _tapasrecord_auxillary_curlzip($node) {
+
+}

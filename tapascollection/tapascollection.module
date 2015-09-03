@@ -167,6 +167,8 @@ function _tapascollection_posthydra($node, $extra_key, $extra_value, $url) {
  */
 function _tapascollection_node_post($node) {
 
+	$result = FALSE;
+
 	switch($node->type) {
 		case 'tapascollection_project':
 			$result = _tapascollection_posthydra(

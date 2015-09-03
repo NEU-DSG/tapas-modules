@@ -230,3 +230,28 @@ function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
 
 }	
 
+
+/**
+ * Helper. Builds an HTTP array from multiple values in a Drupal field.
+ *
+ * @param $node: A drupal node.
+ * @param $field_name: the name of a field that allows multiple values.
+ *
+ * @return: A string parsing the field values into an HTTP style array.
+ */
+
+function tapashydra_drupal_field_to_http_array($node, $field_name) {
+
+	$result = '';
+	$i = 0;
+
+	$value_list = field_get_items('node', $node, $field_name);
+
+	foreach ($value_list as $item) {
+		$result .= $item['value'] . "[]";
+
+	}
+
+	return $result;
+
+}
