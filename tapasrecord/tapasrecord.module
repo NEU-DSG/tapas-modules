@@ -68,8 +68,12 @@ function tapasrecord_node_insert($node) {
 //display_date : A date. For any TEI record there are several dates associated with it that may be considered significant, but for our 1.0 launch we're just asking for a single date that will be used everywhere. Must be in the ISO-8601 format.
 /*support_files : A .zip file containing all of the files associated with this TEI record. When support file updates are required, every support file still attached to this TEI record must be sent in this zip; preexisting support type files are purged before adding new ones. Currently the only supported files are page images that are embedded in the TEI document and the thumbnail associated with this record. The expected zip file structure is this:*/
 
-	$uid = "TEI" . $node->uid;
-	drupal_set_message("Get collections: " . http_build_query(_tapasrecord_getcollections($node)), '', '     |     ');
+	switch ($node->node_type) {
+		case 'tapasrecordnode':
+			$uid = "TEI" . $node->uid;
+			drupal_set_message("Get collections: " . http_build_query(_tapasrecord_getcollections($node)), '', '     |     ');
+			break;
+	}
 
 }
 
