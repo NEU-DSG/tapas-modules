@@ -70,10 +70,10 @@ function tapashydra_posthydra($data, $url_base) {
  * @return: value returned by Hydra.
  */
 
-function tapashydra_delete_hydrarec($base, $node) {
+function tapashydra_delete_hydrarec($base, $node, $uid) {
 
 	$slug = $node->tc_field_slug['und'][0]['value'];
-	$url = "$base/$slug";
+	$url = "$base/$uid";
 
 	$curlopts = array(
 		'CURLOPT_CUSTOMREQUEST', 'DELETE');

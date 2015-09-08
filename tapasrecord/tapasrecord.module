@@ -63,7 +63,10 @@ function tapasrecord_node_insert($node) {
 
 	$uid = 'TAPAS' . $node->nid;
 	$node->tapas_uid['und'][0]['value'] = $uid;
-	_tapasrecord_node_post($node, $uid);
+
+	tapashydra_post_data(
+		tapasrecord_httpdata($node),
+		TAPASHYDRA_POST_TEI_URL);
 }
 
 /**
@@ -77,7 +80,10 @@ function tapasrecord_node_update($node) {
 	}
 
 	$uid = tapashydra_simple_fieldval($node, 'tapas_uid');
-	_tapasrecord_node_post($node, $uid);
+
+	tapashydra_post_data(
+		tapasrecord_httpdata($node),
+		TAPASHYDRA_POST_TEI_URL);
 }
 
 
@@ -91,7 +97,10 @@ function tapasrecord_node_delete($node) {
 		return;
 	}
 
-	tapashydra_delete_hydrarec(TAPASHYDRA_POST_TEI_URL, $node);
+	tapashydra_delete_hydrarec(
+		TAPASHYDRA_POST_TEI_URL, 
+		$node,
+		tapashydra_simple_fieldval($node, 'tapas_uid'));
 }
 
 /**
@@ -110,7 +119,13 @@ function tapasrecord_node_view($node, $view_mode, $lang_code) {
 		case 'rss':
 			break;
 		case 'full':
+			break;
+
+
+		case 'full_readinginterface':
 			$content = _tapasrecord_readingview($node->field_tapas_uid);
+			break;
+		case 'full_metadataview':
 			break;
 
 	}
@@ -126,22 +141,6 @@ function tapasrecord_node_view($node, $view_mode, $lang_code) {
  */
 
 function _tapasrecord_readingview($uid) {
-
-}
-
-/**
- * Internal. POST call for update or insert.
- */
-
-function _tapasrecord_node_post($node) {
-
-	if ($node->node_type != 'tapasrecordnode') {
-		return;
-	}
-
-	tapashydra_post_data(
-		tapasrecord_httpdata($node),
-		TAPASHYDRA_POST_TEI_URL);
 
 }
 

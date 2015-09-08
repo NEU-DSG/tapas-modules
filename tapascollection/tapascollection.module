@@ -83,10 +83,18 @@ function tapascollection_node_delete($node) {
 
 	switch($node->type) {
 		case 'tapascollection_project':
-			tapashydra_delete_hydrarec(TAPASHYDRA_POST_PROJECT_URL, $node);
+			tapashydra_delete_hydrarec(
+				TAPASHYDRA_POST_PROJECT_URL, 
+				$node,
+				tapashydra_simple_fieldval($node, 'tc_field_slug')
+			);
 			break;
 		case 'tapascollection_collection':
-			tapashydra_delete_hydrarec(TAPASHYDRA_POST_COLLECTION_URL, $node);
+			tapashydra_delete_hydrarec(
+				TAPASHYDRA_POST_COLLECTION_URL, 
+				$node,
+				tapashydra_simple_fieldval($node, 'tc_field_slug')
+			);
 			break;
 	}
 
