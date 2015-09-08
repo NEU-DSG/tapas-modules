@@ -17,23 +17,33 @@ function tapasrecord_install()
 	$t = get_t();
 
 	// Create field bases
-	field_create_field(array(
-		'field_name' => 'tapas_teifield',
-		'cardinality' => 1,
-		'type' => 'file',
-		//'locked' => TRUE,
-		'label' => $t('TEI File'),
-	));
+	$fieldinfo = _tapasrecord_fieldinfo();
+	foreach ($fieldinfo as $field) {
+		field_create_field($field);
+	}
+
+	//field_create_field(array(
+		//'field_name' => 'tapas_teifield',
+		//'cardinality' => 1,
+		//'type' => 'file',
+		////'locked' => TRUE,
+		//'label' => $t('TEI File'),
+	//));
 	
 	// Attatch field instances
 	field_info_cache_clear();
-	field_create_instance(array(
-		'field_name' => 'tapas_teifield',
-		'entity_type' => 'node',
-		'bundle' => 'tapasrecordnode',
-		'label' => 'Original TEI File',
-		'settings' => array('file_extensions' => 'tei xml'),
-	));
+
+	$instanceinfo = _tapasercord_instanceinfo();
+	foreach ($instanceinfo as $instance) {
+		field_create_instance($instance);
+	}
+	//field_create_instance(array(
+		//'field_name' => 'tapas_teifield',
+		//'entity_type' => 'node',
+		//'bundle' => 'tapasrecordnode',
+		//'label' => 'Original TEI File',
+		//'settings' => array('file_extensions' => 'tei xml'),
+	//));
 }
 
 /**
@@ -50,4 +60,53 @@ function tapasrecord_uninstall()
 
 	node_type_delete('tapasrecordnode');
 	field_purge_batch(1000);
+}
+
+
+/**
+ * Internal. Gives array of field info arrays.
+ */
+
+function tapasrecord_fieldinfo() {
+	return array(
+		array(
+			'field_name' => 'tapas_teifield',
+			'cardinality' => 1,
+			'type' => 'file',
+			//'locked' => TRUE,
+			'label' => $t('TEI File'),
+		),
+		array(
+			'field_name' => 'tapas_uid',
+			'cardinality' => 1,
+			'type' => 'text',
+			'locked' => TRUE,
+			'label' => 'Internal id'
+		)
+	);
+
+
+}
+
+/**
+ * Internal. Gives array of instance info arrays.
+ */
+
+function tapasrecord_instanceinfo() {
+
+	return array(
+		array(
+			'field_name' => 'tapas_teifield',
+			'entity_type' => 'node',
+			'bundle' => 'tapasrecordnode',
+			'label' => 'Original TEI File',
+			'settings' => array('file_extensions' => 'tei xml'),
+		),
+		array(
+			'field_name' => 'tapas_uid',
+			'entity_type' => 'node',
+			'bundle' => 'tapasrecordnode',
+			'label' => 'Internal id',
+		),
+	);
 }

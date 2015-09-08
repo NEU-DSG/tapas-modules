@@ -6,6 +6,8 @@
  * 
  * defines tapas_record conent type, performs
  * TEI upload and validation, calls TFC transform.
+ *
+ * TODO: merge 'feature_tapasrecord_as_content' into this.
  */
 
 
@@ -49,26 +51,82 @@ function tapasrecordnode_form($node, $form_state) {
   return node_content_form($node, $form_state);
 }
 
-
 /**
  * implements hook_node_insert().
- *
- * Just a call to _tapasrecord_node_post, since update and insert are the same.
  */
 
 function tapasrecord_node_insert($node) {
-	_tapasrecord_node_post($node);
+
+	if ($node->node_type != 'tapasrecordnode') {
+		return;
+	}
+
+	$uid = 'TAPAS' . $node->nid;
+	$node->tapas_uid['und'][0]['value'] = $uid;
+	_tapasrecord_node_post($node, $uid);
+}
+
+/**
+ * implements hook_node_update().
+ */
+
+function tapasrecord_node_update($node) {
+
+	if ($node->node_type != 'tapasrecordnode') {
+		return;
+	}
+
+	$uid = tapashydra_simple_fieldval($node, 'tapas_uid');
+	_tapasrecord_node_post($node, $uid);
 }
 
 
 /**
- * implements hook_node_update().
- *
- * Just a call to _tapasrecord_node_post, since update and insert are the same.
+ * implements hook_node_delete().
  */
 
-function tapasrecord_node_update($node) {
-	_tapasrecord_node_post($node);
+function tapasrecord_node_delete($node) {
+
+	if ($node->node_type != 'tapasrecordnode') {
+		return;
+	}
+
+	tapashydra_delete_hydrarec(TAPASHYDRA_POST_TEI_URL, $node);
+}
+
+/**
+ * Implements hook_node_view().
+ */
+
+function tapasrecord_node_view($node, $view_mode, $lang_code) {
+
+	if ($node->node_type != 'tapasrecordnode') {
+		return;
+	}
+
+	switch ($view_mode) {
+		case 'teaser':
+			break;
+		case 'rss':
+			break;
+		case 'full':
+			$content = _tapasrecord_readingview($node->field_tapas_uid);
+			break;
+
+	}
+
+}
+
+// ====================================================================================
+// Helper Functions
+// ====================================================================================
+
+/**
+ * Internal. Generates the record display for tapasrecord_node_view.
+ */
+
+function _tapasrecord_readingview($uid) {
+
 }
 
 /**
@@ -81,23 +139,11 @@ function _tapasrecord_node_post($node) {
 		return;
 	}
 
-	$data = tapasrecord_httpdata($node);
+	tapashydra_post_data(
+		tapasrecord_httpdata($node),
+		TAPASHYDRA_POST_TEI_URL);
 
 }
-
-/**
- * implements hook_node_delete().
- */
-
-function tapasrecord_node_delete($node) {
-
-
-}
-
-
-// ====================================================================================
-// Helper Functions
-// ====================================================================================
 
 /**
  * Internal. Builds the data array to post to hydra on instert/update
@@ -105,10 +151,10 @@ function tapasrecord_node_delete($node) {
  * @param $node: The node that will be posted.
  */
 
-function _tapasrecord_httpdata($node) {
-
+function _tapasrecord_httpdata($node, $uid) {
 
 	$data = array(
+		'uid' => $uid,
 		'collection_dids' => tapashydra_php_to_http_array(
 			og_get_entity_groups('node', $node), 'collection_dids'),
 		'depositor' => $node->uid,
@@ -120,8 +166,7 @@ function _tapasrecord_httpdata($node) {
 		'support_files' => _tapasrecord_auxillary_curlzip($node),
 	);
 
-//function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
-	drupal_set_message("Tapasrecord data array: " . http_build_query($data, '', ' | '));
+	return $data;
 }
 
 /** 
