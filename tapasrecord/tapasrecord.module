@@ -112,7 +112,7 @@ function _tapasrecord_httpdata($node) {
 		'collection_dids' => tapashydra_php_to_http_array(
 			og_get_entity_groups('node', $node), 'collection_dids'),
 		'depositor' => $node->uid,
-		'file_types' => '',
+		'file_types' => tapashydra_drupal_field_to_http_array($node, 'field_tapas_tei_type'),
 		'display_author' => tapashydra_simple_fieldval($node, 'tc_display_authors'),
 		'display_contributors' => tapashydra_drupal_field_to_http_array($node, 'tc_display_contributors'),
 		'display_date' => tapashydra_simple_fieldval($node, 'tc_timeline_date'), // I thought we weren't sending this to Hydra?
@@ -122,15 +122,6 @@ function _tapasrecord_httpdata($node) {
 
 //function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
 	drupal_set_message("Tapasrecord data array: " . http_build_query($data, '', ' | '));
-}
-
-/**
- * Internal. Gets the file-types for hydra.
- */
-
-function _tapasrecord_curl_filetypes($node) {
-
-
 }
 
 /** 
