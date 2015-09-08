@@ -52,39 +52,36 @@ function tapasrecordnode_form($node, $form_state) {
 
 /**
  * implements hook_node_insert().
+ *
+ * Just a call to _tapasrecord_node_post, since update and insert are the same.
  */
 
 function tapasrecord_node_insert($node) {
-/*On CREATE of a new TEI document, the following fields are required: collection_dids, tei, depositor, and file_types.*/
-
-//On UPDATE no fields are required and the following fields are forbidden: depositor.
-
-//The http fields that this endpoint expects are:
-
-//collection_dids : An array of Drupal IDs that this CoreFile should be associated with. To update this, pass in a new array that will entirely replace the previous collection relationships.
-//tei : The literal TEI file associated with this record. Reading interface versions of this file will be generated.
-//display_author : A sanitized version of the principle author of this document's name.
-//display_contributors : An array listing sanitized contributor names.
-//display_date : A date. For any TEI record there are several dates associated with it that may be considered significant, but for our 1.0 launch we're just asking for a single date that will be used everywhere. Must be in the ISO-8601 format.
-/*support_files : A .zip file containing all of the files associated with this TEI record. When support file updates are required, every support file still attached to this TEI record must be sent in this zip; preexisting support type files are purged before adding new ones. Currently the only supported files are page images that are embedded in the TEI document and the thumbnail associated with this record. The expected zip file structure is this:*/
-
-	switch ($node->node_type) {
-		case 'tapasrecordnode':
-			$uid = "TEI" . $node->uid;
-			drupal_set_message("Get collections: " . http_build_query(_tapasrecord_getcollections($node)), '', '     |     ');
-			break;
-	}
-
+	_tapasrecord_node_post($node);
 }
 
 
 /**
  * implements hook_node_update().
+ *
+ * Just a call to _tapasrecord_node_post, since update and insert are the same.
  */
 
 function tapasrecord_node_update($node) {
+	_tapasrecord_node_post($node);
+}
 
-	drupal_set_message("Get collections: " . http_build_query(_tapasrecord_getcollections($node)), '', '     |     ');
+/**
+ * Internal. POST call for update or insert.
+ */
+
+function _tapasrecord_node_post($node) {
+
+	if ($node->node_type != 'tapasrecordnode') {
+		return;
+	}
+
+	$data = tapasrecord_httpdata($node);
 
 }
 
@@ -108,55 +105,23 @@ function tapasrecord_node_delete($node) {
  * @param $node: The node that will be posted.
  */
 
-function _tapasrecord_postdata($node) {
+function _tapasrecord_httpdata($node) {
 
 
 	$data = array(
-		'collection_dids' => '',
+		'collection_dids' => tapashydra_php_to_http_array(
+			og_get_entity_groups('node', $node), 'collection_dids'),
 		'depositor' => $node->uid,
 		'file_types' => '',
 		'display_author' => tapashydra_simple_fieldval($node, 'tc_display_authors'),
 		'display_contributors' => tapashydra_drupal_field_to_http_array($node, 'tc_display_contributors'),
 		'display_date' => tapashydra_simple_fieldval($node, 'tc_timeline_date'), // I thought we weren't sending this to Hydra?
-		'tei:'=> _tapasrecord_tei_culrstring($node),
+		'tei:'=> tapashydra_filestring($node, 'tapas_teifile'),
 		'support_files' => _tapasrecord_auxillary_curlzip($node),
 	);
 
+//function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
 	drupal_set_message("Tapasrecord data array: " . http_build_query($data, '', ' | '));
-}
-
-/**
- * Internal. Obtains the list of collection slugs to send to hydra.
- */
-
-function _tapasrecord_getcollections($node) {
-
-	$slug_string = "";
-	$c_array = og_get_entity_groups('node', $node);
-
-	if ($c_array) {
-		drupal_set_message("There is a c_array.");
-		//foreach ($c_array as $item) {
-			//drupal_set_message("Item is $item");
-			//foreach ($item as $subitem) {
-				//drupal_set_message("subitem is $subitem");
-			//}
-		//}
-
-		//drupal_set_message("c_array['node'] is: " . $c_array['node']);
-
-		$result = '';
-		$i = 0;
-		foreach ($c_array['node'] as $item) {
-			drupal_set_message("Item number $i is: $item");
-			$i++;
-		}
-
-	} else {
-		drupal_set_message("c array is blank.");
-		return FALSE;
-	}
-
 }
 
 /**
@@ -164,16 +129,6 @@ function _tapasrecord_getcollections($node) {
  */
 
 function _tapasrecord_curl_filetypes($node) {
-
-
-}
-
-
-/**
- * Internal. Builds the curl string for the tei file.
- */
-
-function _tapasrecord_tei_curlstring($node) {
 
 
 }
