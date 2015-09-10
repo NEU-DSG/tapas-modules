@@ -32,37 +32,37 @@ function tapascollection_field_bases() {
 
 	$bases = array(
 		'description' => array(
-			'field_name' => $prefix . '_description',
+			'field_name' => $prefix . 'description',
 			'cardinality' => 1,
 			'module' => 'text',
-			'type' => 'long_text',
+			'type' => 'text_long',
 		),
 		'image' => array(
-			'field_name' => $prefix . '_image',
+			'field_name' => $prefix . 'image',
 			'cardinality' => 1,
 			'module' => 'image',
 			'type' => 'image',
 		),
 		'slug' => array(
-			'field_name' => $prefix . '_slug',
+			'field_name' => $prefix . 'slug',
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text',
 		),
 		'tags' => array(
-			'field_name' => $prefix . '_tags',
+			'field_name' => $prefix . 'tags',
 			'cardinality' => -1, // i.e. unlimited
 			'module' => 'taxonomy',
 			'type' => 'taxonomy_term_reference',
 		),
 		'institution' => array(
-			'field_name' => $prefix . '_institution',
+			'field_name' => $prefix . 'institution',
 			'cardinality' => -1,
 			'module' => 'taxonomy',
 			'type' => 'taxonomy_term_reference',
 		),
 		'links' => array(
-			'field_name' => $prefix . '_links',
+			'field_name' => $prefix . 'links',
 			'cardinality' => -1,
 			'module' => 'link',
 			'type' => 'link_field'
@@ -71,7 +71,7 @@ function tapascollection_field_bases() {
 		// This holds the raw text of the slug of the project to which this
 		// collection belongs, to make hydra post calls easier.
 		'parentslug' => array(
-			'field_name' => $prefix . '_parentslug',
+			'field_name' => $prefix . 'parentslug',
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text',
@@ -82,22 +82,22 @@ function tapascollection_field_bases() {
 		// (Title is probably redundant and can be removed after migration to 2.0)
 		// TODO: Remove hidden_title field after migration.
 
-		'hidden_title' => array(
-			'field_name' => $prefix . '_hidden_title',
+		'hide_title' => array(
+			'field_name' => $prefix . 'hide_title',
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text',
 		),
 
 		// Other hidden fields to help with migration, might be useful in future migrations.
-		'hidden_imagename' => array(
-			'field_name' => $prefix . '_hidden_imagename',
+		'hide_imname' => array(
+			'field_name' => $prefix . 'hide_imname',
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text'
 		),
-		'hidden_institutionnames' => array(
-			'field_name' => $prefix . '_hidden_institutionnames',
+		'hide_instname' => array(
+			'field_name' => $prefix . 'hide_instname',
 			'cardinality' => -1, 
 			'module' => 'text',
 			'type' => 'text'),
@@ -107,65 +107,193 @@ function tapascollection_field_bases() {
 }
 
 /**
- * Array of all instance information arrays.
+ * Field instance arrays for TAPAS_COLLECTION content type.
  *
- * @return array An array of field instance info arrays.
- *
- * @uses _tapascollection_common_instances
- * @uses _tapascollection_field_instance
+ * @return array An array of Drupal field instance arrays.
  */
 
-function tapascollection_field_instances() {
+function tapas_collection_field_instances() {
 
-	// Common instances
-	$instances = array_merge(
-		_tapascollection_common_instances(TAPAS_PROJECT),
-		_tapascollection_common_instances(TAPAS_COLLECTION)
-	);
+	return array(
 
+		// Title field is added by the content type definition.
 
-	// Project-only instances
-
-
-	$project_fields = array(
-		'institution', t('Institutional Affiliation'),
-		'links', t('Links'),
-		'hidden_institutionnames', t('(hidden institution-names)'));
-
-	$instances = array_merge($instances, _tapascollection_field_instances(
-		TAPAS, $project_fields));
-
-	$instution = 'institution_' . TAPAS_PROJECT;
-	$instances[$institution]['description'] = t('A comma-seaparated list of institutions with which this ' .
-		'project is affiliated.');
-	$instances[$institution]['settings'] = array(
-		'allwoed_values' => array(
-			0 => array(
-				'vocabulary' => 'institution',
-				'parent' => 0,
+		TAPAS_C_INSTANCE_PRE . 'description' => array_merge(
+			tapas_instance_common(
+				'description',
+				t('Collection Description'),
+				TAPAS_COLLECTION,
+				TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION
 			),
+			tapas_instance_paragraph()
 		),
+
+		TAPAS_C_INSTANCE_PRE . 'image' => array_merge(
+			tapas_instance_common(
+				'image',
+				t('Collection Thumbnail'),
+				TAPAS_COLLECTION,
+				TAPAS_INSTANCE_DESC_COLLECTIONTHUMB
+			),
+			tapas_instance_thumbnail()
+		),
+
+		TAPAS_C_INSTANCE_PRE . 'slug' => array_merge(
+			tapas_instance_common(
+				'slug',
+				t('Collection Slug'),
+				TAPAS_COLLECTION,
+				TAPAS_INSTANCE_DESC_COLLECTIONSLUG
+			),
+			tapas_instance_uniqueid()
+		),
+
+		TAPAS_C_INSTANCE_PRE . 'tags' => array_merge(
+			tapas_instance_common(
+				'tags',
+				t('Tags'),
+				TAPAS_COLLECTION,
+				TAPAS_INSTANCE_DESC_TAGS
+			),
+			tapas_instance_taxonomy()
+		),
+
+		TAPAS_C_INSTANCE_PRE . 'parent_slug' => array_merge(
+			tapas_instance_common(
+				'parent_slug',
+				t('Parent Slug'),
+				TAPAS_COLLECTION,
+				TAPAS_INSTANCE_DESC_PARENTSLUG
+			),
+			tapas_instance_hiddentext()
+		)
 	);
-	$instances[$institution]['widget'] = array('type' => 'taxonomy_autocomplete');
-
-	// Collection-only instance
-
-	$instances[] = array(
-		'entity_type' => 'node',
-		'bundle' => TAPAS_COLLECTION,
-		'field_name' => 'parentslug_' . TAPAS_COLLECTION,
-		'label' => '(parent slug)'
-	);
-
-	return $instances;
 
 }
 
 /**
- * Generates Organic Groups fields
+ * Field instance arrays for TAPAS_PROJECT content type.
+ *
+ * @return array An array of Drupal field instance arrays.
+ */
+
+function tapas_project_field_instances() {
+	return  array(
+
+		// Title field is added by the content type definition.
+
+		TAPAS_P_INSTANCE_PRE . 'institution' => array_merge(
+			tapas_instance_common(
+				'institution',
+				t('Affiliated Institutions'),
+				TAPAS_PROJECT,
+				TAPAS_INSTANCE_DESC_INSTITUTIONS
+			),
+			tapas_instance_taxonomy()
+		),
+
+
+		TAPAS_P_INSTANCE_PRE . 'description' => array_merge(
+			tapas_instance_common(
+				'description',
+				t('Project Description'),
+				TAPAS_PROJECT,
+				TAPAS_INSTANCE_DESC_PROJDESCRIPTION
+			),
+			tapas_instance_paragraph()
+		),
+
+		TAPAS_P_INSTANCE_PRE . 'image' => array_merge(
+			tapas_instance_common(
+				'image',
+				t('Project Thumbnail'),
+				TAPAS_PROJECT,
+				TAPAS_INSTANCE_DESC_PROJTHUMB
+			),
+			tapas_instance_thumbnail()
+		),
+
+
+		TAPAS_P_INSTANCE_PRE . 'links' => array_merge(
+			tapas_instance_common(
+				'links',
+				t('External Links'),
+				TAPAS_PROJECT,
+				TAPAS_INSTANCE_DESC_LINKS
+			),
+			tapas_instance_hyperlinks()
+		),
+
+	);
+
+}
+
+function tapas_hidden_field_instances() {
+
+	return array(
+
+		TAPAS_C_INSTANCE_PRE . 'hide_title' => array_merge(
+			tapas_instance_common(
+				'hide_title',
+				t('Titlestring'),
+				TAPAS_COLLECTION,
+				TAPAS_INSTANCE_DESC_HIDDENTITLESTRING
+			),
+			tapas_instance_hiddentext()
+		),
+
+		TAPAS_P_INSTANCE_PRE . 'hide_title' => array_merge(
+			tapas_instance_common(
+				'hide_title',
+				t('Titlestring'),
+				TAPAS_PROJECT,
+				TAPAS_INSTANCE_DESC_HIDDENTITLESTRING
+			),
+			tapas_instance_hiddentext()
+		),
+
+		TAPAS_C_INSTANCE_PRE . 'hidden_imname' => array_merge(
+			tapas_instance_common(
+				'hide_imname',
+				t('Imagename'),
+				TAPAS_COLLECTION,
+				TAPAS_INSTANCE_DESC_HIDDENIMAGENAME
+			),
+			tapas_instance_hiddentext()
+		),
+
+		TAPAS_P_INSTANCE_PRE . 'hidden_imname' => array_merge(
+			tapas_instance_common(
+				'hide_imname',
+				t('Imagename'),
+				TAPAS_PROJECT,
+				TAPAS_INSTANCE_DESC_HIDDENIMAGENAME
+			),
+			tapas_instance_hiddentext()
+		),
+
+		TAPAS_P_INSTANCE_PRE . 'hide_instname' => array_merge(
+			tapas_instance_common(
+				'hide_instname',
+				t('Institutionname'),
+				TAPAS_PROJECT,
+				TAPAS_INSTANCE_DESC_HIDDENINST
+			),
+			tapas_instance_hiddentext()
+		),
+
+	);
+
+}
+/**
+ * Generates Organic Groups fields.
  *
  * Calls to the Organic Groups module api to make Project and Collection Organic
- *   Groups entitites.
+ *   Groups entitites. See also tapas_module/features/tapas_feature_collection_type
+ *   and tapas_modules/features/tapas_feature_project_type. Role, Permission, and
+ *   access settings (and hence the group_access and og_roles_permisions fields)
+ *   will be set via the feature rather than here.
+ *
  */
 
 function tapascollection_ogfields() {
@@ -178,6 +306,7 @@ function tapascollection_ogfields() {
 		$og_c_to_p = og_fields_info(OG_AUDIENCE_FIELD);
 		$og_field['field']['settings']['target_type'] = TAPAS_PROJECT;
 		og_create_field(TAPAS_C_TO_P, 'node', TAPAS_COLLECTION, $og_c_to_p);
+
 }
 
 
@@ -185,87 +314,120 @@ function tapascollection_ogfields() {
 // Internal functions
 // ====================================================================================
 
-/** 
- * Field instances common to 'project' and 'collection'
+
+// ====================================================================================
+// TAPAS field instance types
+// ====================================================================================
+
+/**
+ * Returns a field instance array for a hidden text field.
  *
- * @internal Gets common bases for tapascollection_field_bases
- * 
- * @param string indicating either project or collection. Project is
- *   indicated by the constant TAPAS_PROJECT, collection by the 
- *   constant TAPAS_COLLECTION
- *
- * @return array An array of field instance info arrays.
- *
- * @uses _tapascollection_instance().
+ * @return array A field instance array.
  */
-function _tapascollection_common_instances($type) {
 
-	$prefix = TAPAS_FIELD_PREFIX;
+function tapas_instance_hiddentext() {
 
-	// Common Instances
-
-	$common_fields = array(
-		'description' => t('Description'),
-		'image' => t('Image'),
-		'slug' => t('Slug'),
-		'tags' => t('Tags'), 
-		'hidden_title' => '(hidden title)',
-		'hidden_imagename' => '(hidden image-name)',
+	return array(
+		'required' => FALSE,
+		'display' => array('default' => array('type' => 'hidden')),
+		'settings' => array('text_processing' => 0),
+		'widget' => array(
+			'module' => 'text',
+			'settings' => array('size' => 60),
+			'type' => 'text_textfield',
+		)
 	);
-
-	$instances = _tapascollection_instance($type, $common_fields);
-
-	$instances['slug_' . $type]['required'] = TRUE;
-	$instances['tags_' . $type]['widget'] = array(
-		'type' => 'taxonomy_autocomplte');
-
-	return $instances;
-
-}
-
-
-/** 
- * Builds field instance array for a group of fields.
- *
- * @internal Gets field instance arrays for tapascollection_field_instances.
- *
- * @param string $type Whether this is a project or collection. A project
- *   is indicated by the constant TAPAS_PROJECT, a collection by the 
- *   constant TAPAS_COLLECTION.
- * @param array $fields An associative array that uses the field name
- *   as the key, and the translated label as the value.
- *
- * @return array An array of field instance info arrays.
- */
-
-function _tapascollection_instance($type, $fields) {
-
-	$instances = array();
-	foreach ($fields as $field => $label) {
-		$instances[$field . '_' . $type] = array(
-			'entity_type' => 'node',
-			'bundle' => $type,
-			'field_name' => TAPAS_FIELD_PREFIX . '_' . $field,
-			'label' => $label
-		);
-	}
 
 }
 
 /**
- * Helper Functions
+ * Returns a field instance array for a thumbnail field.
+ *
+ * @return array A field instance array.
  */
 
-function tapas_tagtax_fieldinst(
-	$bundle,
-	$description,
-	$name,
-	$label
-) {
+function tapas_instance_thumbnail() {
+
 	return array(
-		'bundle' => $bundle,
+		'display' => array(
+			'default' => array(
+				'label' => 'hidden',
+				'module' => 'image',
+				'type' => 'image',
+			),
+			'teaser' => array(
+				'label' => 'hidden',
+				'type' => 'image',
+			),
+		),
+		'settings' => array(
+			//'alt_field' => $alt,
+			'default_image' => TAPAS_C_DEFAULT_IMAGE,
+			'file_directory' => TAPAS_C_IMAGE_DIR,
+			'file_extentions' => 'png gif jpg jpeg',
+			'max_filesize' => TAPAS_THUMB_MAX_FILESIZE,
+			'max_resolution' => TAPAS_THUMB_MAX_RES,
+			'min_resolution' => TAPAS_THUMB_MIN_RES,
+		),
+		'widget' => array(
+			'module' => 'image',
+			'settings' => array(
+				'preview_image_style' => TAPAS_THUMB_PREVIEW_STYLE,
+				'progress_indicator' => TAPAS_THUMB_PROGRESS_IND,
+			),
+			'type' => 'image_image',
+		)
+	);
+}
+
+/** 
+ * Returns a field instance array for a plaintext field.
+ *
+ * @return array A field instance array.
+ */
+
+function tapas_instance_plaintext() {
+
+}
+
+/**
+ * Returns a field instance array for a paragraph field.
+ *
+ * @return array A field instance array.
+ */
+
+function tapas_instance_paragraph() {
+         
+	return array(
+		'display' => array(
+			'default' => array(
+				'label' => 'hidden',
+				'module' => 'text',
+				'type' => 'text_default',
+			),
+		),
+		'required' => FALSE,
+		'settings' => array('text_processing' => TRUE),
+		'widget' => array(
+			'active' => TRUE,
+			'module' => 'text',
+			'settings' => array('rows' => 5),
+			'type' => 'text_textarea',
+		)
+	);
+
+}
+
+/**
+ * Returns a field instance array for a tag-like taxonomy field.
+ *
+ * @return array A field instance array.
+ */
+
+function tapas_instance_taxonomy() {
+
+	return array(
 		'default_value' => NULL,
-		'description' => $description,
 		'display' => array(
 			'default' => array(
 				'label' => 'inline',
@@ -278,9 +440,6 @@ function tapas_tagtax_fieldinst(
 				'type' => 'taxonomy_term_reference_link',
 			),
 		),
-		'entity_type' => 'node',
-		'field_name' => TAPAS_FIELD_PREFIX . $name,
-		'label' => $label,
 		'widget' => array(
 			'module' => 'taxonomy',
 			'settings' => array(
@@ -293,206 +452,91 @@ function tapas_tagtax_fieldinst(
 
 }
 
-function tapascollection_simpletext_field_display(
-	$visible_default = TRUE,
-	$visible_teaser = TRUE,
-	$label_default = 'inline',
-	$label_teaser = 'inline',
-	$is_long = FALSE) {
+/**
+ * Returns a field instance array for an alphanumeric unique id field.
+ *
+ * @return array A field instance array.
+ */
 
-	if ($is_long) {
-		$type = 'text_textarea';
-		$settings = array('rows' => 5);
-	} else {
-		$type = 'text_textfield';
-		$settings = array('size' => 60);
-	}
+function tapas_instance_uniqueid() {
 
 	return array(
+		'required' => TRUE,
+		'settings' => array('text_processing' => 0),
 		'display' => array(
 			'default' => array(
-				'label' => $label_default,
+				'label' => 'inline',
 				'module' => 'text',
-				'type' => $visible_default?'text_default':'hidden',
+				'settings' => array(),
+				'type' => 'text_default',
 			),
-			'teaser' => array(
-				'label' => $label_teaser,
-				'module' => 'text',
-				'type' => $visible_teaser?'text_default':'hidden',
-			),
+			'teaser' => array('type' => 'hidden'),
 		),
 		'widget' => array(
 			'module' => 'text',
-			'settings' => $settings,
-			'type' => $type,
-		),
+			'settings' => array('size' => 60),
+			'type' => 'text_textfield',
+		)
 	);
 
 }
 
 /**
- * Thumbnail field instance array
- *
- * For use by every thumbnail field defined by Tapas.
- *
- * @param string $name Fieldname, without the TAPAS_FIELD_PREFIX.
- * @param string $type either TAPAS_PROJECT or TAPAS_COLLECTION.
- * @param string $label The translated label.
- * @param string $description The translated description.
- * @param string $alt The translated alt text, if any.
- *
- * @return array The instance array for the field instance.
+ * Returns a field instance array for a collection of hyperlinks.
  */
 
-function tapascollection_thumbnail_instance(
-	$name, $type, $label, $description='', $alt='') {
-
-return array(
-	'bundle' => TAPAS_COLLECTION,
-	'description' => $description,
-	'display' => array(
-		'default' => array(
-			'label' => 'hidden',
-			'module' => 'image',
-			'type' => 'image',
+function tapas_instance_hyperlinks() {
+	
+	return array(
+		'display' => array(
+			'default' => array(
+				'label' => 'above',
+				'module' => 'link',
+				'type' => 'link_default',
+			),
+			'teaser' => array('type' => 'hidden'),
 		),
-		'teaser' => array(
-			'label' => 'hidden',
-			'type' => 'image',
-		),
-	),
-	'entity_type' => 'node',
-	'field_name' => TAPAS_FIELD_PREFIX . $name,
-	'label' => $label,
-	'settings' => array(
-		'alt_field' => $alt,
-		'default_image' => TAPAS_C_DEFAULT_IMAGE,
-		'file_directory' => TAPAS_C_IMAGE_DIR,
-		'file_extentions' => 'png gif jpg jpeg',
-		'max_filesize' => TAPAS_THUMB_MAX_FILESIZE,
-		'max_resolution' => TAPAS_THUMB_MAX_RES,
-		'min_resolution' => TAPAS_THUMB_MIN_RES,
-	),
-	'widget' => array(
-		'module' => 'image',
+		'required' => FALSE,
 		'settings' => array(
-			'preview_image_style' => TAPAS_THUMB_PREVIEW_STYLE,
-			'progress_indicator' => TAPAS_THUMB_PROGRESS_INDICATOR,
+			'absolute_url' => TRUE,
+			'display' => array('url_cutoff' => 80),
+			'enable_tokens' => TRUE,
+			'title' => 'optional',
+			'title_label_use_field_label' => FALSE,
+			'title_maxlength' => 128,
+			'validate_url' => TRUE,
 		),
-		'type' => 'image_image',
-	)
-);
+		'widget' => array(
+			'module' => 'link',
+			'type' => 'link_field',
+		),
+	);
+	
+
 
 }
 
-/** 
- * Field instances.
+/**
+ * The fields of the instane array common to all instances.
+ *
+ * @param string $name Field name (without the TAPAS_FIELD_PREFIX)
+ * @param string $label The translated label.
+ * @param string $bundle TAPAS_PROJECT or TAPAS_COLLECTION constant.
+ * @param string $description the translated description.
+ *
+ * @return array A field instance array.
  */
 
-function tapascollection_collection_instances() {
+function tapas_instance_common(
+	$name, 
+	$label, 
+	$bundle, 
+	$description='') {
 
-$field_instances = array(
-		TAPAS_C_INSTANCE_PRE . 'hidden_imagename' => array_merge(
-			tapascollection_simpletext_field_display(
-				FALSE, FALSE, 'hidden', 'hidden'),
-			array(
-				'bundle' => TAPAS_COLLECTION,
-				'description' => 'Internal -- used as migration aid.',
-				'entity_type' => 'node',
-				'field_name' => TAPAS_FIELD_PREFIX . 'hidden_imagename',
-				'label' => 'image name (internal use)',
-				'settings' => array('text_processing' => 0),
-			)
-		),
-		// Skipping 'title', should be added automatically?
-		// Skipping 'group_access', added in og section
-		// Skipping 'group_group', added in og section
-		// Skipping 'og_collection_to_project_ref', added in og section.
-		// Skipping 'og_roles_permissions', added in og section
-		TAPAS_C_INSTANCE_PRE . 'description' => array_merge(
-			tapascollection_simpletext_field_display(
-				TRUE, TRUE, 'hidden', 'hidden', TRUE, 1),
-			array (
-				'bundle' => TAPAS_COLLECTION,
-				'description' => t('Describe this collection.'),
-				'entity_type' => 'node',
-				'field_name' => TAPAS_FIELD_PREFIX . 'description',
-				'label' => t('Collection Description'),
-				'settings' => array('text_processing' => 1),
-			)
-		),
-		TAPAS_C_INSTANCE_PRE . 'image' => 
-			tapascollection_thumbnail_instance(
-				'image',
-				TAPAS_COLLECTION,
-				t('Collection Thumbnail'),
-				t('You can add an image to be a thumbnail for this collection.'),
-				t('Thumbnail image for this collection.')
-			),
-
-		TAPAS_C_INSTANCE_PRE . 'slug' => array_merge(
-			tapascollection_simple_text_field_display(
-				TRUE, FALSE, 'inline', 'hidden'),
-				array(
-					'bundle' => TAPAS_COLLECTION,
-					'description' => t('A machine-readable identifier for this file. Must contain only letters and hyphens, no spaces.'),
-					'entity_type' => 'node',
-					'field_name' => TAPAS_FIELD_PREFIX . 'slug',
-					'settings' => array('text_processing' => 0),
-					'label' => t('Slug'),
-					'required' => TRUE,
-				)
-		),
-
-		TAPAS_C_INSTANCE_PRE . 'tags' => tapas_tagtax_fieldinst(
-			TAPAS_COLLECTION, '', 'tags', t('Tags')),
-
-		TAPAS_P_INSTANCE_PRE . 'hidden_imagename' => array_merge(
-			tapascollection_simpletext_field_display(
-				FALSE, FALSE, 'hidden', 'hidden'),
-			array(
-				'bundle' => TAPAS_PROJECT,
-				'description' => 'Internal -- used as migration aid.',
-				'entity_type' => 'node',
-				'field_name' => TAPAS_FIELD_PREFIX . 'hidden_imagename',
-				'label' => 'image name (internal use)',
-				'settings' => array('text_processing' => 0),
-			)
-		),
-		
-		TAPAS_P_INSTANCE_PRE . 'instiution' => tapas_tagtax_fieldinst(
-			TAPAS_PROJECT, 
-			t('You may list one or more institutions that this project is affiliated with. Institutions listed will appear on the institution list; autocomplete will suggest institutions already on the list.'),
-			'institution',
-			t('Affiliated Institutions')
-		),
-
-		// skipping title
-		// skipping group_access
-		// skipping group_group
-		// skipping og_roles_permissions
-
-		TAPAS_P_INSTANCE_PRE . 'description' => array_merge(
-			tapascollection_simpletext_field_display(
-				TRUE, TRUE, 'hidden', 'hidden', TRUE, 1),
-			array (
-				'bundle' => TAPAS_PROJECT,
-				'description' => t('Describe this project.'),
-				'entity_type' => 'node',
-				'field_name' => TAPAS_FIELD_PREFIX . 'description',
-				'label' => t('Project Description'),
-				'settings' => array('text_processing' => 1),
-			)
-		),
-		
-		TAPAS_P_INSTANCE_PRE . 'image' => 
-			tapascollection_thumbnail_instance(
-				'image',
-				TAPAS_COLLECTION,
-				t('Project Thumbnail'),
-				t('You can add an image to be a thumbnail for this project.'),
-				t('Thumbnail image for this project.')
-			),
-	);
-
+	return array(
+		'field_name' => TAPAS_FIELD_PREFIX . $name,
+		'label' => $label,
+		'entity_type' => 'node',
+		'bundle' => $bundle,
+		'description' => $description);
 }

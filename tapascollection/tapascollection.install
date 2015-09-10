@@ -10,10 +10,6 @@
  *
  * @see tapascollection_constants.inc for constants used in
  *   this file.
- *
- * @uses tapascollection_constants.inc, (via 
- *   tapascollection_fields.inc)
- * @uses tapascollection_fields.inc
  */
 
 /** Custom field info for TAPAS_PROJECT and TAPAS_COLLECTION */
@@ -24,9 +20,6 @@ include_once 'tapascollection_fields.inc';
  *
  * Generates content types and custom fields.
  *
- * @uses tapascollection_field_bases().
- * @uses tapascollection_field_instanecs().
- * @uses tapascollection_og_fields().
  */
 
 function tapascollection_install() {
@@ -43,7 +36,15 @@ function tapascollection_install() {
 	field_info_cache_clear();
 
 	// field instances
-	$instances = tapascollection_field_instances();
+	$instances = array_merge(
+		tapas_collection_field_instances(),
+		tapas_project_field_instances()
+	);
+	$instances = array_merge(
+		$instances,
+		tapas_hidden_field_instances()
+	);
+
 	foreach($instances as $i) {
 		field_create_instance($i);
 	}
@@ -51,6 +52,38 @@ function tapascollection_install() {
 	// organic groups fields.
 	tapascollection_og_fields();
 
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Deletes the field bases and field instances that we created,
+ * then deletes the TAPAS_COLLECTION and TAPAS_PROJECT content
+ * types.
+ */
+function tapascollection_uninstall() {
+
+	// first, delete all the fields we created.
+	$bases = tapascollection_field_bases();
+	foreach($bases as $field) {
+		field_delete_field($field['field_name']);
+	}
+
+	// then, delete field instances of other fields.
+	$instances = field_info_instances('node', TAPAS_COLLECTION);
+	foreach ($instances as $instance_name => $data) {
+		field_delete_instance($data);
+	}
+
+	$instances = field_info_instances('node', TAPAS_PROJECT);
+	foreach ($instances as $instance_name => $data) {
+		field_delete_instance($data);
+	}
+
+	// finally, delete the content types we created.
+	node_type_delete(TAPAS_COLLECTION);
+	node_type_delete(TAPAS_PROJECT);
+	field_purge_batch(1000);
 }
 
 function tapascollection_enable() {

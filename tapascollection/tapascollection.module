@@ -4,8 +4,12 @@
  * @file
  * Code for the tapascollection module
  *
- * TODO: Prevent edit from changing the slug.
- * TODO: Enforce slug uniqueness and character limitations
+ * @TODO: Prevent edit from changing the slug.
+ * @TODO: Enforce slug uniqueness and character limitations
+ *
+ * @author Linda Moss (github LindaJeanne) <l.moss@neu.edu>
+ * @since 2.0
+ * @version 2.0
  */
 
 include_once 'tapascollection_constants.inc';
@@ -23,7 +27,7 @@ include_once 'tapascollection_constants.inc';
 function tapascollection_node_info() {
 
 	$items = array(
-		'tapascollection_project' => array(
+		TAPAS_PROJECT => array(
 			'name' => t('TAPAS Project'),
 			'base' => 'node_content',
 			'description' => t(''),
@@ -31,7 +35,7 @@ function tapascollection_node_info() {
 			'title_label' => t('Project Title'),
 			'help' => t(''),
 		),
-		'tapascollection_collection' => array(
+		TAPAS_COLLECTION => array(
 			'name' => t('TAPAS Collection'),
 			'base' => 'node_content',
 			'description' => t(''),
@@ -63,7 +67,7 @@ function tapascollection_form($node, $form_state) {
  */
 
 function tapascollection_node_insert($node) {
-	_tapascollection_node_post($node);
+	//_tapascollection_node_post($node);
 }
 
 /** 
@@ -71,7 +75,7 @@ function tapascollection_node_insert($node) {
  */
 
 function tapascollection_node_update($node) {
-	_tapascollection_node_post($node);
+	//_tapascollection_node_post($node);
 }
 
 
@@ -80,24 +84,22 @@ function tapascollection_node_update($node) {
  */
 
 function tapascollection_node_delete($node) {
-	$result = "";
+
+	return;
 
 	switch($node->type) {
-		case 'tapascollection_project':
-			tapashydra_delete_hydrarec(
-				TAPASHYDRA_POST_PROJECT_URL, 
-				$node,
-				tapashydra_simple_fieldval($node, 'tc_field_slug')
-			);
+		case TAPAS_PROJECT:
+			$url = TAPASHYDRA_POST_PROJECT_URL;
 			break;
-		case 'tapascollection_collection':
-			tapashydra_delete_hydrarec(
-				TAPASHYDRA_POST_COLLECTION_URL, 
-				$node,
-				tapashydra_simple_fieldval($node, 'tc_field_slug')
-			);
+		case TAPAS_COLLECTION:
+			$url = TAPASHYDRA_POST_COLLECTION_URL;
 			break;
+		default:
+			return;
 	}
+
+	$slug = tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX, 'slug');
+	$result = tapashydra_delete_hydrarec($url, $node, $slug);
 
 	if ($result) {
 		drupal_set_message("Hydra return code: $result");
@@ -120,30 +122,30 @@ function tapascollection_form_node_form_alter(&$form, &$form_state, $form_id) {
 	//$form['og_roles_permissions']['#access'] = TRUE;
 	//$form[TAPASCOLLECTION_FIELD_PREFIX . 'hidden_nodetitle'][#a
 
-	switch ($form['#node']->type) {
-		case 'tapascollection':
-		case 'tapasproject':
+	//switch ($form['#node']->type) {
+		//case 'tapascollection':
+		//case 'tapasproject':
 
-			$prefix = TAPASCOLLECTION_FIELD_PREFIX;
+			//$prefix = TAPASCOLLECTION_FIELD_PREFIX;
 
-			// Hide certain fields, always
-			$fields_to_hide = array(
-				'og_roles_permissions',
-				$prefix . '_hidden_nodetitle',
-				$prefix . '_hidden_parentslug',
-				$prefix . '_hidden_imagename',
-				$prefix . '_hidden_institutionname'
-			);
+			//// Hide certain fields, always
+			//$fields_to_hide = array(
+				//'og_roles_permissions',
+				//$prefix . '_hidden_nodetitle',
+				//$prefix . '_hidden_parentslug',
+				//$prefix . '_hidden_imagename',
+				//$prefix . '_hidden_institutionname'
+			//);
 
-			foreach($fields_to_hide as $field) {
-				$form[$field]['#access'] = FALSE;
-			}
+			//foreach($fields_to_hide as $field) {
+				//$form[$field]['#access'] = FALSE;
+			//}
 
-			// Slug can only be set on record creation, not edited. 
-			if (isset($node->nid) && !isset($node->is_new)) {
-				$form[$prefix . '_slug']['#disabled'] = TRUE;
-			}
-	}
+			//// Slug can only be set on record creation, not edited. 
+			//if (isset($node->nid) && !isset($node->is_new)) {
+				//$form[$prefix . '_slug']['#disabled'] = TRUE;
+			//}
+	//}
 }
 
 // ====================================================================================
@@ -214,25 +216,28 @@ function _tapascollection_posthydra($node, $extra_key, $extra_value, $url) {
  */
 function _tapascollection_node_post($node) {
 
-	$result = FALSE;
-
 	switch($node->type) {
 		case 'tapascollection_project':
-			$result = _tapascollection_posthydra(
-				$node,
-				'members',
-				_tapascollection_get_group_members($node),
-				TAPASHYDRA_POST_PROJECT_URL);
+			$field = 'members';
+			$value = _tapascollection_get_group_members($node);
+			$url =TAPASHYDRA_POST_PROJECT_URL;
 			break;
 		case 'tapascollection_collection':
-			$result = _tapascollection_posthydra(
-				$node,
-				'proj_did',
-				tapashydra_simple_fieldval($node, 'tc_field_slug'),
-				TAPASHYDRA_POST_COLLECTION_URL);
+			$field = 'proj_did';
+			$value = _tapashydra_simple_fieldval(
+				$node, 
+				TAPAS_FIELD_PREFIX . 'parent_slug'
+			);
+			$url = TAPASHYDRA_POST_COLLECTION_URL;
 			break;
+		default:
+			return;
 	}
-	if (isset($result)) {
+
+
+	$result = _tapascollection_posthydra($node, $field, $value, $url);
+
+	if ($result) {
 		drupal_set_message("Hydra Return Value: $result");
 	}
 	else {
