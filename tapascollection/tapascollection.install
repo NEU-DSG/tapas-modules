@@ -1,37 +1,55 @@
 <?php
 
 /**
- * @file Installation script for tapascollection module
+ * @file tapascollection.install
  *
- * Provides the tapas_project and tapas_collection content types, and
- * all the fields that aren't dependent on outside modules (e.g. the
- * Organic Groups fields will be added later fia Feature)
+ * Installation script for the tapascollection module. Creates
+ *   the TAPAS_PROJECT and TAPAS_COLLECTION content typesm and
+ *   their custom fields, including the Organic Groups fields,
+ *   which is why og is a requirement.
+ *
+ * @see tapascollection_constants.inc for constants used in
+ *   this file.
+ *
+ * @uses tapascollection_constants.inc, (via 
+ *   tapascollection_fields.inc)
+ * @uses tapascollection_fields.inc
  */
 
+/** Custom field info for TAPAS_PROJECT and TAPAS_COLLECTION */
 include_once 'tapascollection_fields.inc';
 
 /**
  * Implements hook_install().
+ *
+ * Generates content types and custom fields.
+ *
+ * @uses tapascollection_field_bases().
+ * @uses tapascollection_field_instanecs().
+ * @uses tapascollection_og_fields().
  */
 
 function tapascollection_install() {
 
-// Make custom node type available at install
+	// Make custom node type available at install
 	node_types_rebuild();
 
-	$bases = _tapascollection_field_bases();
+	//fields
+	$bases = tapascollection_field_bases();
 	foreach($bases as $b) {
 		field_create_field($b);
 	}
 	
 	field_info_cache_clear();
-	
-	$instances = _tapascollection_common_instances('collection');
-	$instances = array_merge($instances, _tapascollection_common_instances('project'));
-	$instances = array_merge($instances, _tapascollection_project_instances());
+
+	// field instances
+	$instances = tapascollection_field_instances();
 	foreach($instances as $i) {
 		field_create_instance($i);
 	}
+
+	// organic groups fields.
+	tapascollection_og_fields();
 
 }
 

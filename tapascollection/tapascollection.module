@@ -8,6 +8,7 @@
  * TODO: Enforce slug uniqueness and character limitations
  */
 
+include_once 'tapascollection_constants.inc';
 
 // ====================================================================================
 // Functions implementing hooks
@@ -106,6 +107,44 @@ function tapascollection_node_delete($node) {
 	}
 }
 
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * Used for hiding and disabling fields on the node creation and editing
+ * forms for tapasproject and tapascollection content types.
+ */
+function tapascollection_form_node_form_alter(&$form, &$form_state, $form_id) {
+
+	// We want this hidden whenever it appears in any form.
+	//$form['og_roles_permissions']['#access'] = TRUE;
+	//$form[TAPASCOLLECTION_FIELD_PREFIX . 'hidden_nodetitle'][#a
+
+	switch ($form['#node']->type) {
+		case 'tapascollection':
+		case 'tapasproject':
+
+			$prefix = TAPASCOLLECTION_FIELD_PREFIX;
+
+			// Hide certain fields, always
+			$fields_to_hide = array(
+				'og_roles_permissions',
+				$prefix . '_hidden_nodetitle',
+				$prefix . '_hidden_parentslug',
+				$prefix . '_hidden_imagename',
+				$prefix . '_hidden_institutionname'
+			);
+
+			foreach($fields_to_hide as $field) {
+				$form[$field]['#access'] = FALSE;
+			}
+
+			// Slug can only be set on record creation, not edited. 
+			if (isset($node->nid) && !isset($node->is_new)) {
+				$form[$prefix . '_slug']['#disabled'] = TRUE;
+			}
+	}
+}
 
 // ====================================================================================
 // Internal Helper Functions
