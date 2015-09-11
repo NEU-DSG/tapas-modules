@@ -18,6 +18,8 @@
  */
 
 
+include_once('tapascontent_constants.inc');
+
 /**
  * Custom base fields for TAPAS content types. 
  *
@@ -72,7 +74,7 @@ function tapas_field_bases() {
 			'type' => 'text',
 		),
 		'migration_thumb' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'migrration_thumb',
+			'field_name' => TAPAS_FIELD_PREFIX . 'migration_thumb',
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text'
@@ -156,7 +158,7 @@ function tapas_fields_project() {
 				'slug',
 				t('Project Slug'),
 				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_PROJECTSLUG
+				TAPAS_INSTANCE_DESC_PROJSLUG
 			),
 			tapas_instance_uniqueid()
 		),
@@ -171,9 +173,9 @@ function tapas_fields_project() {
 			tapas_instance_taxonomy()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'institution' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'institutions' => array_merge(
 			tapas_instance_common(
-				'institution',
+				'institutions',
 				t('Affiliated Institutions'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_INSTITUTIONS
@@ -201,10 +203,10 @@ function tapas_fields_project() {
 			tapas_instance_hiddentext()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'migration_image' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'migration_thumb' => array_merge(
 			tapas_instance_common(
-				'migration_image',
-				t('Migration Image'),
+				'migration_thumb',
+				t('Migration Thumb'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_MIGRATIONIMAGE
 			),
@@ -291,17 +293,17 @@ function tapas_fields_collection() {
 				'migration_title',
 				t('Migration Title'),
 				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_HIDDENTITLESTRING
+				TAPAS_INSTANCE_DESC_MIGRATIONTITLE
 			),
 			tapas_instance_hiddentext()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'migration_image' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'migration_thumb' => array_merge(
 			tapas_instance_common(
-				'migration_image',
-				t('Migration Image'),
+				'migration_thumb',
+				t('Migration Thumb'),
 				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_HIDDENIMAGENAME
+				TAPAS_INSTANCE_DESC_MIGRATIONIMAGE
 			),
 			tapas_instance_hiddentext()
 		),
@@ -333,7 +335,7 @@ function tapas_fields_record() {
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_TEIFILE
 			),
-			tapas_instance_filefield() // @todo: this is not written yet!
+			tapas_instance_filefield('tei xml') 
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'attatchments' => array_merge(
@@ -343,7 +345,7 @@ function tapas_fields_record() {
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_ATTATCH
 			),
-			tapas_instance_fieldfield() // @todo: this has not been written yet!
+			tapas_instance_filefield('jpeg') 
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'display_auth' => array_merge(
@@ -358,7 +360,7 @@ function tapas_fields_record() {
 
 		TAPAS_R_INSTANCE_PRE . 'display_contrib' => array_merge(
 			tapas_instance_common(
-				'display_auth',
+				'display_contrib',
 				t('Contributor Names'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_CONTRIBUTORS
@@ -452,9 +454,53 @@ function tapas_instance_thumbnail() {
  * @return array A field instance array.
  */
 
-function tapas_instance_plaintext() {
-
+function tapas_instance_simpletext() {
+	return array(); // @TODO
 }
+
+/**
+ * Returns a field instance array for a file field.
+ *
+ * @return array: A field instance array.
+ */
+
+function tapas_instance_filefield($file_extensions) {
+
+	return array(
+		'display' => array(
+			'default' => array(
+				'label' => 'inline',
+				'module' => 'file',
+				'type' => 'file_default',
+			),
+			'teaser' => array(
+				'type' => 'hidden',
+			),
+		),
+		'settings' => array( //@TODO
+			'description_field' => FALSE,
+			'field_directory' => '',
+			'file_extentions' => $file_extensions,
+			'max_filesize' => TAPAS_FILE_MAXSIZE,
+		),
+		'widget' => array(
+			'module' => 'file',
+			'settings' => array( 'progress_indicator' => 'throber'),
+			'type' => 'file_generic',
+		),
+	);
+}
+
+/**
+ * Returns a field instance array for a date field.
+ *
+ * @return aray: A file instance array.
+ */
+
+function tapas_instance_datefield() {
+	return array(); //@TODO
+}
+
 
 /**
  * Returns a field instance array for a paragraph field.

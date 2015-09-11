@@ -29,13 +29,13 @@ define ('TAPAS_R_INSTANCE_PRE', 'fi_tapas_r_');
 // ====================================================================================
 
 /** Machine name of the Collection content type. */
-define ('TAPAS_COLLECTION', 'tapascollection_collection');
+define ('TAPAS_COLLECTION', 'tapas_collection');
 
 /** Machine name of the Project content type. */
-define ('TAPAS_PROJECT', 'tapascollection_project');
+define ('TAPAS_PROJECT', 'tapas_project');
 
 /** Machine name of the TEI Record content type. */
-define ('TAPAS_RECORD', 'tapasrecord_tapasrecordnode');
+define ('TAPAS_RECORD', 'tapas_record');
 
 
 // ====================================================================================
@@ -44,6 +44,8 @@ define ('TAPAS_RECORD', 'tapasrecord_tapasrecordnode');
 
 /** Field name for collection-to-project OG audience link*/
 define ('TAPAS_C_TO_P', 'og_tapas_c_to_p');
+/** FIeld name for record-to-collection OG audience link */
+define ('TAPAS_R_TO_C', 'og_tapas_r_to_c');
 
 
 // ====================================================================================
@@ -61,6 +63,12 @@ define ('TAPAS_THUMB_MIN_RES', '');
 
 define ('TAPAS_THUMB_PREVIEW_STYLE', 'thumbnail');
 define ('TAPAS_THUMB_PROGRESS_IND', 'throbber');
+
+// ====================================================================================
+// Other Files.
+// ====================================================================================
+
+define ('TAPAS_FILE_MAXSIZE', 128);
 
 // ====================================================================================
 // Field Instance Descriptions.
@@ -89,22 +97,34 @@ define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', '');
 define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', '');
 
 // ====================================================================================
+// Content Type Descriptions
+// ====================================================================================
+
+define ('TAPAS_CONTENT_PROJ_DESC', '');
+define ('TAPAS_CONTENT_COLL_DESC', '');
+define ('TAPAS_CONTENT_REC_DESC', '');
+
+define ('TAPAS_CONTENT_PROJ_HELP', '');
+define ('TAPAS_CONTENT_COLL_HELP', '');
+define ('TAPAS_CONTENT_REC_HELP', '');
+
+// ====================================================================================
 //  Hydra API.
 // ====================================================================================
 
 // include_once('/var/www/hydratoken.php');
-// define ('TAPASHYDRA_AUTH_TOKEN', HYDRA_API_KEY);
+// define ('TAPAS_AUTH_TOKEN', HYDRA_API_KEY);
 define ('TAPASHYDRA_AUTH_TOKEN', 'tapas12345');
 
 
-define('TAPASHYDRA_BASE_API_URL', 'http://rails_api.localhost:8080');
+define('TAPAS_BASE_API_URL', 'http://rails_api.localhost:8080');
 
-define('TAPASHYDRA_POST_PROJECT_URL', TAPASHYDRA_BASE_API_URL . "/communities");
-define('TAPASHYDRA_POST_COLLECTION_URL', TAPASHYDRA_BASE_API_URL . "/collections");
-define('TAPASHYDRA_POST_TEI_URL', TAPASHYDRA_BASE_API_URL . "/files");
+define('TAPAS_POST_PROJECT_URL', TAPAS_BASE_API_URL . "/communities");
+define('TAPAS_POST_COLLECTION_URL', TAPAS_BASE_API_URL . "/collections");
+define('TAPAS_POST_TEI_URL', TAPAS_BASE_API_URL . "/files");
 
-define('TAPASHYDRA_GET_RAW', 'tei');
-define('TAPASHYDRA_GET_BP', 'teibp');
-define('TAPASHYDRA_GET_GENERIC', 'tapas_generic');
+define('TAPAS_GET_RAW', 'tei');
+define('TAPAS_GET_BP', 'teibp');
+define('TAPAS_GET_GENERIC', 'tapas_generic');
 
-define("TAPASHYDRA_INCLUDE_CURL_DEBUG", TRUE);
+define("TAPAS_INCLUDE_CURL_DEBUG", TRUE);

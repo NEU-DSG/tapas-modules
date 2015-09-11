@@ -13,6 +13,7 @@
  * @version 2.0
  */
 
+include_once('tapascontent_fields.inc');
 
 /**
  * Implements hook_install()
@@ -24,7 +25,7 @@ function tapascontent_install() {
 	node_types_rebuild();
 
 	//create field bases
-	$bases = tapascontent_field_bases();
+	$bases = tapas_field_bases();
 	foreach ($bases as $field) {
 		field_create_field($field);
 	}
@@ -32,7 +33,15 @@ function tapascontent_install() {
 	field_info_cache_clear();
 
 	//create field instances
-	$instances = tapascontent_field_instances();
+	$instances = tapas_fields_project();
+	foreach ($instances as $field) {
+		field_create_instance($field);
+	}
+	$instances = tapas_fields_collection();
+	foreach ($instances as $field) {
+		field_create_instance($field);
+	}
+	$instances = tapas_fields_record();
 	foreach ($instances as $field) {
 		field_create_instance($field);
 	}
@@ -63,12 +72,22 @@ function tapascontent_install() {
 
 function tapascontent_uninstall() {
 
-	$bases = tapascontent_field_bases();
+	$bases = tapas_field_bases();
 	foreach ($bases as $field) {
 		field_delete_field($field['field_name']);
 	}
 
-	$instances = tapascontent_field_instances();
+	$instances = tapas_fields_project();
+	foreach ($instances as $field) {
+		field_delete_instance($field);
+	}
+
+	$instances = tapas_fields_collection();
+	foreach ($instances as $field) {
+		field_delete_instance($field);
+	}
+
+	$instances = tapas_fields_record();
 	foreach ($instances as $field) {
 		field_delete_instance($field);
 	}

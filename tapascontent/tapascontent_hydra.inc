@@ -9,7 +9,7 @@
  * @version 2.0
  */
 
-
+include_once('tapascontent_constants.inc');
 
 // ====================================================================================
 // POST and DELETE functions called from outside the file.
@@ -71,7 +71,7 @@ function tapas_hydra_delete($url_base, $node) {
 
 function _tapas_hydra_curlcall($url, $options) {
 
-	$header = array('Authorization: Token token=' . TAPAS_HYDRA_AUTH_TOKEN);
+	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 
 	$common_opts = array(
 		CURLOPT_URL => $url,
@@ -79,7 +79,7 @@ function _tapas_hydra_curlcall($url, $options) {
 	);
 
 
-	if (TAPASHYDRA_INCLUDE_CURL_DEBUG) {
+	if (TAPAS_INCLUDE_CURL_DEBUG) {
 		// Deubuggin node: if array_merge is used, the keys change to 0, 1, 2, 3, etc, 
 		// and everything breaks.
 		$curlopt = $options + _tapas_hydra_debugopts() + $common_opts;
@@ -93,7 +93,7 @@ function _tapas_hydra_curlcall($url, $options) {
 	}
 	$result = curl_exec($ch);
 
-	if (TAPASHYDRA_INCLUDE_CURL_DEBUG) {
+	if (TAPAS_INCLUDE_CURL_DEBUG) {
 		_tapashydra_curl_messages($ch, $result);
 	}
 
@@ -108,7 +108,7 @@ function _tapas_hydra_curlcall($url, $options) {
 
 function _tapas_hydra_debugopts() {
 
-	if (TAPASRECORD_INCLUDE_CURL_DEBUG) {
+	if (TAPAS_INCLUDE_CURL_DEBUG) {
 		$result = array(
 			CURLOPT_RETURNTRANSFER => TRUE,
 			CURLOPT_VERBOSE => TRUE,

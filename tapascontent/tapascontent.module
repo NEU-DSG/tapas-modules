@@ -11,6 +11,9 @@
  * @TODO: Enforce slug rules. 
  */
 
+include_once('tapascontent_constants.inc');
+include_once('tapascontent_hydra.inc');
+
 
 // ====================================================================================
 // Functions implementing hooks
@@ -96,13 +99,13 @@ function tapascontent_node_delete($node) {
  
  switch($node->type) {
 	case TAPASPROJECT:
-		tapas_hydra_delete(TAPASHYDRA_POST_PROJECT_URL, $node);
+		tapas_hydra_delete(TAPAS_POST_PROJECT_URL, $node);
 		break;
 	case TAPASCOLLECTION:
-		tapas_hydra_delete(TAPASHYDRA_POST_COLLECTION_URL, $node);
+		tapas_hydra_delete(TAPAS_POST_COLLECTION_URL, $node);
 		break;
 	case TAPASRECORD:
-		tapas_hydra_delete(TAPASHYDRA_POST_RECORD_URL, $node);
+		tapas_hydra_delete(TAPAS_POST_RECORD_URL, $node);
 		break;
 	default:
 		return;
@@ -158,7 +161,7 @@ function tapascollection_form_node_form_alter(&$form, &$form_state, $form_id) {
 
 function tapascontent_node_view($node, $view_mode, $lang_code) {
 
-	if ($node->node_type != 'tapasrecordnode') {
+	if ($node->type != 'tapasrecordnode') {
 		return;
 	}
 
@@ -192,7 +195,7 @@ function tapascontent_node_view($node, $view_mode, $lang_code) {
  * @return array: A list of user-ids of users who are members of the group represented by $node
  */
 
-function _tapascollection_get_group_members($node) {
+function _tapascontent_get_group_members($node) {
 	//return og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
 	return $node->uid;
 
@@ -214,7 +217,7 @@ function _tapascontent_projcol_hydradata($node) {
 		'title' => $node->title,
 		'description' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
 		'thumbnail' => tapashydra_filestring($node, TAPAS_FIELD_PREFIX . 'thumbnail'),
-		'access' => $node->group_access['und'][0]['value']?'private':'public',
+		'access' => 'public', //$node->group_access['und'][0]['value']?'private':'public',
 	);
 }
 
@@ -229,12 +232,12 @@ function _tapascontent_projcol_hydradata($node) {
 function _tapascontent_projcol_postnode($node) {
 
 	switch($node->type) {
-		case TAPASPROJECT:
+		case TAPAS_PROJECT:
 			$data = _tapascontent_projcol_hydradata($node);
 			$data['members'] = _tapascontent_get_group_members($node);
 			$result = tapas_hydra_post($data, TAPAS_POST_PROJECT_URL);
 			break;
-		case TAPASCOLLECTION:
+		case TAPAS_COLLECTION:
 			$data = _tapascontent_projcol_hydradata($node);
 			$data['project_did'] = tapasydra_simple_fieldval(
 				$node,
@@ -242,7 +245,7 @@ function _tapascontent_projcol_postnode($node) {
 			);
 			$result = tapas_hydra_post($data, TAPAS_POST_COLLECTION_URL);
 			break;
-		case TAPASRECORD:
+		case TAPAS_RECORD:
 			break;
 		default:
 			return;
