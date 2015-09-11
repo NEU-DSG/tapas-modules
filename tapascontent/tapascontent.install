@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file tapascontet/tapascontent.install
+ * Installation script for the tapascontnet module.
+ *
+ * Creates the content types, field bases, and field instances for
+ * TAPAS content types. Also removes them when the module is 
+ * uninstalled.
+ *
+ * @author Linda Moss (GitHub LindaJeanne) <l.moss@neu.edu>
+ * @since 2.0
+ * @version 2.0
+ */
+
+
+/**
+ * Implements hook_install()
+ */
+
+function tapascontent_install() {
+
+	//make custom node types available at install
+	node_types_rebuild();
+
+	//create field bases
+	$bases = tapascontent_field_bases();
+	foreach ($bases as $field) {
+		field_create_field($field);
+	}
+
+	field_info_cache_clear();
+
+	//create field instances
+	$instances = tapascontent_field_instances();
+	foreach ($instances as $field) {
+		field_create_instance($field);
+	}
+
+	//Add organic groups field. Role, Permission, and Acces settings
+	//(and hence the group_access and og_roles_permissions fields) will
+	//be created and set later via a feature.
+
+	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_COLLECTION);
+	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_PROJECT);
+
+	$audience_base = og_fields_info(OG_AUDIENCE_FIELD);
+	
+	$og_r_to_c = $audience_base;
+	$og_r_to_c['field']['settings']['target_type'] = TAPAS_COLLECTION;
+	og_create_field(TAPAS_R_TO_C, 'node', TAPAS_RECORD, $og_r_to_c);
+
+	$og_c_to_p = $audience_base;
+	$og_c_to_p['field']['settings']['target_type'] = TAPAS_PROJECT;
+	og_create_field(TAPAS_C_TO_P, 'node', TAPAS_COLLECTION, $og_c_to_p);
+
+}
+
+
+/** 
+ * Implements hook_uninstall()
+ */
+
+function tapascontent_uninstall() {
+
+	$bases = tapascontent_field_bases();
+	foreach ($bases as $field) {
+		field_delete_field($field['field_name']);
+	}
+
+	$instances = tapascontent_field_instances();
+	foreach ($instances as $field) {
+		field_delete_instance($field);
+	}
+
+	node_type_delete(TAPAS_RECORD);
+	node_type_delete(TAPAS_COLLECTION);
+	node_type_delete(TAPAS_PROJECT);
+	field_purge_batch(1000);
+
+}

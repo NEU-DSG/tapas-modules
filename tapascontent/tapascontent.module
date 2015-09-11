@@ -1,0 +1,252 @@
+<?php
+
+/** 
+ * @file tappascontent/tapascontent.module
+ *
+ * @author Linda Moss (GitHub LindaJeanne) <l.moss@neu.edu>
+ * @since 2.0
+ * @version 2.0
+ *
+ * @TODO: Disallow editing slug after creation.
+ * @TODO: Enforce slug rules. 
+ */
+
+
+// ====================================================================================
+// Functions implementing hooks
+// ====================================================================================
+
+
+/**
+ * Imlements hook_node_info().
+ */
+
+function tapascontent_node_info() {
+
+	$items = array(
+		TAPAS_PROJECT => array(
+			'name' => t('TAPAS Project'),
+			'base' => 'node_content',
+			'description' => TAPAS_CONTENT_PROJ_DESC,
+			'has_title' => TRUE,
+			'title_label' => t('Project Title'),
+			'help' => TAPAS_CONTENT_PROJ_HELP,
+		),
+		TAPAS_COLLECTION => array(
+			'name' => t('TAPAS Collection'),
+			'base' => 'node_content',
+			'description' => TAPAS_CONTENT_COLL_DESC,
+			'has_title' => TRUE,
+			'title_label' => t('Collection Title'),
+			'help' => TAPAS_CONTENT_COLL_HELP,
+		),
+		TAPAS_RECORD => array(
+			'name' => t('TAPAS TEI Record'),
+			'base' => 'node_content',
+			'description' => TAPAS_CONTENT_REC_DESC,
+			'has_title' => TRUE,
+			'title_label' => t('Display Title'),
+			'help' => TAPAS_CONTENT_REC_HELP,
+		)
+	);
+
+	drupal_alter('node_info', $items);
+	return $items;
+
+}
+
+/**
+ * Implements hook_form().
+ *
+ * Debugging Note: this has to be present, even if it's just a pass-trough, 
+ *   otherwise the content type won't appear in the admin/structure/types list.
+ */
+
+function tapascontent_form($node, $form_state) {
+	return node_content_form($node, $form_state);
+}
+
+/**
+ * Implemenst hook_node_insert().
+ *
+ * Calls the Hydra API to add the record.
+ */
+
+function tapascontent_node_insert($node) {
+	_tapascontent_projcol_postnode($node);
+}
+
+/** 
+ * Implements hook_node_update().
+ *
+ * Calls the Hydra API to update the record.
+ */
+
+function tapascontent_node_update($node) {
+	_tapascontent_projcol_postnode($node);
+}
+
+
+/** 
+ * Implements hook_node_delete().
+ *
+ * Calls the Hydra API to delete the record.
+ */
+function tapascontent_node_delete($node) {
+ 
+ switch($node->type) {
+	case TAPASPROJECT:
+		tapas_hydra_delete(TAPASHYDRA_POST_PROJECT_URL, $node);
+		break;
+	case TAPASCOLLECTION:
+		tapas_hydra_delete(TAPASHYDRA_POST_COLLECTION_URL, $node);
+		break;
+	case TAPASRECORD:
+		tapas_hydra_delete(TAPASHYDRA_POST_RECORD_URL, $node);
+		break;
+	default:
+		return;
+ }
+
+}
+
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * Used for hiding and disabling fields on the node creation and editing
+ * forms for tapasproject and tapascollection content types.
+ */
+function tapascollection_form_node_form_alter(&$form, &$form_state, $form_id) {
+
+	// We want this hidden whenever it appears in any form.
+	//$form['og_roles_permissions']['#access'] = TRUE;
+	//$form[TAPASCOLLECTION_FIELD_PREFIX . 'hidden_nodetitle'][#a
+
+	//switch ($form['#node']->type) {
+		//case 'tapascollection':
+		//case 'tapasproject':
+
+			//$prefix = TAPASCOLLECTION_FIELD_PREFIX;
+
+			//// Hide certain fields, always
+			//$fields_to_hide = array(
+				//'og_roles_permissions',
+				//$prefix . '_hidden_nodetitle',
+				//$prefix . '_hidden_parentslug',
+				//$prefix . '_hidden_imagename',
+				//$prefix . '_hidden_institutionname'
+			//);
+
+			//foreach($fields_to_hide as $field) {
+				//$form[$field]['#access'] = FALSE;
+			//}
+
+			//// Slug can only be set on record creation, not edited. 
+			//if (isset($node->nid) && !isset($node->is_new)) {
+				//$form[$prefix . '_slug']['#disabled'] = TRUE;
+			//}
+	//}
+}
+
+
+/** 
+ * Implements hook_node_view()
+ *
+ * For enabling the reading interface.
+ */
+
+function tapascontent_node_view($node, $view_mode, $lang_code) {
+
+	if ($node->node_type != 'tapasrecordnode') {
+		return;
+	}
+
+	switch ($view_mode) {
+		case 'teaser':
+			break;
+		case 'rss':
+			break;
+		case 'full':
+			break;
+
+
+		case 'full_readinginterface':
+			$content = _tapasrecord_readingview($node->field_tapas_uid);
+			break;
+		case 'full_metadataview':
+			break;
+
+	}
+
+}
+
+// ====================================================================================
+// Helper functions
+// ====================================================================================
+
+/**
+ * Internal. Returns a list of user-ids that are a member of the given project or collection.
+ *
+ * @param $node: The project or collection node
+ * @return array: A list of user-ids of users who are members of the group represented by $node
+ */
+
+function _tapascollection_get_group_members($node) {
+	//return og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
+	return $node->uid;
+
+}
+
+/**
+ * @internal Post-data common to Projects and Collections.
+ *
+ * @param node $node: the node we will be posting.
+ *
+ * @return array: An array with the common values set.
+ */
+
+function _tapascontent_projcol_hydradata($node) {
+	
+	return array(
+		'uid' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
+		'depostitor' => $node->uid,
+		'title' => $node->title,
+		'description' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
+		'thumbnail' => tapashydra_filestring($node, TAPAS_FIELD_PREFIX . 'thumbnail'),
+		'access' => $node->group_access['und'][0]['value']?'private':'public',
+	);
+}
+
+
+/**
+ * @internal post function called by node_insert and node_update.
+ *
+ * @param node $node: the node we will be posting.
+ *
+ * @return array: An array with the common values set.
+ */
+function _tapascontent_projcol_postnode($node) {
+
+	switch($node->type) {
+		case TAPASPROJECT:
+			$data = _tapascontent_projcol_hydradata($node);
+			$data['members'] = _tapascontent_get_group_members($node);
+			$result = tapas_hydra_post($data, TAPAS_POST_PROJECT_URL);
+			break;
+		case TAPASCOLLECTION:
+			$data = _tapascontent_projcol_hydradata($node);
+			$data['project_did'] = tapasydra_simple_fieldval(
+				$node,
+				TAPAS_FIELD_PREFIX . 'parent_slug'
+			);
+			$result = tapas_hydra_post($data, TAPAS_POST_COLLECTION_URL);
+			break;
+		case TAPASRECORD:
+			break;
+		default:
+			return;
+	}
+}
+
+
