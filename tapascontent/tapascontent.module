@@ -76,7 +76,7 @@ function tapascontent_form($node, $form_state) {
  */
 
 function tapascontent_node_insert($node) {
-	_tapascontent_projcol_postnode($node);
+	_tapascontent_postnode($node);
 }
 
 /** 
@@ -86,7 +86,7 @@ function tapascontent_node_insert($node) {
  */
 
 function tapascontent_node_update($node) {
-	_tapascontent_projcol_postnode($node);
+	_tapascontent_postnode($node);
 }
 
 
@@ -98,14 +98,14 @@ function tapascontent_node_update($node) {
 function tapascontent_node_delete($node) {
  
  switch($node->type) {
-	case TAPASPROJECT:
-		tapas_hydra_delete(TAPAS_POST_PROJECT_URL, $node);
+	case TAPAS_PROJECT:
+		tapahydra_delete(TAPAS_POST_PROJECT_URL, $node);
 		break;
-	case TAPASCOLLECTION:
-		tapas_hydra_delete(TAPAS_POST_COLLECTION_URL, $node);
+	case TAPAS_COLLECTION:
+		tapashydra_delete(TAPAS_POST_COLLECTION_URL, $node);
 		break;
-	case TAPASRECORD:
-		tapas_hydra_delete(TAPAS_POST_RECORD_URL, $node);
+	case TAPAS_RECORD:
+		tapasydra_delete(TAPAS_POST_TEI_URL, $node);
 		break;
 	default:
 		return;
@@ -211,14 +211,117 @@ function _tapascontent_get_group_members($node) {
 
 function _tapascontent_projcol_hydradata($node) {
 	
-	return array(
-		'uid' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
-		'depostitor' => $node->uid,
+	$result =  array(
+		'uniqueid' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
+		'depositor' => $node->uid,
 		'title' => $node->title,
 		'description' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
-		'thumbnail' => tapashydra_filestring($node, TAPAS_FIELD_PREFIX . 'thumbnail'),
-		'access' => 'public', //$node->group_access['und'][0]['value']?'private':'public',
+		'access' => $node->group_access['und'][0]['value']?'private':'public',
 	);
+
+	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
+	if ($thumb_file) {
+		$result['thumbnail'] = $thumb_file;
+	}
+
+	return $result;
+}
+/**
+ * @internal Get Slug from NodeId
+ *
+ * @param int $nodid the Drupal nid for the project/collection/record node.
+ *
+ * @return string The contents of the slug field.
+ */
+
+function _tapascontent_slug_from_nid($nodeid) {
+
+	drupal_set_message("getting slug for $nodeid");
+	
+	$item = field_get_items(
+		'node',
+		node_load($nodeid),
+		TAPAS_FIELD_PREFIX . 'slug'
+	);
+
+	return $item[0]['value'];
+}
+
+/**
+ * @internal Get array of parent-slugs for a node.
+ *
+ * @param node An OG Content node.
+ *
+ * @param array An array of strings, containing slugs. (or FALSE)
+ */
+
+function _tapascontent_get_parent_slugs($node) {
+
+	$parent_ids = og_get_entity_groups('node', $node);
+
+
+	if (!$parent_ids) {
+		drupal_set_message("No parents found.");
+		return FALSE;
+	}
+	
+	return;
+
+	foreach ($parent_ids as $parent) {
+		$slugs[] = _tapascontent_slug_from_nid($parent);
+	}
+
+	return $slugs;
+
+
+}
+/**
+ * @internal Post-data for Records
+ *
+ * @param node $node: The containing the post info.
+ * @param string $uniqueid: The (non-drupal node-id) persistant unique id.
+ *
+ * @return array: an array with the $data elements.
+ */
+
+function _tapascontent_record_hydradata($node, $uniqueid) {
+
+	$collection_dids = tapashydra_php_to_http_array(
+		_tapascontent_get_parent_slugs($node),
+		'collection_dids'
+	);
+
+	$data = array(
+		'uniqueid' => $uniqueid,
+		'collection_dids' => $collection_dids,
+		'depositor' => $node->uid,
+		'display_date' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
+	);
+
+	$array_fields = array(
+		'tei_type' => 'file_types',
+		'display_authors' => 'display_authors',
+		'display_contributors' => 'display_contributors'
+	);
+
+	foreach($array_fields as $fieldname => $paramname) {
+		$data[$paramname] = tapashydra_field_to_http_array(
+			$node,
+			TAPAS_FIELD_PREFIX . $fieldname,
+			$paramname
+		);
+	}
+
+	$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
+	if($tei_file) {
+		$data['tei'] = $tei_file;
+	} else {
+		drupal_set_message("Debug WARNING! tei field seems to be empty.");
+	}
+	return $data;
+
+	//@todo $data['support_files']
+
 }
 
 
@@ -229,27 +332,32 @@ function _tapascontent_projcol_hydradata($node) {
  *
  * @return array: An array with the common values set.
  */
-function _tapascontent_projcol_postnode($node) {
+function _tapascontent_postnode($node) {
 
 	switch($node->type) {
 		case TAPAS_PROJECT:
 			$data = _tapascontent_projcol_hydradata($node);
 			$data['members'] = _tapascontent_get_group_members($node);
-			$result = tapas_hydra_post($data, TAPAS_POST_PROJECT_URL);
+			$result = tapashydra_post($data, TAPAS_POST_PROJECT_URL);
 			break;
 		case TAPAS_COLLECTION:
 			$data = _tapascontent_projcol_hydradata($node);
-			$data['project_did'] = tapasydra_simple_fieldval(
+			$data['project_did'] = tapashydra_simple_fieldval(
 				$node,
 				TAPAS_FIELD_PREFIX . 'parent_slug'
 			);
-			$result = tapas_hydra_post($data, TAPAS_POST_COLLECTION_URL);
+			$result = tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
 			break;
 		case TAPAS_RECORD:
-			break;
+			$uniqueid = 'TAPAS-' . $node->nid;
+			$data = _tapascontent_record_hydradata($node, $uniqueid);
+			$result = tapashydra_post($data, TAPAS_POST_TEI_URL);
 		default:
 			return;
 	}
+
+	drupal_set_message("@@_tapascontent_postnode return value: $result");
+	return $result;
 }
 
 

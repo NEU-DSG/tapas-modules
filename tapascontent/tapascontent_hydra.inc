@@ -24,16 +24,19 @@ include_once('tapascontent_constants.inc');
  * @return string The return message passed back by Hydra.
  */
 
-function tapas_hydra_post($data, $url_base) {
+function tapashydra_post($data, $url_base) {
 	
-	$url = "$url_base/" . $data['uid'];
+	$url = "$url_base/" . $data['uniqueid'];
+
+	drupal_set_message("@@ URL: $url");
+	drupal_set_message("@@ data: " . http_build_query($data, '', '|'));
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
 		CURLOPT_POSTFIELDS => $data,
 	);
 
-	return _tapas_hydra_curlcall($url, $curl_options);
+	return _tapashydra_curlcall($url, $curl_options);
 
 }
 
@@ -46,12 +49,12 @@ function tapas_hydra_post($data, $url_base) {
  * @return string: The message returned by Hydra.
  */
 
-function tapas_hydra_delete($url_base, $node) {
+function tapashydra_delete($url_base, $node) {
 
 	$uniqueid = tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug');
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'DELETE');
 
-	return _tapas_hydracurl_call("$url_base/$uniqueid", $curl_options);
+	return _tapashydra_curlcall("$url_base/$uniqueid", $curl_options);
 
 }
 
@@ -61,15 +64,15 @@ function tapas_hydra_delete($url_base, $node) {
 
 /**
  * Perform the actual POST or DELETE curl call.
- * @internal: Access via tapas_hydra_post or tapas_hydra_delete, not directly.
+ * @internal: Access via tapashydra_post or tapashydra_delete, not directly.
  *
- * @param string $url: Which url to POST or DELETE to (including slug/uid).
+ * @param string $url: Which url to POST or DELETE to (including slug/uniqueid).
  * @param array $options: Additional curl options to set.
  *
  * @return string" The Hydra result message.
  */
 
-function _tapas_hydra_curlcall($url, $options) {
+function _tapashydra_curlcall($url, $options) {
 
 	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 
@@ -82,7 +85,7 @@ function _tapas_hydra_curlcall($url, $options) {
 	if (TAPAS_INCLUDE_CURL_DEBUG) {
 		// Deubuggin node: if array_merge is used, the keys change to 0, 1, 2, 3, etc, 
 		// and everything breaks.
-		$curlopt = $options + _tapas_hydra_debugopts() + $common_opts;
+		$curlopt = $options + _tapashydra_debugopts() + $common_opts;
 	} else {
 		$curlopt = $options + $common_opts;
 	}
@@ -106,7 +109,7 @@ function _tapas_hydra_curlcall($url, $options) {
  * @internal Provdes an array of curloptions used for debugging.
  */
 
-function _tapas_hydra_debugopts() {
+function _tapashydra_debugopts() {
 
 	if (TAPAS_INCLUDE_CURL_DEBUG) {
 		$result = array(
@@ -141,30 +144,6 @@ function _tapashydra_curl_messages($ch, $result) {
 		drupal_set_message("### Body ### " . $body);
 		drupal_set_message("### Header Out ### " . curl_getinfo($ch, CURLINFO_HEADER_OUT));
 
-}
-
-/**
- * Internal. Builds the data array to post to hydra on instert/update
- *
- * @param $node: The node that will be posted.
- */
-
-function _tapasrecord_httpdata($node, $uid) {
-
-	$data = array(
-		'uid' => $uid,
-		'collection_dids' => tapashydra_php_to_http_array(
-			og_get_entity_groups('node', $node), 'collection_dids'),
-		'depositor' => $node->uid,
-		'file_types' => tapashydra_drupal_field_to_http_array($node, 'field_tapas_tei_type'),
-		'display_author' => tapashydra_simple_fieldval($node, 'tc_display_authors'),
-		'display_contributors' => tapashydra_drupal_field_to_http_array($node, 'tc_display_contributors'),
-		'display_date' => tapashydra_simple_fieldval($node, 'tc_timeline_date'), // I thought we weren't sending this to Hydra?
-		'tei:'=> tapashydra_filestring($node, 'tapas_teifile'),
-		'support_files' => _tapasrecord_auxillary_curlzip($node),
-	);
-
-	return $data;
 }
 
 // ====================================================================================
@@ -204,39 +183,115 @@ function tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delta
 
 }
 
+/**
+ * Helper. Given a file handled, returns the HTTP filestring.
+ *
+ * This method (string beginning with '@') for posting files to HTTP is depricated in 
+ * HTTP, but the version of PHP we are using does not yet support the new (object-based)
+ * way of posting files, so we need to stick with this.
+ */
 
+function tapashydra_filestring($file_handle) {
+	return '@' . drupal_realpath($file_handle->uri);
+
+}
+
+/**
+ * Helper. Given a node and a file-field name, return the HTTP string for the FIRST file
+ *
+ * i.e. if there is one file, that string will be returned. If there is more than one, only
+ * the first will be returned.
+ */
+
+function tapashydra_filestring_from_field($node, $field_name) {
+	$fielditems = field_get_items('node', $node, $field_name);
+	if (!$fielditems) {
+		return;
+	}
+	$file_handle = file_load($fielditems[0]['fid']);
+	return tapashydra_filestring($file_handle);
+}
+
+/**
+ * Helper. Get an array of file handles from a filefield on a node. 
+ *
+ * @param node $node The node.
+ * @param string $field_name the name of the field to get the files from.
+ *
+ * @return array An array of file-handles, one for each file listed in the field.
+ */
+
+function tapashydra_filearray_from_field($node, $field_name) {
+	$fielditems = field_get_items('node', $node, $field_name);
+
+	if (!$fielditems) {
+		return;
+	}
+
+	$handle_array = array();
+	foreach ($fielditesm as $item) {
+		$handle_array[] = file_load($item['fid']);	
+	}
+	
+	return $handle_array;
+
+}
 /**
  * Helper. Given a node and a field-name, gets the filestring for posting the file so named.
  *
  * Note: this way of passing a file is depricated in newer versions of PHP, but we have
  *    an older version that doesn't have the new, object-based way available yet.
  */
-function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
+//function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
 
-	$array = field_get_items('node', $node, $field_name);
+	//$fielditems = field_get_items('node', $node, $field_name);
 
-	if ($array) {
-		$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
-		return '@' . drupal_realpath($thumb_file->uri);
-	} else {
-		return $val_if_unset;
-	}
+	//if (!$array) {
+		//drupal_set_message("The array for $fielditems was empty.");
+		//return $val_if_unset;
+	//}
 
-}	
+
+	//$i = 0;
+	//foreach ($fielditems as $item) {
+		//$filestring
+			
+	//}
+
+	//if ($array) {
+		//drupal_set_message("@@ The array for $field_name was NOT empty.");
+		//$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
+		//return '@' . drupal_realpath($thumb_file->uri);
+	//} else {
+		//drupal_set_message("@@ The array for $field_name WAS empty.");
+		//return $val_if_unset;
+	//}
+
+//}	
 
 
 /**
  * Helper. Builds an HTTP array from multiple values in a Drupal field.
  *
- * @param $node: A drupal node.
- * @param $field_name: the name of a field that allows multiple values.
+ * @param node $node: A drupal node.
+ * @param string $field_name: the name of a field that allows multiple values.
+ * @param string $param : the name of the http parameter.
  *
  * @return: A string parsing the field values into an HTTP style array.
  */
 
-function tapashydra_drupal_field_to_http_array($node, $field_name) {
+function tapashydra_field_to_http_array($node, $field_name, $param) {
 
 	$value_list = field_get_items('node', $node, $field_name);
+
+	if(!$value_list) {
+		drupal_set_message("@@The value_list for $param WAS empty.");
+		return;
+	} else {
+		drupal_set_message("@@The value_lists for $param was NOT empty.");
+	}
+
+	drupal_set_message("@@value_list is: " . http_build_query($value_list, '', '|'));
 
 	$new_array = array();
 	$i = 0;
@@ -244,7 +299,7 @@ function tapashydra_drupal_field_to_http_array($node, $field_name) {
 		$new_array[] = $value_list[$i]['value'];
 	}
 
-	return tapashydra_php_to_http_array($new_array);
+	return tapashydra_php_to_http_array($new_array, $param);
 
 }
 
@@ -259,17 +314,21 @@ function tapashydra_drupal_field_to_http_array($node, $field_name) {
 
 function tapashydra_php_to_http_array($array = array(), $param) {
 
-	if (!$array()) {
+	if ($array) {
+		drupal_set_message("There IS a php-to-http array for $param.");
+	} else {
+		drupal_set_message("There is NOT a php-to-http array for $param.");
 		return FALSE;
 	}
 
-	$outstr_arr = '';
+	//$outstr_arr = '';
+	$outstr_arr = array();
 	$i = 0;
 
-	foreach ($array as $item) {
-		$outstr_arr .= "$param\[$i\]=$item";
+	foreach ($array['node'] as $item) {
+		$outstr_arr[] = "$param\[$i\]=$item";
 	}
 
-	return implode('&amp;', $outstring_arr);
+	return implode('&amp;', $outstr_arr);
 
 }

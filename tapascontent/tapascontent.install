@@ -46,25 +46,17 @@ function tapascontent_install() {
 		field_create_instance($field);
 	}
 
-	//Add organic groups field. Role, Permission, and Acces settings
-	//(and hence the group_access and og_roles_permissions fields) will
-	//be created and set later via a feature.
+	//Add organic groups field. 
+	//Detailed role and permission info will be added via feature, but
+	//we add the needed fields via the API here.
 
-	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_COLLECTION);
-	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_PROJECT);
+	tapas_og_group_fields(TAPAS_PROJECT);
+	tapas_og_group_fields(TAPAS_COLLECTION);
 
-	$audience_base = og_fields_info(OG_AUDIENCE_FIELD);
-	
-	$og_r_to_c = $audience_base;
-	$og_r_to_c['field']['settings']['target_type'] = TAPAS_COLLECTION;
-	og_create_field(TAPAS_R_TO_C, 'node', TAPAS_RECORD, $og_r_to_c);
-
-	$og_c_to_p = $audience_base;
-	$og_c_to_p['field']['settings']['target_type'] = TAPAS_PROJECT;
-	og_create_field(TAPAS_C_TO_P, 'node', TAPAS_COLLECTION, $og_c_to_p);
+	tapas_og_content_fields(TAPAS_RECORD, TAPAS_COLLECTION, TAPAS_R_TO_C);
+	tapas_og_content_fields(TAPAS_COLLECTION, TAPAS_PROJECT, TAPAS_C_TO_P);
 
 }
-
 
 /** 
  * Implements hook_uninstall()

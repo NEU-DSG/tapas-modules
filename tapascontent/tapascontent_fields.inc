@@ -101,7 +101,7 @@ function tapas_field_bases() {
 			'field_name' => TAPAS_FIELD_PREFIX . 'attatchments',
 			'cardinality' => -1,
 			'module' => 'file',
-			'type' => 'file' // @todo: confirm!
+			'type' => 'file'
 		),
 		'display_auth' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'display_auth',
@@ -480,7 +480,7 @@ function tapas_instance_filefield($file_extensions) {
 		'settings' => array( //@TODO
 			'description_field' => FALSE,
 			'field_directory' => '',
-			'file_extentions' => $file_extensions,
+			'file_extensions' => $file_extensions,
 			'max_filesize' => TAPAS_FILE_MAXSIZE,
 		),
 		'widget' => array(
@@ -655,29 +655,35 @@ function tapas_instance_common(
 
 
 // ====================================================================================
-// Organic Groups fields.
+// Adding Organic Groups fields.
 // ====================================================================================
 
 /**
- * Generates Organic Groups fields.
+ * Generate the Organic Groups 'group' fields.
  *
- * Calls to the Organic Groups module api to make Project and Collection Organic
- *   Groups entitites. See also tapas_module/features/tapas_feature_collection_type
- *   and tapas_modules/features/tapas_feature_project_type. Role, Permission, and
- *   access settings (and hence the group_access and og_roles_permisions fields)
- *   will be set via the feature rather than here.
- *
+ * @param string $bundle: name of the og node-type.
  */
 
-function tapascollection_ogfields() {
+function tapas_og_group_fields($bundle) {
 
-		// Make collections and projects both be organic groups.
-		og_create_field(OG_GROUP_FIELD, 'node', TAPAS_COLLECTION);
-		og_create_field(OG_GROUP_FIELD, 'node', TAPAS_PROJECT);
+	og_create_field(OG_GROUP_FIELD, 'node', $bundle);
+	og_create_field(OG_ACCESS_FIELD, 'node', $bundle);
+}
 
-		// collections should also be a content type for the project organic group.
-		$og_c_to_p = og_fields_info(OG_AUDIENCE_FIELD);
-		$og_field['field']['settings']['target_type'] = TAPAS_PROJECT;
-		og_create_field(TAPAS_C_TO_P, 'node', TAPAS_COLLECTION, $og_c_to_p);
+/**
+ * Generate the Organic Groups 'content' fields.
+ *
+ * @param string $content_bundle: name of the og content node-type.
+ * @param string $group_bundle: name of the og group node-type to which
+ *   the content item belongs.
+ * @param string $link_name: The name for the reference field that will link
+ *   the OG content to its OG group.
+ */
+
+function tapas_og_content_fields($content_bundle, $group_bundle, $link_name) {
+
+	$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
+	$audience_field['field']['settubgs']['target_type'] = $group_bundle;
+	og_create_field($link_name, 'node', $content_bundle, $audience_field);
 
 }
