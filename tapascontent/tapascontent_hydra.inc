@@ -51,8 +51,10 @@ function tapashydra_post($data, $url_base) {
 
 function tapashydra_delete($url_base, $node) {
 
-	$uniqueid = tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug');
+	$uniqueid = tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug');
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'DELETE');
+	
+	drupal_set_message("Calling the followign URL for delete: $url_base/$uniqueid");
 
 	return _tapashydra_curlcall("$url_base/$uniqueid", $curl_options);
 
@@ -150,38 +152,33 @@ function _tapashydra_curl_messages($ch, $result) {
 // Retrieving and displaying TEI records from Hydra
 // ====================================================================================
 
+function tapashydra_get_tei($did, $type) {
 
+	//if (!in_array($type, $array('tei', 'teibp', 'tapas_generic'))) {
+		//drupal_set_message("Error! unrecognized tei type: $type");
+		//return FALSE;
+	//}
+
+	if(!isset($did) || !isset($type)) {
+		drupal_set_message("One of the values is not set. DID: $did Type: $type");
+	}
+
+	$url = TAPAS_BASE_API_URL . "/files/$did/$type";
+
+	drupal_set_message("URL is $url");
+	
+	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET');
+		
+	return _tapashydra_curlcall($url, $curl_options);
+	
+
+
+}
 
 // ====================================================================================
 // Other helper functions, used internally and externally.
 // ====================================================================================
 
-/**
- * Helper. Syntactic sugar to safely get the value of a Drupal node field.
- *
- * Only works for fields that have a simple string or numeric value. Not for
- * use with fields that contain a file, etc.
- *
- * @param $node: The Drupal node who's field value we are checking.
- * @param $field_name: The name of the field.
- * @param $val_if_unset: The string to return if the field value is unset. (default '')
- * @param $delta: If the field has more than one value, which to return (default 0)
- *
- * @return string or number: The value of the field.
- */
-
-function tapashydra_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
-
-	$array = field_get_items('node', $node, $field_name);
-
-	if ($array == FALSE) {
-		return $val_if_unset;
-	}
-	else {
-		return $array[$delta]['value'];
-	}
-
-}
 
 /**
  * Helper. Given a file handled, returns the HTTP filestring.
@@ -236,39 +233,6 @@ function tapashydra_filearray_from_field($node, $field_name) {
 	return $handle_array;
 
 }
-/**
- * Helper. Given a node and a field-name, gets the filestring for posting the file so named.
- *
- * Note: this way of passing a file is depricated in newer versions of PHP, but we have
- *    an older version that doesn't have the new, object-based way available yet.
- */
-//function tapashydra_filestring($node, $field_name, $val_if_unset='', $delta=0) {
-
-	//$fielditems = field_get_items('node', $node, $field_name);
-
-	//if (!$array) {
-		//drupal_set_message("The array for $fielditems was empty.");
-		//return $val_if_unset;
-	//}
-
-
-	//$i = 0;
-	//foreach ($fielditems as $item) {
-		//$filestring
-			
-	//}
-
-	//if ($array) {
-		//drupal_set_message("@@ The array for $field_name was NOT empty.");
-		//$thumb_file = file_load($node->tc_field_image['und'][0]['fid']);
-		//return '@' . drupal_realpath($thumb_file->uri);
-	//} else {
-		//drupal_set_message("@@ The array for $field_name WAS empty.");
-		//return $val_if_unset;
-	//}
-
-//}	
-
 
 /**
  * Helper. Builds an HTTP array from multiple values in a Drupal field.
@@ -282,6 +246,7 @@ function tapashydra_filearray_from_field($node, $field_name) {
 
 function tapashydra_field_to_http_array($node, $field_name, $param) {
 
+	//drupal_set_message("Getting the field items for node " . $node->nid . " with fieldname $field_name and param $param.");
 	$value_list = field_get_items('node', $node, $field_name);
 
 	if(!$value_list) {
@@ -291,12 +256,13 @@ function tapashydra_field_to_http_array($node, $field_name, $param) {
 		drupal_set_message("@@The value_lists for $param was NOT empty.");
 	}
 
-	drupal_set_message("@@value_list is: " . http_build_query($value_list, '', '|'));
+	//drupal_set_message("@@value_list is: " . http_build_query($value_list, '', '|'));
 
 	$new_array = array();
 	$i = 0;
 	foreach ($value_list as $value) {
 		$new_array[] = $value_list[$i]['value'];
+		$i++;
 	}
 
 	return tapashydra_php_to_http_array($new_array, $param);
@@ -316,19 +282,22 @@ function tapashydra_php_to_http_array($array = array(), $param) {
 
 	if ($array) {
 		drupal_set_message("There IS a php-to-http array for $param.");
+		//drupal_set_message("The array is: " . http_build_query($array, '', '|'));
 	} else {
 		drupal_set_message("There is NOT a php-to-http array for $param.");
 		return FALSE;
 	}
 
-	//$outstr_arr = '';
-	$outstr_arr = array();
 	$i = 0;
+	$outstr = '';
 
-	foreach ($array['node'] as $item) {
-		$outstr_arr[] = "$param\[$i\]=$item";
+	foreach ($array as $key => $item) {
+		$outstr .= $param . '[' . $i . ']=' . $item . '&amp;';
+		$i++;
 	}
 
-	return implode('&amp;', $outstr_arr);
+	//return implode('&amp;', $outstr_arr);
+	return $outstr;
 
 }
+

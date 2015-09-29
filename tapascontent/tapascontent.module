@@ -70,25 +70,41 @@ function tapascontent_form($node, $form_state) {
 }
 
 /**
- * Implemenst hook_node_insert().
+ * Implements hook_node_presave().
  *
- * Calls the Hydra API to add the record.
+ * Hook is called for updates and for inserts.
  */
 
-function tapascontent_node_insert($node) {
-	_tapascontent_postnode($node);
+function tapascontent_node_presave($node) {
+
+	drupal_set_message("node_presave called for " . $node->type); 
+
+	switch($node->type) {
+		case TAPAS_PROJECT:
+			$data = _tapascontent_projcol_hydradata($node);
+			$data['members'] = _tapascontent_get_group_members($node);
+			$result = tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+			break;
+		case TAPAS_COLLECTION:
+			$data = _tapascontent_projcol_hydradata($node);
+			$data['project_did'] = tapas_simple_fieldval(
+				$node,
+				TAPAS_FIELD_PREFIX . 'parent_slug'
+			);
+			$result = tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+			break;
+		case TAPAS_RECORD:
+			drupal_set_message("postnodoe recieved request to post TAPAS record.");
+			$uniqueid = 'TAPAS-' . $node->nid;
+			$data = _tapascontent_record_hydradata($node, $uniqueid);
+			$result = tapashydra_post($data, TAPAS_POST_TEI_URL);
+		default:
+			return;
+	}
+
+	drupal_set_message("@@_tapascontent_postnode return value: $result");
+	return $result;
 }
-
-/** 
- * Implements hook_node_update().
- *
- * Calls the Hydra API to update the record.
- */
-
-function tapascontent_node_update($node) {
-	_tapascontent_postnode($node);
-}
-
 
 /** 
  * Implements hook_node_delete().
@@ -96,16 +112,18 @@ function tapascontent_node_update($node) {
  * Calls the Hydra API to delete the record.
  */
 function tapascontent_node_delete($node) {
- 
- switch($node->type) {
+
+	drupal_set_message("node delete called against type: " . $node->type);
+
+  switch($node->type) {
 	case TAPAS_PROJECT:
-		tapahydra_delete(TAPAS_POST_PROJECT_URL, $node);
+		tapashydra_delete(TAPAS_POST_PROJECT_URL, $node);
 		break;
 	case TAPAS_COLLECTION:
 		tapashydra_delete(TAPAS_POST_COLLECTION_URL, $node);
 		break;
 	case TAPAS_RECORD:
-		tapasydra_delete(TAPAS_POST_TEI_URL, $node);
+		tapashydra_delete(TAPAS_POST_TEI_URL, $node);
 		break;
 	default:
 		return;
@@ -120,70 +138,14 @@ function tapascontent_node_delete($node) {
  * Used for hiding and disabling fields on the node creation and editing
  * forms for tapasproject and tapascollection content types.
  */
-function tapascollection_form_node_form_alter(&$form, &$form_state, $form_id) {
+//function tapascollection_form_node_form_alter(&$form, &$form_state, $form_id) {
 
-	// We want this hidden whenever it appears in any form.
+	////We want this hidden whenever it appears in any form.
 	//$form['og_roles_permissions']['#access'] = TRUE;
-	//$form[TAPASCOLLECTION_FIELD_PREFIX . 'hidden_nodetitle'][#a
-
-	//switch ($form['#node']->type) {
-		//case 'tapascollection':
-		//case 'tapasproject':
-
-			//$prefix = TAPASCOLLECTION_FIELD_PREFIX;
-
-			//// Hide certain fields, always
-			//$fields_to_hide = array(
-				//'og_roles_permissions',
-				//$prefix . '_hidden_nodetitle',
-				//$prefix . '_hidden_parentslug',
-				//$prefix . '_hidden_imagename',
-				//$prefix . '_hidden_institutionname'
-			//);
-
-			//foreach($fields_to_hide as $field) {
-				//$form[$field]['#access'] = FALSE;
-			//}
-
-			//// Slug can only be set on record creation, not edited. 
-			//if (isset($node->nid) && !isset($node->is_new)) {
-				//$form[$prefix . '_slug']['#disabled'] = TRUE;
-			//}
-	//}
-}
+//}
 
 
-/** 
- * Implements hook_node_view()
- *
- * For enabling the reading interface.
- */
-
-function tapascontent_node_view($node, $view_mode, $lang_code) {
-
-	if ($node->type != 'tapasrecordnode') {
-		return;
-	}
-
-	switch ($view_mode) {
-		case 'teaser':
-			break;
-		case 'rss':
-			break;
-		case 'full':
-			break;
-
-
-		case 'full_readinginterface':
-			$content = _tapasrecord_readingview($node->field_tapas_uid);
-			break;
-		case 'full_metadataview':
-			break;
-
-	}
-
-}
-
+//}
 // ====================================================================================
 // Helper functions
 // ====================================================================================
@@ -205,17 +167,16 @@ function _tapascontent_get_group_members($node) {
  * @internal Post-data common to Projects and Collections.
  *
  * @param node $node: the node we will be posting.
- *
  * @return array: An array with the common values set.
  */
 
 function _tapascontent_projcol_hydradata($node) {
 	
 	$result =  array(
-		'uniqueid' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
+		'uniqueid' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
 		'depositor' => $node->uid,
 		'title' => $node->title,
-		'description' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
+		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
 		'access' => $node->group_access['und'][0]['value']?'private':'public',
 	);
 
@@ -230,7 +191,6 @@ function _tapascontent_projcol_hydradata($node) {
  * @internal Get Slug from NodeId
  *
  * @param int $nodid the Drupal nid for the project/collection/record node.
- *
  * @return string The contents of the slug field.
  */
 
@@ -251,11 +211,13 @@ function _tapascontent_slug_from_nid($nodeid) {
  * @internal Get array of parent-slugs for a node.
  *
  * @param node An OG Content node.
- *
  * @param array An array of strings, containing slugs. (or FALSE)
  */
 
 function _tapascontent_get_parent_slugs($node) {
+
+	//@TODO: Obviously this is just for debugging.
+	return 'projectfalco';
 
 	$parent_ids = og_get_entity_groups('node', $node);
 
@@ -265,11 +227,14 @@ function _tapascontent_get_parent_slugs($node) {
 		return FALSE;
 	}
 	
-	return;
+	drupal_set_message("!! " . http_build_query($parent_ids, '', '|'));
 
-	foreach ($parent_ids as $parent) {
+	foreach ($parent_ids['node'] as $parent) {
+		drupal_set_message("!!! " . http_build_query($parent, '', '|'));
 		$slugs[] = _tapascontent_slug_from_nid($parent);
 	}
+
+	//drupal_set_message("Returning slugs: " . http_build_query($slugs, '', '|'));
 
 	return $slugs;
 
@@ -291,17 +256,19 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 		'collection_dids'
 	);
 
+	drupal_set_message("@@Collection DIDS: $collection_dids");
+
 	$data = array(
 		'uniqueid' => $uniqueid,
 		'collection_dids' => $collection_dids,
 		'depositor' => $node->uid,
-		'display_date' => tapashydra_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
+		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
 	);
 
 	$array_fields = array(
 		'tei_type' => 'file_types',
-		'display_authors' => 'display_authors',
-		'display_contributors' => 'display_contributors'
+		'display_auth' => 'display_authors',
+		'display_contrib' => 'display_contributors'
 	);
 
 	foreach($array_fields as $fieldname => $paramname) {
@@ -326,38 +293,118 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 
 
 /**
- * @internal post function called by node_insert and node_update.
- *
- * @param node $node: the node we will be posting.
- *
- * @return array: An array with the common values set.
- */
-function _tapascontent_postnode($node) {
+* Implements hook_menu().
+*/
+function tapascontent_menu() {
+	$items = array();
 
-	switch($node->type) {
-		case TAPAS_PROJECT:
-			$data = _tapascontent_projcol_hydradata($node);
-			$data['members'] = _tapascontent_get_group_members($node);
-			$result = tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-			break;
-		case TAPAS_COLLECTION:
-			$data = _tapascontent_projcol_hydradata($node);
-			$data['project_did'] = tapashydra_simple_fieldval(
-				$node,
-				TAPAS_FIELD_PREFIX . 'parent_slug'
-			);
-			$result = tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-			break;
-		case TAPAS_RECORD:
-			$uniqueid = 'TAPAS-' . $node->nid;
-			$data = _tapascontent_record_hydradata($node, $uniqueid);
-			$result = tapashydra_post($data, TAPAS_POST_TEI_URL);
-		default:
-			return;
-	}
+	$items['node/%node/hydra'] = array(
+		'title' => 'View Hydra HTML',
+		'page callback' => 'add_viewhydra_action',
+		'access callback' => TRUE,
+		'type' => MENU_LOCAL_TASK,
+		'page arguments' => array('node', 1),
+		'access arguments' => array('access content'), 
+	);
 
-	drupal_set_message("@@_tapascontent_postnode return value: $result");
-	return $result;
+	return $items;
 }
 
+/**
+* Page callback.
+*/
+function add_viewhydra_action($type, $object) {
+
+
+	$slug = _tapascontent_slug_from_nid($object->nid);
+
+	drupal_set_message("slug is $slug");
+
+	if ($object && $object->type == TAPAS_RECORD) {
+		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($slug, 'tei');
+	} else {
+		return '<h2>Not a record</h2>';
+		return FALSE;
+	}
+}
+
+
+// ====================================================================================
+// Record View Tab Helper Functions
+// ====================================================================================
+
+/**
+ * @internal Provides the array for the drupalfields view tab.
+ *
+ * @return array The render array for the drupalfields tab.
+ */
+function _tapas_drupaltab() {
+
+	$drupaltab = array(
+		'#type' => 'fieldset',
+		'#title' => TAPAS_DRUPALFIELD_TAB,
+		'#collapsible' => TRUE,
+		'#group' => TAPAS_RECORDTABS,
+	);
+
+	$drupaltab[TAPAS_FIELD_PREFIX . 'slug']['#group'] = TAPAS_DRUPALFIELD_TAB;
+	$drupaltab[TAPAS_FIELD_PREFIX . 'tei_file']['#group'] = TAPAS_DRUPALFIELD_TAB;
+	$drupaltab[TAPAS_FIELD_PREFIX . 'attatchments']['#group'] = TAPAS_DRUPALFIELD_TAB;
+
+	return $drupaltab;
+}
+
+
+/**
+ * @internal Provides the array for the reader view tab.
+ *
+ * @return array The render array for the reader tab.
+ */
+function _tapas_readertab() {
+	
+	$readingtab = array(
+		'#type' => 'fieldset',
+		'#title' => TAPAS_READER_TAB,
+		'#collapsible' => TRUE,
+		'#group' => TAPAS_RECORDTABS,
+		TAPAS_VIEW_FIELD . 'styledrop' => array(
+			'#type' => 'select',
+			'#title' => t('Choose Stylesheet'),
+			'#options' => array(
+				0 => 'stylesheet1',
+				1 => 'stylesheet2',
+				2 => 'stylesheet3',
+			),
+			'#description' => t('Choose a stylesheet you would like to use to view the rendered TEI.'),
+		),
+		TAPAS_VIEW_FIELD . 'content' => array(
+			'#markup' => '<h2>Content tab</h2>',
+		),
+	);
+
+	return $readingtab;
+}
+
+/**
+ * @internal Provides the array for the metadata view tab.
+ *
+ * @return array The render array for the metadata tab.
+ */
+function _tapas_metatab() {
+
+	$metatab = array(
+		'#type' => 'fieldset',
+		'#title' => TAPAS_METADATA_TAB,
+		'#collapsible' => TRUE,
+		'#group' => TAPAS_RECORDTABS,
+	);
+
+	$metatab[TAPAS_VIEW_FIELD . 'rend_meta'] = array(
+		'#markup' => '<h2>metadata tab</h2>',
+	);
+
+	$metatab[TAPAS_FIELD_PREFIX . 'display_contrib']['#group'] = TAPAS_DTAB;
+	$metatab[TAPAS_FIELD_PREFIX . 'display_auth']['#group'] = TAPAS_DTAB;
+	$metatab[TAPAS_FIELD_PREFIX . 'display_date']['#group'] = TAPAS_DTAB;
+}
 

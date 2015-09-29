@@ -1,10 +1,7 @@
 <?php
 /**
  * @file
- * TAPAS constants and utility functions.
- *
- * Functions useful to more than one tapas module and that are not
- * module specific go here, as do project-wide constnts.
+ * TAPAS constants 
  *
  * @author Linda Moss (github LindaJeanne) <l.moss@neu.edu>
  * @since 2.0
@@ -17,12 +14,11 @@
 
 /** Prefix used on all tapasfield base names. */
 define ('TAPAS_FIELD_PREFIX', 'field_tapas_');
-/** Prefix used by all Collection field instances. */
-define ('TAPAS_C_INSTANCE_PRE', 'fi_tapas_c_');
-/** Prefix used by all project field instances. */
-define ('TAPAS_P_INSTANCE_PRE', 'fi_tapas_p_');
-/** Prefic before sll tapasrecord field instances. */
-define ('TAPAS_R_INSTANCE_PRE', 'fi_tapas_r_');
+/** Prefix before element names on forms */
+//define ('TAPAS_FORM_FIELD', 'tapas_ff_');
+/** Prefix before display element names (other than forms) */
+define ('TAPAS_VIEW_FIELD', 'tapas_vf_');
+
 
 // ====================================================================================
 // Content Types.
@@ -38,79 +34,7 @@ define ('TAPAS_PROJECT', 'tapas_project');
 define ('TAPAS_RECORD', 'tapas_record');
 
 
-// ====================================================================================
-// Organc Groups.
-// ====================================================================================
 
-/** Field name for collection-to-project OG audience link*/
-define ('TAPAS_C_TO_P', 'og_tapas_c_to_p');
-/** FIeld name for record-to-collection OG audience link */
-define ('TAPAS_R_TO_C', 'og_tapas_r_to_c');
-
-
-// ====================================================================================
-// Images.
-// ====================================================================================
-/** Default thumbnail image for collections. */
-define ('TAPAS_C_DEFAULT_IMAGE', 0);
-/** Default thumbnail image for projects. */
-define ('TAPAS_P_DEFAULT_IMAGE', 0);
-
-/** Where (under files:/public) collection thumnails will be stored. */
-define ('TAPAS_C_IMAGE_DIR', '');
-/** Where (under files:/public) project thumnails will be stored. */
-define ('TAPAS_P_IMAGE_DIR', '');
-
-/** Maximum filesize allowed for uploaded project/collection thumbnails. */
-define ('TAPAS_THUMB_MAX_FILESIZE', '');
-/** Maximum resolution allowed for uploaded project/collection thumbnails. */
-define ('TAPAS_THUMB_MAX_RES', '');
-/** Minimum resolution required for project/collection thumbnails. */
-define ('TAPAS_THUMB_MIN_RES', '');
-
-/** Which style setting to use for thumbnails */
-define ('TAPAS_THUMB_PREVIEW_STYLE', 'thumbnail');
-/** Which cursor to use while uploading. */
-define ('TAPAS_THUMB_PROGRESS_IND', 'throbber');
-
-// ====================================================================================
-// Other Files.
-// ====================================================================================
-
-/** Maximum filesize allowed for any uploaded file. */
-define ('TAPAS_FILE_MAXSIZE', '');
-
-// ====================================================================================
-// Field Instance Descriptions.
-// ====================================================================================
-
-/*
- * The following constants are for the user-facing field descriptions for various
- * custom fields.
- */
-
-define ('TAPAS_INSTANCE_DESC_TAGS', t(''));
-define ('TAPAS_INSTANCE_DESC_MIGRATIONTITLE', t(''));
-define ('TAPAS_INSTANCE_DESC_MIGRATIONIMAGE', t(''));
-define ('TAPAS_INSTANCE_DESC_MIGRATIONINST', t(''));
-
-define ('TAPAS_INSTANCE_DESC_PROJDESCRIPTION', t(''));
-define ('TAPAS_INSTANCE_DESC_PROJTHUMB', t(''));
-define ('TAPAS_INSTANCE_DESC_PROJSLUG', t(''));
-define ('TAPAS_INSTANCE_DESC_INSTITUTIONS', t(''));
-define ('TAPAS_INSTANCE_DESC_PROJLINKS', t(''));
-
-define ('TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION', t(''));
-define ('TAPAS_INSTANCE_DESC_COLLECTIONTHUMB', t(''));
-define ('TAPAS_INSTANCE_DESC_COLLECTIONSLUG', t(''));
-define ('TAPAS_INSTANCE_DESC_PARENTSLUG', t(''));
-
-define ('TAPAS_INSTANCE_DESC_PERSISTID', t(''));
-define ('TAPAS_INSTANCE_DESC_TEIFILE', t(''));
-define ('TAPAS_INSTANCE_DESC_ATTATCH', t(''));
-define ('TAPAS_INSTANCE_DESC_AUTHORS', t(''));
-define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
-define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
 
 // ====================================================================================
 // Content Type Descriptions
@@ -153,3 +77,34 @@ define('TAPAS_GET_GENERIC', 'tapas_generic');
 
 /** Whether to include debug output. Not intended for production! */
 define("TAPAS_INCLUDE_CURL_DEBUG", TRUE);
+
+// ====================================================================================
+// Helper Functions
+// ====================================================================================
+
+/**
+ * Helper. Syntactic sugar to safely get the value of a Drupal node field.
+ *
+ * Only works for fields that have a simple string or numeric value. Not for
+ * use with fields that contain a file, etc.
+ *
+ * @param $node: The Drupal node who's field value we are checking.
+ * @param $field_name: The name of the field.
+ * @param $val_if_unset: The string to return if the field value is unset. (default '')
+ * @param $delta: If the field has more than one value, which to return (default 0)
+ *
+ * @return string or number: The value of the field.
+ */
+
+function tapas_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
+
+	$array = field_get_items('node', $node, $field_name);
+
+	if ($array == FALSE) {
+		return $val_if_unset;
+	}
+	else {
+		return $array[$delta]['value'];
+	}
+
+}

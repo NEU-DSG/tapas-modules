@@ -13,6 +13,11 @@
  * @version 2.0
  */
 
+/** Field name for collection-to-project OG audience link*/
+define ('TAPAS_C_TO_P', 'og_tapas_c_to_p');
+/** FIeld name for record-to-collection OG audience link */
+define ('TAPAS_R_TO_C', 'og_tapas_r_to_c');
+
 include_once('tapascontent_fields.inc');
 
 /**
@@ -50,12 +55,13 @@ function tapascontent_install() {
 	//Detailed role and permission info will be added via feature, but
 	//we add the needed fields via the API here.
 
-	tapas_og_group_fields(TAPAS_PROJECT);
-	tapas_og_group_fields(TAPAS_COLLECTION);
+	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_PROJECT);
+	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_COLLECTION);
+	og_create_field(OG_ACCESS_FIELD, 'node', TAPAS_PROJECT);
+	og_create_field(OG_ACCESS_FIELD, 'node', TAPAS_COLLECTION);
 
-	tapas_og_content_fields(TAPAS_RECORD, TAPAS_COLLECTION, TAPAS_R_TO_C);
-	tapas_og_content_fields(TAPAS_COLLECTION, TAPAS_PROJECT, TAPAS_C_TO_P);
-
+	_tapascontent_og_content(TAPAS_COLLECTION, TAPAS_PROJECT, TAPAS_C_TO_P);
+	_tapascontent_og_content(TAPAS_RECORD, TAPAS_COLLECTION, TAPAS_R_TO_C);
 }
 
 /** 
@@ -88,5 +94,23 @@ function tapascontent_uninstall() {
 	node_type_delete(TAPAS_COLLECTION);
 	node_type_delete(TAPAS_PROJECT);
 	field_purge_batch(1000);
+
+}
+
+/**
+ * Generate the Organic Groups 'content' fields.
+ *
+ * @param string $content_bundle: name of the og content node-type.
+ * @param string $group_bundle: name of the og group node-type to which
+ *   the content item belongs.
+ * @param string $link_name: The name for the reference field that will link
+ *   the OG content to its OG group.
+ */
+
+function _tapascontent_og_content($content_bundle, $group_bundle, $link_name) {
+
+	$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
+	$audience_field['field']['settubgs']['target_type'] = $group_bundle;
+	og_create_field($link_name, 'node', $content_bundle, $audience_field);
 
 }

@@ -20,6 +20,75 @@
 
 include_once('tapascontent_constants.inc');
 
+// ====================================================================================
+// Field Instance Descriptions.
+// ====================================================================================
+
+/*
+ * The following constants are for the user-facing field descriptions for various
+ * custom fields.
+ */
+
+define ('TAPAS_INSTANCE_DESC_TAGS', t(''));
+define ('TAPAS_INSTANCE_DESC_MIGRATIONTITLE', t(''));
+define ('TAPAS_INSTANCE_DESC_MIGRATIONIMAGE', t(''));
+define ('TAPAS_INSTANCE_DESC_MIGRATIONINST', t(''));
+
+define ('TAPAS_INSTANCE_DESC_PROJDESCRIPTION', t(''));
+define ('TAPAS_INSTANCE_DESC_PROJTHUMB', t(''));
+define ('TAPAS_INSTANCE_DESC_PROJSLUG', t(''));
+define ('TAPAS_INSTANCE_DESC_INSTITUTIONS', t(''));
+define ('TAPAS_INSTANCE_DESC_PROJLINKS', t(''));
+
+define ('TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION', t(''));
+define ('TAPAS_INSTANCE_DESC_COLLECTIONTHUMB', t(''));
+define ('TAPAS_INSTANCE_DESC_COLLECTIONSLUG', t(''));
+define ('TAPAS_INSTANCE_DESC_PARENTSLUG', t(''));
+
+define ('TAPAS_INSTANCE_DESC_PERSISTID', t(''));
+define ('TAPAS_INSTANCE_DESC_TEIFILE', t(''));
+define ('TAPAS_INSTANCE_DESC_ATTATCH', t(''));
+define ('TAPAS_INSTANCE_DESC_AUTHORS', t(''));
+define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
+define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
+
+
+// ====================================================================================
+// Instance Prefixes
+// ====================================================================================
+
+define ('TAPAS_C_INSTANCE_PRE', 'fi_tapas_c_');
+define ('TAPAS_P_INSTANCE_PRE', 'fi_tapas_p_');
+define ('TAPAS_R_INSTANCE_PRE', 'fi_tapas_r_');
+
+// ====================================================================================
+// Thumbnails.
+// ====================================================================================
+
+define ('TAPAS_C_DEFAULT_IMAGE', 0);
+define ('TAPAS_P_DEFAULT_IMAGE', 0);
+
+define ('TAPAS_C_IMAGE_DIR', '');
+define ('TAPAS_P_IMAGE_DIR', '');
+
+define ('TAPAS_THUMB_MAX_FILESIZE', '');
+define ('TAPAS_THUMB_MAX_RES', '');
+define ('TAPAS_THUMB_MIN_RES', '');
+
+define ('TAPAS_THUMB_PREVIEW_STYLE', 'thumbnail');
+define ('TAPAS_THUMB_PROGRESS_IND', 'throbber');
+
+
+// ====================================================================================
+// Other Files.
+// ====================================================================================
+
+/** Maximum filesize allowed for any uploaded file. */
+define ('TAPAS_FILE_MAXSIZE', '');
+
+// ====================================================================================
+// Field Definitions
+// ====================================================================================
 /**
  * Custom base fields for TAPAS content types. 
  *
@@ -629,7 +698,7 @@ function tapas_instance_hyperlinks() {
 }
 
 /**
- * The fields of the instane array common to all instances.
+ * The fields of the instance array common to all instances.
  *
  * @param string $name Field name (without the TAPAS_FIELD_PREFIX)
  * @param string $label The translated label.
@@ -653,37 +722,3 @@ function tapas_instance_common(
 		'description' => $description);
 }
 
-
-// ====================================================================================
-// Adding Organic Groups fields.
-// ====================================================================================
-
-/**
- * Generate the Organic Groups 'group' fields.
- *
- * @param string $bundle: name of the og node-type.
- */
-
-function tapas_og_group_fields($bundle) {
-
-	og_create_field(OG_GROUP_FIELD, 'node', $bundle);
-	og_create_field(OG_ACCESS_FIELD, 'node', $bundle);
-}
-
-/**
- * Generate the Organic Groups 'content' fields.
- *
- * @param string $content_bundle: name of the og content node-type.
- * @param string $group_bundle: name of the og group node-type to which
- *   the content item belongs.
- * @param string $link_name: The name for the reference field that will link
- *   the OG content to its OG group.
- */
-
-function tapas_og_content_fields($content_bundle, $group_bundle, $link_name) {
-
-	$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
-	$audience_field['field']['settubgs']['target_type'] = $group_bundle;
-	og_create_field($link_name, 'node', $content_bundle, $audience_field);
-
-}
