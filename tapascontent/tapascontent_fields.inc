@@ -115,15 +115,15 @@ function tapas_field_bases() {
 		'tags' => _tapas_fieldarray('tags', -1, 'taxonomy', 'taxonomy_term_reference'),
 		'institutions' => _tapas_fieldarray('institutions', -1, 'taxonomy', 'taxonomy_term_reference'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
-		'migration_title', _tapas_fieldarray('migration_title', 1, 'text', 'text'),
-		'migration_thumb', _tapas_fieldarray('migration_thumb', 1, 'text', 'text'),
-		'migration_instnames', _tapas_fieldarray('migration_instnames', -1, 'text', 'text'),
-		'parent_slug', _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
-		'tei_file', _tapas_fieldarray('tei_file', 1, 'file', 'file'),
-		'attatchments', _tapas_fieldarray('attatchments', -1, 'file', 'file'),
-		'display_auth', _tapas_fieldarray('display_auth', -1, 'text', 'text'),
-		'display_contrib', _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
-		'display_date', _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
+		'migration_title' => _tapas_fieldarray('migration_title', 1, 'text', 'text'),
+		'migration_thumb' => _tapas_fieldarray('migration_thumb', 1, 'text', 'text'),
+		'migration_instnames' => _tapas_fieldarray('migration_instnames', -1, 'text', 'text'),
+		'parent_slug' => _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
+		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
+		'attatchments' => _tapas_fieldarray('attatchments', -1, 'file', 'file'),
+		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
+		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
+		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
 	);
 
 }
@@ -236,6 +236,7 @@ function tapas_fields_project() {
  */
 
 function tapas_fields_collection() {
+
 
 	return array(
 
