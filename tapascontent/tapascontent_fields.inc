@@ -97,100 +97,35 @@ define ('TAPAS_FILE_MAXSIZE', '');
  *   the og api, others are added later via a feature.
  */
 
+function _tapas_fieldarray($name, $cardinality, $module, $type) {
+	return array(
+		'field_name' => TAPAS_FIELD_PREFIX . $name,
+		'cardinality' => $cardinality,
+		'module' => $module,
+		'type' => $type,
+	);
+}
+
 function tapas_field_bases() {
 
 	return array(
-		'description' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'description',
-			'cardinality' => 1,
-			'module' => 'text',
-			'type' => 'text_long',
-		),
-		'thumbnail' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
-			'cardinality' => 1,
-			'module' => 'image',
-			'type' => 'image',
-		),
-		'slug' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'slug',
-			'cardinality' => 1,
-			'module' => 'text',
-			'type' => 'text',
-		),
-		'tags' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'tags',
-			'cardinality' => -1,
-			'module' => 'taxonomy',
-			'type' => 'taxonomy_term_reference',
-		),
-		'insitutions' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'institutions',
-			'cardinality' => -1,
-			'module' => 'taxonomy',
-			'type' => 'taxonomy_term_reference'
-		),
-		'links' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'links',
-			'cardinality' => -1,
-			'module' => 'link',
-			'type' => 'link_field',
-		),
-		'migration_title' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'migration_title',
-			'cardinality' => 1,
-			'module' => 'text',
-			'type' => 'text',
-		),
-		'migration_thumb' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'migration_thumb',
-			'cardinality' => 1,
-			'module' => 'text',
-			'type' => 'text'
-		),
-		'migration_instnames' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'migration_instnames',
-			'cardinality'=>  -1,
-			'module' => 'text',
-			'type' => 'text'
-		),
-		'parent_slug' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'parent_slug',
-			'cardinality' => 1,
-			'module' => 'text',
-			'type' => 'text'
-		),
-		'tei_file' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'tei_file',
-			'cardinality' => 1,
-			'module' => 'file',
-			'type' => 'file' // @todo: Confirm!
-		),
-		'attachments' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'attatchments',
-			'cardinality' => -1,
-			'module' => 'file',
-			'type' => 'file'
-		),
-		'display_auth' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'display_auth',
-			'cardinality' => -1,
-			'module' => 'text',
-			'type' => 'text',
-		),
-		'display_contrib' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'display_contrib',
-			'cardinality' => -1,
-			'module' => 'text',
-			'type' => 'text',
-		),
-		'display_date' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'display_date',
-			'cardinality' => 1,
-			'module' => 'date',
-			'type' => 'date' // @todo: this is a guess! Confirm or change.
-		),
+		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
+		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
+		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
+		'tags' => _tapas_fieldarray('tags', -1, 'taxonomy', 'taxonomy_term_reference'),
+		'institutions' => _tapas_fieldarray('institutions', -1, 'taxonomy', 'taxonomy_term_reference'),
+		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
+		'migration_title', _tapas_fieldarray('migration_title', 1, 'text', 'text'),
+		'migration_thumb', _tapas_fieldarray('migration_thumb', 1, 'text', 'text'),
+		'migration_instnames', _tapas_fieldarray('migration_instnames', -1, 'text', 'text'),
+		'parent_slug', _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
+		'tei_file', _tapas_fieldarray('tei_file', 1, 'file', 'file'),
+		'attatchments', _tapas_fieldarray('attatchments', -1, 'file', 'file'),
+		'display_auth', _tapas_fieldarray('display_auth', -1, 'text', 'text'),
+		'display_contrib', _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
+		'display_date', _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
 	);
+
 }
 
 
@@ -201,94 +136,93 @@ function tapas_field_bases() {
 function tapas_fields_project() {
 
 	return  array(
-
-		TAPAS_P_INSTANCE_PRE . 'description' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'description' => (
 			tapas_instance_common(
 				'description',
 				t('Project Description'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_PROJDESCRIPTION
-			),
+			) +
 			tapas_instance_paragraph()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'thumbnail' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'thumbnail' => (
 			tapas_instance_common(
 				'thumbnail',
 				t('Project Thumbnail'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_PROJTHUMB
-			),
+			) +
 			tapas_instance_thumbnail()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'slug' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'slug' => (
 			tapas_instance_common(
 				'slug',
 				t('Project Slug'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_PROJSLUG
-			),
+			) +
 			tapas_instance_uniqueid()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'tags' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'tags' => (
 			tapas_instance_common( 
 				'tags',
 				t('Tags'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_TAGS
-			),
+			) +
 			tapas_instance_taxonomy()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'institutions' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'institutions' => (
 			tapas_instance_common(
 				'institutions',
 				t('Affiliated Institutions'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_INSTITUTIONS
-			),
+			) +
 			tapas_instance_taxonomy()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'links' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'links' => (
 			tapas_instance_common(
 				'links',
 				t('External Links'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_PROJLINKS
-			),
+			) +
 			tapas_instance_hyperlinks()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'migration_title' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'migration_title' => (
 			tapas_instance_common(
 				'migration_title',
 				t('Migration Title'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_MIGRATIONTITLE
-			),
+			) +
 			tapas_instance_hiddentext()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'migration_thumb' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'migration_thumb' => (
 			tapas_instance_common(
 				'migration_thumb',
 				t('Migration Thumb'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_MIGRATIONIMAGE
-			),
+			) +
 			tapas_instance_hiddentext()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'migration_instnames' => array_merge(
+		TAPAS_P_INSTANCE_PRE . 'migration_instnames' => (
 			tapas_instance_common(
 				'migration_instnames',
 				t('Institutionname'),
 				TAPAS_PROJECT,
 				TAPAS_INSTANCE_DESC_MIGRATIONINST
-			),
+			) +
 			tapas_instance_hiddentext()
 		),
 
@@ -307,73 +241,73 @@ function tapas_fields_collection() {
 
 		// Title field is added by the content type definition.
 
-		TAPAS_C_INSTANCE_PRE . 'description' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'description' => (
 			tapas_instance_common(
 				'description',
 				t('Collection Description'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION
-			),
+			) +
 			tapas_instance_paragraph()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'thumbnail' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'thumbnail' => (
 			tapas_instance_common(
 				'thumbnail',
 				t('Collection Thumbnail'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_COLLECTIONTHUMB
-			),
+			) +
 			tapas_instance_thumbnail()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'slug' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'slug' => (
 			tapas_instance_common(
 				'slug',
 				t('Collection Slug'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_COLLECTIONSLUG
-			),
+			) +
 			tapas_instance_uniqueid()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'tags' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'tags' => (
 			tapas_instance_common(
 				'tags',
 				t('Tags'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_TAGS
-			),
+			) +
 			tapas_instance_taxonomy()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'parent_slug' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'parent_slug' => (
 			tapas_instance_common(
 				'parent_slug',
 				t('Parent Slug'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_PARENTSLUG
-			),
+			) +
 			tapas_instance_hiddentext()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'migration_title' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'migration_title' => (
 			tapas_instance_common(
 				'migration_title',
 				t('Migration Title'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_MIGRATIONTITLE
-			),
+			) +
 			tapas_instance_hiddentext()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'migration_thumb' => array_merge(
+		TAPAS_C_INSTANCE_PRE . 'migration_thumb' => (
 			tapas_instance_common(
 				'migration_thumb',
 				t('Migration Thumb'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_MIGRATIONIMAGE
-			),
+			) +
 			tapas_instance_hiddentext()
 		),
 	);
@@ -387,63 +321,63 @@ function tapas_fields_collection() {
 function tapas_fields_record() {
 
 	return array(
-		TAPAS_R_INSTANCE_PRE . 'slug' => array_merge(
+		TAPAS_R_INSTANCE_PRE . 'slug' => (
 			tapas_instance_common(
 				'slug',
 				t('Persistant ID'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_PERSISTID
-			),
+			) +
 			tapas_instance_uniqueid()
 		),
 
-		TAPAS_R_INSTANCE_PRE . 'tei_file' => array_merge(
+		TAPAS_R_INSTANCE_PRE . 'tei_file' => (
 			tapas_instance_common(
 				'tei_file',
 				t('TEI File'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_TEIFILE
-			),
+			) +
 			tapas_instance_filefield('tei xml') 
 		),
 
-		TAPAS_R_INSTANCE_PRE . 'attatchments' => array_merge(
+		TAPAS_R_INSTANCE_PRE . 'attatchments' => (
 			tapas_instance_common(
 				'attatchments',
 				t('Auxillary Files'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_ATTATCH
-			),
+			) +
 			tapas_instance_filefield('jpeg') 
 		),
 
-		TAPAS_R_INSTANCE_PRE . 'display_auth' => array_merge(
+		TAPAS_R_INSTANCE_PRE . 'display_auth' => (
 			tapas_instance_common(
 				'display_auth',
 				t('Author Names'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_AUTHORS
-			),
+			) +
 			tapas_instance_simpletext() // @todo: verify field name. Also, not written yet.
 		),
 
-		TAPAS_R_INSTANCE_PRE . 'display_contrib' => array_merge(
+		TAPAS_R_INSTANCE_PRE . 'display_contrib' => (
 			tapas_instance_common(
 				'display_contrib',
 				t('Contributor Names'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_CONTRIBUTORS
-			),
+			) +
 			tapas_instance_simpletext() // @todo: confirm function name, write function.
 		),
 
-		TAPAS_R_INSTANCE_PRE . 'display_date' => array_merge(
+		TAPAS_R_INSTANCE_PRE . 'display_date' => (
 			tapas_instance_common(
 				'display_date',
 				t('Timeline Date'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_DISPLAYDATE
-			),
+			) +
 			tapas_instance_datefield() // @todo: write this function.
 		),
 	);
