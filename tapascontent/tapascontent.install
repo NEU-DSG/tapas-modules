@@ -18,6 +18,11 @@ define ('TAPAS_C_TO_P', 'og_tapas_c_to_p');
 /** FIeld name for record-to-collection OG audience link */
 define ('TAPAS_R_TO_C', 'og_tapas_r_to_c');
 
+/** Name of paid-member role. Must match what's in the buildtapas profile! */
+define ('TAPAS_PAIDMEMBER_ROLE', 'paidmember');
+/** Name of admin role. Must match what's in the buildtapas profile! */
+define ('TAPAS_ADMIN_ROLE', 'administrator');
+
 include_once('tapascontent_fields.inc');
 
 /**
@@ -64,6 +69,9 @@ function tapascontent_install() {
 
 	_tapascontent_og_content(TAPAS_COLLECTION, TAPAS_PROJECT, TAPAS_C_TO_P);
 	_tapascontent_og_content(TAPAS_RECORD, TAPAS_COLLECTION, TAPAS_R_TO_C);
+
+	//Content editing permissions for tapas content types.
+	_tapascontent_user_perms();
 }
 
 /** 
@@ -71,6 +79,8 @@ function tapascontent_install() {
  */
 
 function tapascontent_uninstall() {
+
+	_tapascontent_revoke_permissions();
 
 	$bases = tapas_field_bases();
 	foreach ($bases as $field) {
@@ -114,5 +124,105 @@ function _tapascontent_og_content($content_bundle, $group_bundle, $link_name) {
 	$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
 	$audience_field['field']['settubgs']['target_type'] = $group_bundle;
 	og_create_field($link_name, 'node', $content_bundle, $audience_field);
+
+}
+
+
+// ====================================================================================
+// User Permissions.
+// ====================================================================================
+
+
+/**
+ * Set up module-specific user permissions.
+ */
+
+function _tapasconent_user_perms() {
+
+	user_role_grant_permissions(
+		DRUPAL_AUTHENTICATED_RID,
+		_tapascontent_registered_perms()
+	);
+
+	user_role_grant_permissions(
+		array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
+		_tapascontent_paid_perms()
+	);
+
+
+	user_role_grant_permissions(
+		array_search(TAPAS_ADMIN_ROLE, user_roles()),
+		_tapascontent_admin_perms()
+	);
+
+}
+
+/** @internal. Get registered user tapascontent perm array. */
+function _tapascontent_registered_perms() {
+
+	return _tapascontent_basicperms(TAPAS_RECORD);
+
+}
+
+/** @internal. Get paidmember tapascontent perm array. */
+function _tapascontent_paid_perms() {
+	return _tapascontent_registered_perms() + 
+		_tapascontent_basicperms(TAPAS_PROJECT) +
+	  _tapascontent_basicperms(TAPAS_COLLECTION) +
+		array(
+			'edit any ' . TAPAS_RECORD . ' content',
+			'delete any ' . TAPAS_RECORD . ' content',
+			'edit any ' . TAPAS_COLLECTION . ' content',
+			'delete any ' . TAPAS_COLLECTION . ' content',
+	);
+
+}
+
+/** @internal. Get administroator tapascontent perm array. */
+function _tapascontent_admin_perms($type) {
+	return _tapascontent_paid_perms +
+	  array(
+			'edit any ' . TAPAS_PROJECT . ' content',
+			'delete any ' . TAPAS_PROJECT . ' content',
+		);
+}
+
+/**
+ * @internal. Builds basic edit permissions for a content type. 
+ *
+ * @param string $type: the $node->type to generate a perm array for.
+ * @return array: Create, Edit Own, and Delete Own perm array for type.
+ */
+
+function _tapascontent_basicperms($type) {
+
+	return array(
+		"create $type content",
+		"edit own $type content",
+		"delete own $type content",
+	);
+
+}
+
+/**
+ * @internal on uninstall, remove the custom permissions. 
+ */
+function _tapasconent_revoke_perms() {
+
+	user_role_revoke_permissions(
+		DRUPAL_AUTHENTICATED_RID,
+		_tapascontent_registered_perms()
+	);
+
+	user_role_revoke_permissions(
+		array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
+		_tapascontent_paid_perms()
+	);
+
+
+	user_role_revoke_permissions(
+		array_search(TAPAS_ADMIN_ROLE, user_roles()),
+		_tapascontent_admin_perms()
+	);
 
 }
