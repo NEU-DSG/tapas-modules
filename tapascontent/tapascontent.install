@@ -33,7 +33,7 @@ function tapascontent_install() {
 	$bases = tapas_field_bases();
 
 	foreach ($bases as $field) {
-		drupal_set_message("Tapas field: " . http_build_query($field, '', '|'));
+		//drupal_set_message("Tapas field: " . http_build_query($field, '', '|'));
 		field_create_field($field);
 	}
 

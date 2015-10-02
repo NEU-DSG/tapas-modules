@@ -70,40 +70,19 @@ function tapascontent_form($node, $form_state) {
 }
 
 /**
- * Implements hook_node_presave().
- *
- * Hook is called for updates and for inserts.
+ * Implements hook_node_insert().
  */
 
-function tapascontent_node_presave($node) {
+function tapascontent_node_insert($node) {
+	_tapascontent_insert_update($node);
+}
 
-	drupal_set_message("node_presave called for " . $node->type); 
+/**
+ * Implements hook_node_insert().
+ */
 
-	switch($node->type) {
-		case TAPAS_PROJECT:
-			$data = _tapascontent_projcol_hydradata($node);
-			$data['members'] = _tapascontent_get_group_members($node);
-			$result = tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-			break;
-		case TAPAS_COLLECTION:
-			$data = _tapascontent_projcol_hydradata($node);
-			$data['project_did'] = tapas_simple_fieldval(
-				$node,
-				TAPAS_FIELD_PREFIX . 'parent_slug'
-			);
-			$result = tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-			break;
-		case TAPAS_RECORD:
-			drupal_set_message("postnodoe recieved request to post TAPAS record.");
-			$uniqueid = 'TAPAS-' . $node->nid;
-			$data = _tapascontent_record_hydradata($node, $uniqueid);
-			$result = tapashydra_post($data, TAPAS_POST_TEI_URL);
-		default:
-			return;
-	}
-
-	drupal_set_message("@@_tapascontent_postnode return value: $result");
-	return $result;
+function tapascontent_node_update($node) {
+	_tapascontent_insert_update($node);
 }
 
 /** 
@@ -115,7 +94,7 @@ function tapascontent_node_delete($node) {
 
 	drupal_set_message("node delete called against type: " . $node->type);
 
-  switch($node->type) {
+	switch($node->type) {
 	case TAPAS_PROJECT:
 		tapashydra_delete(TAPAS_POST_PROJECT_URL, $node);
 		break;
@@ -125,12 +104,27 @@ function tapascontent_node_delete($node) {
 	case TAPAS_RECORD:
 		tapashydra_delete(TAPAS_POST_TEI_URL, $node);
 		break;
-	default:
-		return;
  }
 
 }
 
+/**
+* Implements hook_menu().
+*/
+function tapascontent_menu() {
+	$items = array();
+
+	$items['node/%node/hydra'] = array(
+		'title' => 'View Hydra HTML',
+		'page callback' => 'add_viewhydra_action',
+		'access callback' => TRUE,
+		'type' => MENU_LOCAL_TASK,
+		'page arguments' => array('node', 1),
+		'access arguments' => array('access content'), 
+	);
+
+	return $items;
+}
 
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
@@ -145,7 +139,31 @@ function tapascontent_node_delete($node) {
 //}
 
 
-//}
+////}
+
+
+// ====================================================================================
+// Callback Functions
+// ====================================================================================
+
+/**
+* Menu hook page callback.
+*/
+function add_viewhydra_action($type, $object) {
+
+
+	$slug = _tapascontent_slug_from_nid($object->nid);
+
+	drupal_set_message("slug is $slug");
+
+	if ($object && $object->type == TAPAS_RECORD) {
+		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($slug, 'tei');
+	} else {
+		return '<h2>Not a record</h2>';
+		return FALSE;
+	}
+}
+
 // ====================================================================================
 // Helper functions
 // ====================================================================================
@@ -163,30 +181,6 @@ function _tapascontent_get_group_members($node) {
 
 }
 
-/**
- * @internal Post-data common to Projects and Collections.
- *
- * @param node $node: the node we will be posting.
- * @return array: An array with the common values set.
- */
-
-function _tapascontent_projcol_hydradata($node) {
-	
-	$result =  array(
-		'uniqueid' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
-		'depositor' => $node->uid,
-		'title' => $node->title,
-		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
-		'access' => $node->group_access['und'][0]['value']?'private':'public',
-	);
-
-	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
-	if ($thumb_file) {
-		$result['thumbnail'] = $thumb_file;
-	}
-
-	return $result;
-}
 /**
  * @internal Get Slug from NodeId
  *
@@ -217,7 +211,7 @@ function _tapascontent_slug_from_nid($nodeid) {
 function _tapascontent_get_parent_slugs($node) {
 
 	//@TODO: Obviously this is just for debugging.
-	return 'projectfalco';
+	//return array('collectionandromeda');
 
 	$parent_ids = og_get_entity_groups('node', $node);
 
@@ -240,6 +234,70 @@ function _tapascontent_get_parent_slugs($node) {
 
 
 }
+
+/**
+ * @internal Performs the POST for inserts and for updates.
+ *
+ * @param node $node The node object being created or updated.
+ */
+function _tapascontent_insert_update($node) {
+
+	drupal_set_message("node_insert_update called for " . $node->type); 
+
+	switch($node->type) {
+		case TAPAS_PROJECT:
+			$data = _tapascontent_projcol_hydradata($node);
+			$data['members'] = _tapascontent_get_group_members($node);
+			tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+			break;
+		case TAPAS_COLLECTION:
+			$data = _tapascontent_projcol_hydradata($node);
+			$data['project_did'] = tapas_simple_fieldval(
+				$node,
+				TAPAS_FIELD_PREFIX . 'parent_slug'
+			);
+			tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+			break;
+		case TAPAS_RECORD:
+			tapashydra_post(
+				_tapascontent_record_hydradata($node, $node->uuid),
+				TAPAS_POST_TEI_URL);
+			break;
+		//default:
+	}
+
+}
+
+// ====================================================================================
+// CURL call data arrays
+// ====================================================================================
+
+/**
+ * @internal Post-data common to Projects and Collections.
+ *
+ * @param node $node: the node we will be posting.
+ * @return array: An array with the common values set.
+ */
+
+function _tapascontent_projcol_hydradata($node) {
+	
+	$result =  array(
+		'uniqueid' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
+		'depositor' => $node->uid,
+		'title' => $node->title,
+		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
+		'access' => $node->group_access['und'][0]['value']?'private':'public',
+	);
+
+	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
+	if ($thumb_file) {
+		$result['thumbnail'] = $thumb_file;
+	}
+
+	return $result;
+
+
+}
 /**
  * @internal Post-data for Records
  *
@@ -256,13 +314,16 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 		'collection_dids'
 	);
 
-	drupal_set_message("@@Collection DIDS: $collection_dids");
+	$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
+	drupal_set_message("filetypes: $filetypes");
 
 	$data = array(
 		'uniqueid' => $uniqueid,
 		'collection_dids' => $collection_dids,
 		'depositor' => $node->uid,
 		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
+		//'file_types' => tapashydra_php_to_http_array(array('tapascontent', 'file_types')),
+		//'file_types' => 'tapascontent',
 	);
 
 	$array_fields = array(
@@ -285,50 +346,12 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 	} else {
 		drupal_set_message("Debug WARNING! tei field seems to be empty.");
 	}
+	
 	return $data;
 
 	//@todo $data['support_files']
 
 }
-
-
-/**
-* Implements hook_menu().
-*/
-function tapascontent_menu() {
-	$items = array();
-
-	$items['node/%node/hydra'] = array(
-		'title' => 'View Hydra HTML',
-		'page callback' => 'add_viewhydra_action',
-		'access callback' => TRUE,
-		'type' => MENU_LOCAL_TASK,
-		'page arguments' => array('node', 1),
-		'access arguments' => array('access content'), 
-	);
-
-	return $items;
-}
-
-/**
-* Page callback.
-*/
-function add_viewhydra_action($type, $object) {
-
-
-	$slug = _tapascontent_slug_from_nid($object->nid);
-
-	drupal_set_message("slug is $slug");
-
-	if ($object && $object->type == TAPAS_RECORD) {
-		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($slug, 'tei');
-	} else {
-		return '<h2>Not a record</h2>';
-		return FALSE;
-	}
-}
-
-
 // ====================================================================================
 // Record View Tab Helper Functions
 // ====================================================================================

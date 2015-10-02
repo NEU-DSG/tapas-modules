@@ -133,7 +133,56 @@ function tapas_field_bases() {
  * Field instances for Project fields.
  */
 
+//function _tapas_fieldinstance($data, $prefix, $bundle) {
+	//$result = array();
+	//foreach ($data as $name => $values) {
+		//$result[$prefix . $name] = 
+			//tapas_instance_common($name, $values['label'], $values['description']) + $values['extra'];
+	//}
+	//return $result;
+
+//}
+
 function tapas_fields_project() {
+
+	//return array(
+		//'description' => array(
+			//'label' => t('Project Description'),
+			//'description' => TAPAS_INSTANCE_DESC_PROJDESCRIPTION,
+			//'extra' => tapas_instance_paragraph()),
+		//'thumbnail' => array(
+			//'label' => t('Project Thumbnail'),
+			//'description' => TAPAS_INSTANCE_DESC_PROJTHUMB,
+			//'extra' => tapas_instance_thumbnail()),
+		//'slug' => array(
+			//'label' => t('Project Slug'),
+			//'description' => TAPAS_INSTANCE_DESC_PROJSLUG,
+			//'extra' => tapas_instance_uniquide()),
+		//'tags' => array(
+			//'label' => t('Tags'),
+			//'description' => TAPAS_INSTANCE_DESC_TAGS,
+			//'extra' => tapas_instance_taxonomy()),
+		//'institutions' => array(
+			//'label' => t('Affiliated Institutions'),
+			//'description' => TAPAS_INSTANCE_DESC_INSTUTUTIONS,
+			//'extra' => tapas_instance_taxonomy()),
+		//'links' => array(
+			//'label' => t('External Links'),
+			//'description' => TAPAS_INSTANCE_DESC_PROJLINKS,
+			//'extra' => tapas_instance_hyperlinks()),
+		//'migration_title' => array(
+			//'label' => t('Migration Title'),
+			//'description' => TAPAS_INSTANCE_DESC_MIGRATIONTITLE,
+			//'extra' => tapas_instance_hiddentext()),
+		//'migration_thumb' => array(
+			//'label' => t('Migration Thumb Name'),
+			//'description' => TAPAS_INSTANCE_DESC_MIGRATIONIMAGE,
+			//'extra' => tapas_instance_hiddentext()),
+		//'migration_instnames' => array(
+			//'label' => t('Migration Institution Names'),
+			//'description' => TAPAS_INSTANCE_MIGRATIONINST,
+			//'extra' => tapas_instance_hiddentext()),
+		//);
 
 	return  array(
 		TAPAS_P_INSTANCE_PRE . 'description' => (
@@ -167,7 +216,7 @@ function tapas_fields_project() {
 		),
 
 		TAPAS_P_INSTANCE_PRE . 'tags' => (
-			tapas_instance_common( 
+			tapas_instance_common(
 				'tags',
 				t('Tags'),
 				TAPAS_PROJECT,
@@ -216,6 +265,7 @@ function tapas_fields_project() {
 			tapas_instance_hiddentext()
 		),
 
+
 		TAPAS_P_INSTANCE_PRE . 'migration_instnames' => (
 			tapas_instance_common(
 				'migration_instnames',
@@ -225,8 +275,6 @@ function tapas_fields_project() {
 			) +
 			tapas_instance_hiddentext()
 		),
-
-
 	);
 }
 

@@ -11,3 +11,4 @@ dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = entityreference
 dependencies[] = og
+dependencies[] = uuid
