@@ -210,11 +210,7 @@ function _tapascontent_slug_from_nid($nodeid) {
 
 function _tapascontent_get_parent_slugs($node) {
 
-	//@TODO: Obviously this is just for debugging.
-	return array('collectiondegoba');
-
 	$parent_ids = og_get_entity_groups('node', $node);
-
 
 	if (!$parent_ids) {
 		drupal_set_message("No parents found.");
@@ -224,15 +220,13 @@ function _tapascontent_get_parent_slugs($node) {
 	drupal_set_message("!! " . http_build_query($parent_ids, '', '|'));
 
 	foreach ($parent_ids['node'] as $parent) {
-		drupal_set_message("!!! " . http_build_query($parent, '', '|'));
+		drupal_set_message("Parent: $parent");
 		$slugs[] = _tapascontent_slug_from_nid($parent);
 	}
 
 	drupal_set_message("Returning slugs: " . http_build_query($slugs, '', '|'));
 
 	return $slugs;
-
-
 }
 
 /**
@@ -260,7 +254,7 @@ function _tapascontent_insert_update($node) {
 			break;
 		case TAPAS_RECORD:
 			$data = _tapascontent_record_hydradata($node, $node->uuid);
-			//tapashydra_post($data, TAPAS_POST_TEI_URL);
+			tapashydra_post($data, TAPAS_POST_TEI_URL);
 			break;
 		//default:
 	}
@@ -323,7 +317,6 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 		'depositor' => $node->uid,
 		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
 		'file_types' => $filetypes,
-		//'file_types' => 'tapascontent',
 	);
 
 	$array_fields = array(
