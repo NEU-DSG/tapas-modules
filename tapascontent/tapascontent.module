@@ -314,38 +314,38 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 	);
 
 	//@TODO: filetype(s) temporarily hardcoded. 
-	//$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
-	//drupal_set_message("filetypes: $filetypes");
+	$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
+	drupal_set_message("filetypes: $filetypes");
 
 	$data = array(
-		//'uniqueid' => $uniqueid,
-		//'collection_dids' => $collection_dids,
-		//'depositor' => $node->uid,
-		//'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
-		////'file_types' => tapashydra_php_to_http_array(array('tapascontent', 'file_types')),
-		////'file_types' => 'tapascontent',
+		'uniqueid' => $uniqueid,
+		'collection_dids' => $collection_dids,
+		'depositor' => $node->uid,
+		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
+		'file_types' => $filetypes,
+		//'file_types' => 'tapascontent',
 	);
 
-	//$array_fields = array(
-		//'tei_type' => 'file_types',
-		//'display_auth' => 'display_authors',
-		//'display_contrib' => 'display_contributors'
-	//);
+	$array_fields = array(
+		'tei_type' => 'file_types',
+		'display_auth' => 'display_authors',
+		'display_contrib' => 'display_contributors'
+	);
 
-	//foreach($array_fields as $fieldname => $paramname) {
-		//$data[$paramname] = tapashydra_field_to_http_array(
-			//$node,
-			//TAPAS_FIELD_PREFIX . $fieldname,
-			//$paramname
-		//);
-	//}
+	foreach($array_fields as $fieldname => $paramname) {
+		$data[$paramname] = tapashydra_field_to_http_array(
+			$node,
+			TAPAS_FIELD_PREFIX . $fieldname,
+			$paramname
+		);
+	}
 
-	//$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
-	//if($tei_file) {
-		//$data['tei'] = $tei_file;
-	//} else {
-		//drupal_set_message("Debug WARNING! tei field seems to be empty.");
-	//}
+	$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
+	if($tei_file) {
+		$data['tei'] = $tei_file;
+	} else {
+		drupal_set_message("Debug WARNING! tei field seems to be empty.");
+	}
 	
 	return $data;
 
