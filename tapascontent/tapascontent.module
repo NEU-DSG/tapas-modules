@@ -211,7 +211,7 @@ function _tapascontent_slug_from_nid($nodeid) {
 function _tapascontent_get_parent_slugs($node) {
 
 	//@TODO: Obviously this is just for debugging.
-	//return array('collectionandromeda');
+	return array('collectiondegoba');
 
 	$parent_ids = og_get_entity_groups('node', $node);
 
@@ -228,7 +228,7 @@ function _tapascontent_get_parent_slugs($node) {
 		$slugs[] = _tapascontent_slug_from_nid($parent);
 	}
 
-	//drupal_set_message("Returning slugs: " . http_build_query($slugs, '', '|'));
+	drupal_set_message("Returning slugs: " . http_build_query($slugs, '', '|'));
 
 	return $slugs;
 
@@ -259,9 +259,8 @@ function _tapascontent_insert_update($node) {
 			tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
 			break;
 		case TAPAS_RECORD:
-			tapashydra_post(
-				_tapascontent_record_hydradata($node, $node->uuid),
-				TAPAS_POST_TEI_URL);
+			$data = _tapascontent_record_hydradata($node, $node->uuid);
+			//tapashydra_post($data, TAPAS_POST_TEI_URL);
 			break;
 		//default:
 	}
@@ -314,38 +313,39 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 		'collection_dids'
 	);
 
-	$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
-	drupal_set_message("filetypes: $filetypes");
+	//@TODO: filetype(s) temporarily hardcoded. 
+	//$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
+	//drupal_set_message("filetypes: $filetypes");
 
 	$data = array(
-		'uniqueid' => $uniqueid,
-		'collection_dids' => $collection_dids,
-		'depositor' => $node->uid,
-		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
-		//'file_types' => tapashydra_php_to_http_array(array('tapascontent', 'file_types')),
-		//'file_types' => 'tapascontent',
+		//'uniqueid' => $uniqueid,
+		//'collection_dids' => $collection_dids,
+		//'depositor' => $node->uid,
+		//'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
+		////'file_types' => tapashydra_php_to_http_array(array('tapascontent', 'file_types')),
+		////'file_types' => 'tapascontent',
 	);
 
-	$array_fields = array(
-		'tei_type' => 'file_types',
-		'display_auth' => 'display_authors',
-		'display_contrib' => 'display_contributors'
-	);
+	//$array_fields = array(
+		//'tei_type' => 'file_types',
+		//'display_auth' => 'display_authors',
+		//'display_contrib' => 'display_contributors'
+	//);
 
-	foreach($array_fields as $fieldname => $paramname) {
-		$data[$paramname] = tapashydra_field_to_http_array(
-			$node,
-			TAPAS_FIELD_PREFIX . $fieldname,
-			$paramname
-		);
-	}
+	//foreach($array_fields as $fieldname => $paramname) {
+		//$data[$paramname] = tapashydra_field_to_http_array(
+			//$node,
+			//TAPAS_FIELD_PREFIX . $fieldname,
+			//$paramname
+		//);
+	//}
 
-	$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
-	if($tei_file) {
-		$data['tei'] = $tei_file;
-	} else {
-		drupal_set_message("Debug WARNING! tei field seems to be empty.");
-	}
+	//$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
+	//if($tei_file) {
+		//$data['tei'] = $tei_file;
+	//} else {
+		//drupal_set_message("Debug WARNING! tei field seems to be empty.");
+	//}
 	
 	return $data;
 
