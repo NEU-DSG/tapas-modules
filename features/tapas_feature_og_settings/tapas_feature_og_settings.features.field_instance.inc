@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * feature_tapas_tapascollection_og_settings.features.field_instance.inc
+ * tapas_feature_og_settings.features.field_instance.inc
  */
 
 /**
  * Implements hook_field_default_field_instances().
  */
-function feature_tapas_tapascollection_og_settings_field_default_field_instances() {
+function tapas_feature_og_settings_field_default_field_instances() {
   $field_instances = array();
 
   // Exported field_instance: 'node-tapas_collection-group_access'

@@ -1,4 +1,4 @@
-name = feature_tapas_tapascollection_og_settings
+name = tapas_feature_og_settings
 core = 7.x
 package = Features
 version = 7.x-0.1

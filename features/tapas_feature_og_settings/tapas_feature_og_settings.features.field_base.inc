@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * feature_tapas_tapascollection_og_settings.features.field_base.inc
+ * tapas_feature_og_settings.features.field_base.inc
  */
 
 /**
  * Implements hook_field_default_field_bases().
  */
-function feature_tapas_tapascollection_og_settings_field_default_field_bases() {
+function tapas_feature_og_settings_field_default_field_bases() {
   $field_bases = array();
 
   // Exported field_base: 'group_access'
