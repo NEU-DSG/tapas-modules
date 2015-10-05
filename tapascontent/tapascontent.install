@@ -71,7 +71,8 @@ function tapascontent_install() {
 	_tapascontent_og_content(TAPAS_RECORD, TAPAS_COLLECTION, TAPAS_R_TO_C);
 
 	//Content editing permissions for tapas content types.
-	_tapascontent_user_perms();
+	//@TODO temporary quickfix.
+	//_tapascontent_user_perms();
 }
 
 /** 
@@ -80,7 +81,8 @@ function tapascontent_install() {
 
 function tapascontent_uninstall() {
 
-	_tapascontent_revoke_perms();
+	//@TODO temporary quickfix.
+	//_tapascontent_revoke_perms();
 
 	$bases = tapas_field_bases();
 	foreach ($bases as $field) {
@@ -139,21 +141,21 @@ function _tapascontent_og_content($content_bundle, $group_bundle, $link_name) {
 
 function _tapascontent_user_perms() {
 
-	//user_role_grant_permissions(
-		//DRUPAL_AUTHENTICATED_RID,
-		//_tapascontent_registered_perms()
-	//);
+	user_role_grant_permissions(
+		DRUPAL_AUTHENTICATED_RID,
+		_tapascontent_registered_perms()
+	);
 
-	//user_role_grant_permissions(
-		//array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
-		//_tapascontent_paid_perms()
-	//);
+	user_role_grant_permissions(
+		array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
+		_tapascontent_paid_perms()
+	);
 
 
-	//user_role_grant_permissions(
-		//array_search(TAPAS_ADMIN_ROLE, user_roles()),
-		//_tapascontent_admin_perms()
-	//);
+	user_role_grant_permissions(
+		array_search(TAPAS_ADMIN_ROLE, user_roles()),
+		_tapascontent_admin_perms()
+	);
 
 }
 
