@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the tapas_feature_content_tapasrecord_as_content feature.
- */
-
-include_once 'tapas_feature_content_tapasrecord_as_content.features.inc';
