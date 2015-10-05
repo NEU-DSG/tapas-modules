@@ -26,7 +26,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 8,
+        'weight' => 7,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -56,7 +56,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 3,
+      'weight' => 2,
     ),
     'widget_type' => 'options_select',
   );
@@ -79,7 +79,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
           'field_name' => FALSE,
         ),
         'type' => 'og_group_subscribe',
-        'weight' => 7,
+        'weight' => 6,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -131,7 +131,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
         'module' => 'og_ui',
         'settings' => array(),
         'type' => 'og_list_default',
-        'weight' => 9,
+        'weight' => 8,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -142,12 +142,11 @@ function tapas_feature_og_settings_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'og_tapas_c_to_p',
-    'label' => 'Part of project',
-    'required' => 1,
+    'label' => 'Groups audience',
+    'required' => FALSE,
     'settings' => array(
       'behaviors' => array(
         'og_widget' => array(
-          'access_override' => 0,
           'admin' => array(
             'widget_type' => 'entityreference_autocomplete',
           ),
@@ -172,11 +171,10 @@ function tapas_feature_og_settings_field_default_field_instances() {
       ),
     ),
     'widget' => array(
-      'active' => 0,
       'module' => 'og',
       'settings' => array(),
       'type' => 'og_complex',
-      'weight' => 4,
+      'weight' => 3,
     ),
   );
 
@@ -196,7 +194,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 10,
+        'weight' => 9,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -226,7 +224,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 5,
+      'weight' => 4,
     ),
     'widget_type' => 'options_select',
   );
@@ -249,7 +247,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
           'field_name' => FALSE,
         ),
         'type' => 'og_group_subscribe',
-        'weight' => 9,
+        'weight' => 8,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -312,12 +310,11 @@ function tapas_feature_og_settings_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'og_tapas_r_to_c',
-    'label' => 'Part of Collections',
-    'required' => 1,
+    'label' => 'Groups audience',
+    'required' => FALSE,
     'settings' => array(
       'behaviors' => array(
         'og_widget' => array(
-          'access_override' => 0,
           'admin' => array(
             'widget_type' => 'entityreference_autocomplete',
           ),
@@ -342,7 +339,6 @@ function tapas_feature_og_settings_field_default_field_instances() {
       ),
     ),
     'widget' => array(
-      'active' => 0,
       'module' => 'og',
       'settings' => array(),
       'type' => 'og_complex',
@@ -389,8 +385,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
   t('Determine if this is an OG group.');
   t('Group');
   t('Group visibility');
-  t('Part of Collections');
-  t('Part of project');
+  t('Groups audience');
   t('Request message');
   t('This is the text a user may send to the group administrators.');
 
