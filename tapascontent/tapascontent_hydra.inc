@@ -36,9 +36,8 @@ function tapashydra_post($data, $url_base) {
 		CURLOPT_POSTFIELDS => $data,
 	);
 
-	//@TODO obviously needs to be turned back on.
-	return ("WARNING: Hydra call still turned off. Turn it back on before committing.");
-	//return _tapashydra_curlcall($url, $curl_options);
+	//return ("WARNING: Hydra call still turned off. Turn it back on before committing.");
+	return _tapashydra_curlcall($url, $curl_options);
 }
 
 /**
@@ -57,9 +56,8 @@ function tapashydra_delete($url_base, $node) {
 	
 	drupal_set_message("Calling the followign URL for delete: $url_base/$uniqueid");
 
-	//@TODO: Turn this back on before commiting.
-	return ("WARNING: Hydra call still turned off. Turn it back on before committing.");
-	//return _tapashydra_curlcall("$url_base/$uniqueid", $curl_options);
+	//return ("WARNING: Hydra call still turned off. Turn it back on before committing.");
+	return _tapashydra_curlcall("$url_base/$uniqueid", $curl_options);
 
 }
 
