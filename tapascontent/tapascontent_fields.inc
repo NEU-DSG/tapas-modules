@@ -29,7 +29,7 @@ include_once('tapascontent_constants.inc');
  * custom fields.
  */
 
-define ('TAPAS_INSTANCE_DESC_TAGS', t(''));
+//define ('TAPAS_INSTANCE_DESC_TAGS', t(''));
 define ('TAPAS_INSTANCE_DESC_MIGRATIONTITLE', t(''));
 define ('TAPAS_INSTANCE_DESC_MIGRATIONIMAGE', t(''));
 define ('TAPAS_INSTANCE_DESC_MIGRATIONINST', t(''));
@@ -112,7 +112,7 @@ function tapas_field_bases() {
 		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
 		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
 		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
-		'tags' => _tapas_fieldarray('tags', -1, 'taxonomy', 'taxonomy_term_reference'),
+		//'tags' => _tapas_fieldarray('tags', -1, 'taxonomy', 'taxonomy_term_reference'),
 		'institutions' => _tapas_fieldarray('institutions', -1, 'taxonomy', 'taxonomy_term_reference'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
 		'migration_title' => _tapas_fieldarray('migration_title', 1, 'text', 'text'),
@@ -133,56 +133,7 @@ function tapas_field_bases() {
  * Field instances for Project fields.
  */
 
-//function _tapas_fieldinstance($data, $prefix, $bundle) {
-	//$result = array();
-	//foreach ($data as $name => $values) {
-		//$result[$prefix . $name] = 
-			//tapas_instance_common($name, $values['label'], $values['description']) + $values['extra'];
-	//}
-	//return $result;
-
-//}
-
 function tapas_fields_project() {
-
-	//return array(
-		//'description' => array(
-			//'label' => t('Project Description'),
-			//'description' => TAPAS_INSTANCE_DESC_PROJDESCRIPTION,
-			//'extra' => tapas_instance_paragraph()),
-		//'thumbnail' => array(
-			//'label' => t('Project Thumbnail'),
-			//'description' => TAPAS_INSTANCE_DESC_PROJTHUMB,
-			//'extra' => tapas_instance_thumbnail()),
-		//'slug' => array(
-			//'label' => t('Project Slug'),
-			//'description' => TAPAS_INSTANCE_DESC_PROJSLUG,
-			//'extra' => tapas_instance_uniquide()),
-		//'tags' => array(
-			//'label' => t('Tags'),
-			//'description' => TAPAS_INSTANCE_DESC_TAGS,
-			//'extra' => tapas_instance_taxonomy()),
-		//'institutions' => array(
-			//'label' => t('Affiliated Institutions'),
-			//'description' => TAPAS_INSTANCE_DESC_INSTUTUTIONS,
-			//'extra' => tapas_instance_taxonomy()),
-		//'links' => array(
-			//'label' => t('External Links'),
-			//'description' => TAPAS_INSTANCE_DESC_PROJLINKS,
-			//'extra' => tapas_instance_hyperlinks()),
-		//'migration_title' => array(
-			//'label' => t('Migration Title'),
-			//'description' => TAPAS_INSTANCE_DESC_MIGRATIONTITLE,
-			//'extra' => tapas_instance_hiddentext()),
-		//'migration_thumb' => array(
-			//'label' => t('Migration Thumb Name'),
-			//'description' => TAPAS_INSTANCE_DESC_MIGRATIONIMAGE,
-			//'extra' => tapas_instance_hiddentext()),
-		//'migration_instnames' => array(
-			//'label' => t('Migration Institution Names'),
-			//'description' => TAPAS_INSTANCE_MIGRATIONINST,
-			//'extra' => tapas_instance_hiddentext()),
-		//);
 
 	return  array(
 		TAPAS_P_INSTANCE_PRE . 'description' => (
@@ -215,15 +166,15 @@ function tapas_fields_project() {
 			tapas_instance_uniqueid()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'tags' => (
-			tapas_instance_common(
-				'tags',
-				t('Tags'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_TAGS
-			) +
-			tapas_instance_taxonomy()
-		),
+		//TAPAS_P_INSTANCE_PRE . 'tags' => (
+			//tapas_instance_common(
+				//'tags',
+				//t('Tags'),
+				//TAPAS_PROJECT,
+				//TAPAS_INSTANCE_DESC_TAGS
+			//) +
+			//tapas_instance_taxonomy()
+		//),
 
 		TAPAS_P_INSTANCE_PRE . 'institutions' => (
 			tapas_instance_common(
@@ -320,15 +271,15 @@ function tapas_fields_collection() {
 			tapas_instance_uniqueid()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'tags' => (
-			tapas_instance_common(
-				'tags',
-				t('Tags'),
-				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_TAGS
-			) +
-			tapas_instance_taxonomy()
-		),
+		//TAPAS_C_INSTANCE_PRE . 'tags' => (
+			//tapas_instance_common(
+				//'tags',
+				//t('Tags'),
+				//TAPAS_COLLECTION,
+				//TAPAS_INSTANCE_DESC_TAGS
+			//) +
+			//tapas_instance_taxonomy()
+		//),
 
 		TAPAS_C_INSTANCE_PRE . 'parent_slug' => (
 			tapas_instance_common(

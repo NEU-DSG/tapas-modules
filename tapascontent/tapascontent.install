@@ -1,8 +1,8 @@
 <?php
 
 /**
- * @file tapascontet/tapascontent.install
- * Installation script for the tapascontnet module.
+ * @file 
+ * tapascontet/tapascontent.install
  *
  * Creates the content types, field bases, and field instances for
  * TAPAS content types. Also removes them when the module is 
@@ -80,7 +80,7 @@ function tapascontent_install() {
 
 function tapascontent_uninstall() {
 
-	_tapascontent_revoke_permissions();
+	_tapascontent_revoke_perms();
 
 	$bases = tapas_field_bases();
 	foreach ($bases as $field) {
@@ -137,7 +137,7 @@ function _tapascontent_og_content($content_bundle, $group_bundle, $link_name) {
  * Set up module-specific user permissions.
  */
 
-function _tapasconent_user_perms() {
+function _tapascontent_user_perms() {
 
 	user_role_grant_permissions(
 		DRUPAL_AUTHENTICATED_RID,
@@ -180,10 +180,9 @@ function _tapascontent_paid_perms() {
 
 /** @internal. Get administroator tapascontent perm array. */
 function _tapascontent_admin_perms($type) {
-	return _tapascontent_paid_perms +
-	  array(
-			'edit any ' . TAPAS_PROJECT . ' content',
-			'delete any ' . TAPAS_PROJECT . ' content',
+	return _tapascontent_paid_perms($type) + array(
+			'edit any ' . $type . ' content',
+			'delete any ' . $type . ' content',
 		);
 }
 
@@ -207,22 +206,26 @@ function _tapascontent_basicperms($type) {
 /**
  * @internal on uninstall, remove the custom permissions. 
  */
-function _tapasconent_revoke_perms() {
+function _tapascontent_revoke_perms() {
 
-	user_role_revoke_permissions(
-		DRUPAL_AUTHENTICATED_RID,
-		_tapascontent_registered_perms()
-	);
+	$types = array(TAPAS_PROJECT, TAPAS_COLLECTION, TAPAS_RECORD);
 
-	user_role_revoke_permissions(
-		array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
-		_tapascontent_paid_perms()
-	);
+	foreach($types as $ct) {
+		user_role_revoke_permissions(
+			DRUPAL_AUTHENTICATED_RID,
+			_tapascontent_registered_perms($ct)
+		);
+
+		user_role_revoke_permissions(
+			array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
+			_tapascontent_paid_perms($ct)
+		);
 
 
-	user_role_revoke_permissions(
-		array_search(TAPAS_ADMIN_ROLE, user_roles()),
-		_tapascontent_admin_perms()
-	);
+		user_role_revoke_permissions(
+			array_search(TAPAS_ADMIN_ROLE, user_roles()),
+			_tapascontent_admin_perms($ct)
+		);
+	}
 
 }
