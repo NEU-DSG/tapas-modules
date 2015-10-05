@@ -2,7 +2,7 @@
 
 /**
  * @file 
- * tapascontet/tapascontent.install
+ * tapascontent.install
  *
  * Creates the content types, field bases, and field instances for
  * TAPAS content types. Also removes them when the module is 

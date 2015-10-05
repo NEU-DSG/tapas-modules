@@ -17,7 +17,7 @@ define ('TAPAS_FIELD_PREFIX', 'field_tapas_');
 /** Prefix before element names on forms */
 //define ('TAPAS_FORM_FIELD', 'tapas_ff_');
 /** Prefix before display element names (other than forms) */
-define ('TAPAS_VIEW_FIELD', 'tapas_vf_');
+//define ('TAPAS_VIEW_FIELD', 'tapas_vf_');
 
 
 // ====================================================================================

@@ -7,7 +7,6 @@ dependencies[] = file
 dependencies[] = image
 dependencies[] = node
 dependencies[] = options
-dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = entityreference
 dependencies[] = og

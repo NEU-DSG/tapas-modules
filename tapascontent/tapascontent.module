@@ -1,7 +1,8 @@
 <?php
 
 /** 
- * @file tappascontent/tapascontent.module
+ * @file 
+ * tapascontent.module
  *
  * @author Linda Moss (GitHub LindaJeanne) <l.moss@neu.edu>
  * @since 2.0
@@ -152,10 +153,7 @@ function tapascontent_menu() {
 */
 function add_viewhydra_action($type, $object) {
 
-
 	$slug = _tapascontent_slug_from_nid($object->nid);
-
-	drupal_set_message("slug is $slug");
 
 	if ($object && $object->type == TAPAS_RECORD) {
 		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($slug, 'tei');
@@ -177,6 +175,7 @@ function add_viewhydra_action($type, $object) {
  */
 
 function _tapascontent_get_group_members($node) {
+	//@TODO: properly add 'get group memberss'
 	//return og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
 	return $node->uid;
 
@@ -191,7 +190,7 @@ function _tapascontent_get_group_members($node) {
 
 function _tapascontent_slug_from_nid($nodeid) {
 
-	drupal_set_message("getting slug for $nodeid");
+	//drupal_set_message("getting slug for $nodeid");
 	
 	$item = field_get_items(
 		'node',
@@ -217,15 +216,10 @@ function _tapascontent_get_parent_slugs($node) {
 		drupal_set_message("No parents found.");
 		return FALSE;
 	}
-	
-	drupal_set_message("!! " . http_build_query($parent_ids, '', '|'));
 
 	foreach ($parent_ids['node'] as $parent) {
-		drupal_set_message("Parent: $parent");
 		$slugs[] = _tapascontent_slug_from_nid($parent);
 	}
-
-	drupal_set_message("Returning slugs: " . http_build_query($slugs, '', '|'));
 
 	return $slugs;
 }
@@ -252,10 +246,9 @@ function _tapascontent_insert_update($node) {
 			tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
 			break;
 		case TAPAS_RECORD:
-			$data = _tapascontent_record_hydradata($node, $node->uuid);
+			$data = _tapascontent_record_hydradata($node);
 			tapashydra_post($data, TAPAS_POST_TEI_URL);
 			break;
-		//default:
 	}
 
 }
@@ -299,7 +292,7 @@ function _tapascontent_projcol_hydradata($node) {
  * @return array: an array with the $data elements.
  */
 
-function _tapascontent_record_hydradata($node, $uniqueid) {
+function _tapascontent_record_hydradata($node) {
 
 	$collection_dids = tapashydra_php_to_http_array(
 		_tapascontent_get_parent_slugs($node),
@@ -311,7 +304,7 @@ function _tapascontent_record_hydradata($node, $uniqueid) {
 	drupal_set_message("filetypes: $filetypes");
 
 	$data = array(
-		'uniqueid' => $uniqueid,
+		'uniqueid' => $node->uuid,
 		'collection_dids' => $collection_dids,
 		'depositor' => $node->uid,
 		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),

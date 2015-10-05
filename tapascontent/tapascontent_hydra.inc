@@ -1,7 +1,9 @@
 <?php
 
 /**
- * @file /tapascontent/tapascontent_hydra.inc
+ * @file
+ * tapascontent_hydra.inc
+ *
  * Encapsulates the calls to the Hydra API.
  * 
  * @author Linda Moss (Github LindaJeanne) <l.moss@neu.edu>
@@ -28,8 +30,8 @@ function tapashydra_post($data, $url_base) {
 	
 	$url = "$url_base/" . $data['uniqueid'];
 
-	drupal_set_message("@@ URL: $url");
-	drupal_set_message("@@ data: " . http_build_query($data, '', '|'));
+	//drupal_set_message("URL: $url");
+	//drupal_set_message("data: " . http_build_query($data, '', '|'));
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
@@ -253,13 +255,13 @@ function tapashydra_field_to_http_array($node, $field_name, $param) {
 	$value_list = field_get_items('node', $node, $field_name);
 
 	if(!$value_list) {
-		drupal_set_message("@@The value_list for $param WAS empty.");
+		//drupal_set_message("The value_list for $param WAS empty.");
 		return;
 	} else {
-		drupal_set_message("@@The value_lists for $param was NOT empty.");
+		//drupal_set_message("The value_lists for $param was NOT empty.");
 	}
 
-	//drupal_set_message("@@value_list is: " . http_build_query($value_list, '', '|'));
+	//drupal_set_message("value_list is: " . http_build_query($value_list, '', '|'));
 
 	$new_array = array();
 	$i = 0;
@@ -284,10 +286,10 @@ function tapashydra_field_to_http_array($node, $field_name, $param) {
 function tapashydra_php_to_http_array($array = array(), $param) {
 
 	if ($array) {
-		drupal_set_message("There IS a php-to-http array for $param.");
+		//drupal_set_message("There IS a php-to-http array for $param.");
 		//drupal_set_message("The array is: " . http_build_query($array, '', '|'));
 	} else {
-		drupal_set_message("There is NOT a php-to-http array for $param.");
+		//drupal_set_message("There is NOT a php-to-http array for $param.");
 		return FALSE;
 	}
 
@@ -299,8 +301,6 @@ function tapashydra_php_to_http_array($array = array(), $param) {
 		$i++;
 	}
 
-	//return implode('&amp;', $outstr_arr);
 	return $outstr;
-
 }
 
