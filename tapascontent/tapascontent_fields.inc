@@ -37,7 +37,7 @@ define ('TAPAS_INSTANCE_DESC_MIGRATIONINST', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJDESCRIPTION', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJTHUMB', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJSLUG', t(''));
-define ('TAPAS_INSTANCE_DESC_INSTITUTIONS', t(''));
+//define ('TAPAS_INSTANCE_DESC_INSTITUTIONS', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJLINKS', t(''));
 
 define ('TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION', t(''));
@@ -113,7 +113,7 @@ function tapas_field_bases() {
 		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
 		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
 		//'tags' => _tapas_fieldarray('tags', -1, 'taxonomy', 'taxonomy_term_reference'),
-		'institutions' => _tapas_fieldarray('institutions', -1, 'taxonomy', 'taxonomy_term_reference'),
+		//'institutions' => _tapas_fieldarray('institutions', -1, 'taxonomy', 'taxonomy_term_reference'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
 		'migration_title' => _tapas_fieldarray('migration_title', 1, 'text', 'text'),
 		'migration_thumb' => _tapas_fieldarray('migration_thumb', 1, 'text', 'text'),
@@ -176,15 +176,15 @@ function tapas_fields_project() {
 			//tapas_instance_taxonomy()
 		//),
 
-		TAPAS_P_INSTANCE_PRE . 'institutions' => (
-			tapas_instance_common(
-				'institutions',
-				t('Affiliated Institutions'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_INSTITUTIONS
-			) +
-			tapas_instance_taxonomy()
-		),
+		//TAPAS_P_INSTANCE_PRE . 'institutions' => (
+			//tapas_instance_common(
+				//'institutions',
+				//t('Affiliated Institutions'),
+				//TAPAS_PROJECT,
+				//TAPAS_INSTANCE_DESC_INSTITUTIONS
+			//) +
+			//tapas_instance_taxonomy()
+		//),
 
 		TAPAS_P_INSTANCE_PRE . 'links' => (
 			tapas_instance_common(
@@ -539,33 +539,33 @@ function tapas_instance_paragraph() {
  * @return array A field instance array.
  */
 
-function tapas_instance_taxonomy() {
+//function tapas_instance_taxonomy() {
 
-	return array(
-		'default_value' => NULL,
-		'display' => array(
-			'default' => array(
-				'label' => 'inline',
-				'module' => 'taxonomy',
-				'type' => 'taxonomy_term_reference_link',
-			),
-			'teaser' => array(
-				'label' => 'inline',
-				'module' => 'taxonomy',
-				'type' => 'taxonomy_term_reference_link',
-			),
-		),
-		'widget' => array(
-			'module' => 'taxonomy',
-			'settings' => array(
-				'autocomplete_path' => 'taxonomy/autocomplete',
-				'size' => 60,
-			),
-			'type' => 'taxonomy_autocomplete',
-		)
-	);
+	//return array(
+		//'default_value' => NULL,
+		//'display' => array(
+			//'default' => array(
+				//'label' => 'inline',
+				//'module' => 'taxonomy',
+				//'type' => 'taxonomy_term_reference_link',
+			//),
+			//'teaser' => array(
+				//'label' => 'inline',
+				//'module' => 'taxonomy',
+				//'type' => 'taxonomy_term_reference_link',
+			//),
+		//),
+		//'widget' => array(
+			//'module' => 'taxonomy',
+			//'settings' => array(
+				////'autocomplete_path' => 'taxonomy/autocomplete',
+				//'size' => 60,
+			//),
+			//'type' => 'taxonomy_autocomplete',
+		//)
+	//);
 
-}
+//}
 
 /**
  * Returns a field instance array for an alphanumeric unique id field.
