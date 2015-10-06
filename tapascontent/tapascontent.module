@@ -294,36 +294,45 @@ function _tapascontent_projcol_hydradata($node) {
 
 function _tapascontent_record_hydradata($node) {
 
-	$collection_dids = tapashydra_php_to_http_array(
+	//$collection_dids = tapashydra_php_to_http_array(
+	$collection_data = tapashydra_http_array(
 		_tapascontent_get_parent_slugs($node),
 		'collection_dids'
 	);
 
+	drupal_set_message("##collection_data: ", http_build_query($collection_data, '', '|'));
 	//@TODO: filetype(s) temporarily hardcoded. 
-	$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
-	drupal_set_message("filetypes: $filetypes");
+	//$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
+	//drupal_set_message("filetypes: $filetypes");
+	$filetype_data = tapashydra_http_array(
+		array('personography'),
+		'file_types'
+	);
+
+	drupal_set_message("##filetype_data: ", http_build_query($filetype_data, '', '|'));
+
 
 	$data = array(
 		'uniqueid' => $node->uuid,
-		'collection_dids' => $collection_dids,
+		'collection_dids' => http_build_query($collection_data),
 		'depositor' => $node->uid,
 		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
-		'file_types' => $filetypes,
-	);
+		'file_types' => http_build_query($filetype_data),
+	)+ $collection_data + $filetype_data;
 
-	$array_fields = array(
-		'tei_type' => 'file_types',
-		'display_auth' => 'display_authors',
-		'display_contrib' => 'display_contributors'
-	);
+	//$array_fields = array(
+		//'tei_type' => 'file_types',
+		//'display_auth' => 'display_authors',
+		//'display_contrib' => 'display_contributors'
+	//);
 
-	foreach($array_fields as $fieldname => $paramname) {
-		$data[$paramname] = tapashydra_field_to_http_array(
-			$node,
-			TAPAS_FIELD_PREFIX . $fieldname,
-			$paramname
-		);
-	}
+	//foreach($array_fields as $fieldname => $paramname) {
+		//$data[$paramname] = tapashydra_field_to_http_array(
+			//$node,
+			//TAPAS_FIELD_PREFIX . $fieldname,
+			//$paramname
+		//);
+	//}
 
 	$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
 	if($tei_file) {

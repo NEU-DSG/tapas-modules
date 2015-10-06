@@ -31,7 +31,7 @@ function tapashydra_post($data, $url_base) {
 	$url = "$url_base/" . $data['uniqueid'];
 
 	//drupal_set_message("URL: $url");
-	//drupal_set_message("data: " . http_build_query($data, '', '|'));
+	drupal_set_message("data: " . http_build_query($data, '', '|'));
 
 	$curl_options = array(
 		CURLOPT_POST => TRUE,
@@ -270,7 +270,8 @@ function tapashydra_field_to_http_array($node, $field_name, $param) {
 		$i++;
 	}
 
-	return tapashydra_php_to_http_array($new_array, $param);
+	//return tapashydra_php_to_http_array($new_array, $param);
+	return tapashydra_http_array($new_array, $param);
 
 }
 
@@ -283,24 +284,43 @@ function tapashydra_field_to_http_array($node, $field_name, $param) {
  * @return string: The HTTP formatted array. (or FALSE, if the input array was empty).
  */
 
-function tapashydra_php_to_http_array($array = array(), $param) {
+//function tapashydra_php_to_http_array($array = array(), $param) {
 
-	if ($array) {
-		//drupal_set_message("There IS a php-to-http array for $param.");
-		//drupal_set_message("The array is: " . http_build_query($array, '', '|'));
-	} else {
-		//drupal_set_message("There is NOT a php-to-http array for $param.");
-		return FALSE;
+	//if ($array) {
+		////drupal_set_message("There IS a php-to-http array for $param.");
+		////drupal_set_message("The array is: " . http_build_query($array, '', '|'));
+	//} else {
+		////drupal_set_message("There is NOT a php-to-http array for $param.");
+		//return FALSE;
+	//}
+
+	//$outstr = '';
+
+	//foreach ($array as $key => $item) {
+		//$outstr .= $param . '[]=>' . $item . '&amp;';
+	//}
+
+	//drupal_set_message("http array string is: $outstr");
+	//return $outstr;
+//}
+
+function tapashydra_http_array($array = array(), $param) {
+	
+	$out_arr = array();
+	$array_param = $param . '[]';
+
+	if (!$array) {
+		drupal_set_message("empty array for $param");
+		return array();
 	}
-
-	$i = 0;
-	$outstr = '';
 
 	foreach ($array as $key => $item) {
-		$outstr .= $param . '[' . $i . ']=' . $item . '&amp;';
-		$i++;
+		$out_key = $param . '[' . $key . ']';
+		$out_arr[$out_key] = $item;
+		drupal_set_message("out_key: $out_key");
+		drupal_set_message("item: $item");
 	}
+	
+	return $out_arr;
 
-	return $outstr;
 }
-
