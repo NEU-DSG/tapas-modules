@@ -294,6 +294,8 @@ function _tapascontent_projcol_hydradata($node) {
 
 function _tapascontent_record_hydradata($node) {
 
+	//return array('dummy'=>'dummy');
+
 	//$collection_dids = tapashydra_php_to_http_array(
 	$collection_data = tapashydra_http_array(
 		_tapascontent_get_parent_slugs($node),
@@ -314,10 +316,8 @@ function _tapascontent_record_hydradata($node) {
 
 	$data = array(
 		'uniqueid' => $node->uuid,
-		'collection_dids' => http_build_query($collection_data),
 		'depositor' => $node->uid,
 		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
-		'file_types' => http_build_query($filetype_data),
 	)+ $collection_data + $filetype_data;
 
 	//$array_fields = array(
