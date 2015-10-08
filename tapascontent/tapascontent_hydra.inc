@@ -17,6 +17,31 @@ include_once('tapascontent_constants.inc');
 // POST and DELETE functions called from outside the file.
 // ====================================================================================
 
+function _tapashydra_sanitize_query_string($data) {
+  $checked_keys = array();
+
+  // If data is an array, add the key name to the list of key names
+  // to be sanizied
+  foreach($data as $key => $value){
+    if (is_array($value)) {
+      array_push($checked_keys, $key);
+    } 
+  }
+
+  $data_string = http_build_query($data);
+
+  // Fix [0...n] to [] for all parts of the string that look like they are 
+  // definitely keys and not just bits of user input.
+  foreach($checked_keys as $key) {
+    $regex_string = "&".$key."%5B[0-9]+%5D=";
+    $replacement_string = "&".$key."%5B%5D=";
+    $data_string = preg_replace("/".$regex_string."/simU", $replacement_string,
+      $data_string);
+  }
+
+  return $data_string;
+}
+
 /**
  * POST new or updated project, collection, or tei recrd to Hydra.
  *
@@ -33,13 +58,14 @@ function tapashydra_post($data, $url_base) {
 	//drupal_set_message("URL: $url");
 	drupal_set_message("data: " . http_build_query($data, '', '|'));
 
-	$curl_options = array(
+  //Build query and ensure array values are set correctly
+  $data_string = _tapashydra_sanitize_query_string($data);
+
+    $curl_options = array(
 		CURLOPT_POST => TRUE,
-		CURLOPT_POSTFIELDS => $data,
+		CURLOPT_POSTFIELDS => $data_string,
 	);
 
-	//@TODO obviously needs to be turned back on.
-	//return ("WARNING: Hydra call still turned off. Turn it back on before committing.");
 	return _tapashydra_curlcall($url, $curl_options);
 }
 

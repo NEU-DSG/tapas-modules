@@ -72,18 +72,18 @@ function tapascontent_form($node, $form_state) {
 }
 
 /**
- * Implements hook_node_insert().
+ * Implements hook_node_postinsert().
  */
 
-function tapascontent_node_insert($node) {
-	_tapascontent_insert_update($node);
+function tapascontent_node_postinsert($node) {
+  _tapascontent_insert_update($node);
 }
 
 /**
  * Implements hook_node_insert().
  */
 
-function tapascontent_node_update($node) {
+function tapascontent_node_postupdate($node) {
 	_tapascontent_insert_update($node);
 }
 
@@ -175,10 +175,9 @@ function add_viewhydra_action($type, $object) {
  */
 
 function _tapascontent_get_group_members($node) {
-	//@TODO: properly add 'get group memberss'
-	//return og_get_group_members_properties($node, array(), OG_STATE_ACTIVE, 'node');
-	return $node->uid;
-
+	$members = og_get_group_members_properties($node, [], OG_STATE_ACTIVE, 'node');
+  drupal_set_message('node had ' . count($members) . ' members');
+  return $members;
 }
 
 /**
