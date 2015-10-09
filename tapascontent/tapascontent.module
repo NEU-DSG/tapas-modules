@@ -76,6 +76,7 @@ function tapascontent_form($node, $form_state) {
  */
 
 function tapascontent_node_postinsert($node) {
+	drupal_set_message("hook for node insert called.");
   _tapascontent_insert_update($node);
 }
 
@@ -84,6 +85,7 @@ function tapascontent_node_postinsert($node) {
  */
 
 function tapascontent_node_postupdate($node) {
+	drupal_set_message("hook for node update called.");
 	_tapascontent_insert_update($node);
 }
 
@@ -232,23 +234,23 @@ function _tapascontent_insert_update($node) {
 
 	drupal_set_message("node_insert_update called for " . $node->type); 
 
-	switch($node->type) {
-		case TAPAS_PROJECT:
-			$data = _tapascontent_projcol_hydradata($node);
-			$data['members'] = _tapascontent_get_group_members($node);
-			tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-			break;
-		case TAPAS_COLLECTION:
-			$data = _tapascontent_projcol_hydradata($node);
-			$proj_as_array = _tapascontent_get_parent_slugs($node);
-			$data['project_did'] = $proj_as_array[0];
-			tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-			break;
-		case TAPAS_RECORD:
-			$data = _tapascontent_record_hydradata($node);
-			tapashydra_post($data, TAPAS_POST_TEI_URL);
-			break;
-	}
+	//switch($node->type) {
+		//case TAPAS_PROJECT:
+			//$data = _tapascontent_projcol_hydradata($node);
+			//$data['members'] = _tapascontent_get_group_members($node);
+			//tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+			//break;
+		//case TAPAS_COLLECTION:
+			//$data = _tapascontent_projcol_hydradata($node);
+			//$proj_as_array = _tapascontent_get_parent_slugs($node);
+			//$data['project_did'] = $proj_as_array[0];
+			//tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+			//break;
+		//case TAPAS_RECORD:
+			//$data = _tapascontent_record_hydradata($node);
+			//tapashydra_post($data, TAPAS_POST_TEI_URL);
+			//break;
+	//}
 
 }
 

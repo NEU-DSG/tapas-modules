@@ -19,9 +19,9 @@ define ('TAPAS_C_TO_P', 'og_tapas_c_to_p');
 define ('TAPAS_R_TO_C', 'og_tapas_r_to_c');
 
 /** Name of paid-member role. Must match what's in the buildtapas profile! */
-define ('TAPAS_PAIDMEMBER_ROLE', 'paidmember');
+define ('TAPAS_PAIDMEMBER_ROLE_INSTALL', 'paidmember');
 /** Name of admin role. Must match what's in the buildtapas profile! */
-define ('TAPAS_ADMIN_ROLE', 'administrator');
+define ('TAPAS_ADMIN_ROLE_INSTALL', 'administrator');
 
 include_once('tapascontent_fields.inc');
 
@@ -217,13 +217,13 @@ function _tapascontent_revoke_perms() {
 		);
 
 		user_role_revoke_permissions(
-			array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
+			array_search(TAPAS_PAIDMEMBER_ROLE_INSTALL, user_roles()),
 			_tapascontent_paid_perms($ct)
 		);
 
 
 		user_role_revoke_permissions(
-			array_search(TAPAS_ADMIN_ROLE, user_roles()),
+			array_search(TAPAS_ADMIN_ROLE_INSTALL, user_roles()),
 			_tapascontent_admin_perms($ct)
 		);
 	}
