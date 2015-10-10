@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the tapas_feature_view_group_members feature.
- */
-
-include_once 'tapas_feature_view_group_members.features.inc';

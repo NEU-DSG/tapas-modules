@@ -1,0 +1,231 @@
+<?php
+
+/**
+ * @file 
+ * tapascontent.install
+ *
+ * Creates the content types, field bases, and field instances for
+ * TAPAS content types. Also removes them when the module is 
+ * uninstalled.
+ *
+ * @author Linda Moss (GitHub LindaJeanne) <l.moss@neu.edu>
+ * @since 2.0
+ * @version 2.0
+ */
+
+/** Field name for collection-to-project OG audience link*/
+define ('TAPAS_C_TO_P', 'og_tapas_c_to_p');
+/** FIeld name for record-to-collection OG audience link */
+define ('TAPAS_R_TO_C', 'og_tapas_r_to_c');
+
+/** Name of paid-member role. Must match what's in the buildtapas profile! */
+define ('TAPAS_PAIDMEMBER_ROLE_INSTALL', 'paidmember');
+/** Name of admin role. Must match what's in the buildtapas profile! */
+define ('TAPAS_ADMIN_ROLE_INSTALL', 'administrator');
+
+include_once('tapascontent_fields.inc');
+
+/**
+ * Implements hook_install()
+ */
+
+function tapascontent_install() {
+
+	//make custom node types available at install
+	node_types_rebuild();
+
+	//create field bases
+	$bases = tapas_field_bases();
+
+	foreach ($bases as $field) {
+		//drupal_set_message("Tapas field: " . http_build_query($field, '', '|'));
+		field_create_field($field);
+	}
+
+	field_info_cache_clear();
+
+	//create field instances
+	$instances = tapas_fields_project();
+	foreach ($instances as $field) {
+		field_create_instance($field);
+	}
+	$instances = tapas_fields_collection();
+	foreach ($instances as $field) {
+		field_create_instance($field);
+	}
+	$instances = tapas_fields_record();
+	foreach ($instances as $field) {
+		field_create_instance($field);
+	}
+
+	//Add organic groups field. 
+	//Detailed role and permission info will be added via feature, but
+	//we add the needed fields via the API here.
+
+	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_PROJECT);
+	og_create_field(OG_GROUP_FIELD, 'node', TAPAS_COLLECTION);
+	og_create_field(OG_ACCESS_FIELD, 'node', TAPAS_PROJECT);
+	og_create_field(OG_ACCESS_FIELD, 'node', TAPAS_COLLECTION);
+
+	_tapascontent_og_content(TAPAS_COLLECTION, TAPAS_PROJECT, TAPAS_C_TO_P);
+	_tapascontent_og_content(TAPAS_RECORD, TAPAS_COLLECTION, TAPAS_R_TO_C);
+
+	//Content editing permissions for tapas content types.
+	_tapascontent_user_perms();
+}
+
+/** 
+ * Implements hook_uninstall()
+ */
+
+function tapascontent_uninstall() {
+
+	_tapascontent_revoke_perms();
+
+	$bases = tapas_field_bases();
+	foreach ($bases as $field) {
+		field_delete_field($field['field_name']);
+	}
+
+	$instances = tapas_fields_project();
+	foreach ($instances as $field) {
+		field_delete_instance($field);
+	}
+
+	$instances = tapas_fields_collection();
+	foreach ($instances as $field) {
+		field_delete_instance($field);
+	}
+
+	$instances = tapas_fields_record();
+	foreach ($instances as $field) {
+		field_delete_instance($field);
+	}
+
+	node_type_delete(TAPAS_RECORD);
+	node_type_delete(TAPAS_COLLECTION);
+	node_type_delete(TAPAS_PROJECT);
+	field_purge_batch(1000);
+
+}
+
+/**
+ * Generate the Organic Groups 'content' fields.
+ *
+ * @param string $content_bundle: name of the og content node-type.
+ * @param string $group_bundle: name of the og group node-type to which
+ *   the content item belongs.
+ * @param string $link_name: The name for the reference field that will link
+ *   the OG content to its OG group.
+ */
+
+function _tapascontent_og_content($content_bundle, $group_bundle, $link_name) {
+
+	$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
+	$audience_field['field']['settubgs']['target_type'] = $group_bundle;
+	og_create_field($link_name, 'node', $content_bundle, $audience_field);
+
+}
+
+
+// ====================================================================================
+// User Permissions.
+// ====================================================================================
+
+
+/**
+ * Set up module-specific user permissions.
+ */
+
+function _tapascontent_user_perms() {
+
+	//user_role_grant_permissions(
+		//DRUPAL_AUTHENTICATED_RID,
+		//_tapascontent_registered_perms()
+	//);
+
+	//user_role_grant_permissions(
+		//array_search(TAPAS_PAIDMEMBER_ROLE, user_roles()),
+		//_tapascontent_paid_perms()
+	//);
+
+
+	//user_role_grant_permissions(
+		//array_search(TAPAS_ADMIN_ROLE, user_roles()),
+		//_tapascontent_admin_perms()
+	//);
+
+}
+
+/** @internal. Get registered user tapascontent perm array. */
+function _tapascontent_registered_perms() {
+
+	return _tapascontent_basicperms(TAPAS_RECORD);
+
+}
+
+/** @internal. Get paidmember tapascontent perm array. */
+function _tapascontent_paid_perms() {
+	return _tapascontent_registered_perms() + 
+		_tapascontent_basicperms(TAPAS_PROJECT) +
+	  _tapascontent_basicperms(TAPAS_COLLECTION) +
+		array(
+			'edit any ' . TAPAS_RECORD . ' content',
+			'delete any ' . TAPAS_RECORD . ' content',
+			'edit any ' . TAPAS_COLLECTION . ' content',
+			'delete any ' . TAPAS_COLLECTION . ' content',
+	);
+
+}
+
+/** @internal. Get administroator tapascontent perm array. */
+function _tapascontent_admin_perms($type) {
+	return _tapascontent_paid_perms($type) + array(
+			'edit any ' . $type . ' content',
+			'delete any ' . $type . ' content',
+		);
+}
+
+/**
+ * @internal. Builds basic edit permissions for a content type. 
+ *
+ * @param string $type: the $node->type to generate a perm array for.
+ * @return array: Create, Edit Own, and Delete Own perm array for type.
+ */
+
+function _tapascontent_basicperms($type) {
+
+	return array(
+		"create $type content",
+		"edit own $type content",
+		"delete own $type content",
+	);
+
+}
+
+/**
+ * @internal on uninstall, remove the custom permissions. 
+ */
+function _tapascontent_revoke_perms() {
+
+	$types = array(TAPAS_PROJECT, TAPAS_COLLECTION, TAPAS_RECORD);
+
+	foreach($types as $ct) {
+		user_role_revoke_permissions(
+			DRUPAL_AUTHENTICATED_RID,
+			_tapascontent_registered_perms($ct)
+		);
+
+		user_role_revoke_permissions(
+			array_search(TAPAS_PAIDMEMBER_ROLE_INSTALL, user_roles()),
+			_tapascontent_paid_perms($ct)
+		);
+
+
+		user_role_revoke_permissions(
+			array_search(TAPAS_ADMIN_ROLE_INSTALL, user_roles()),
+			_tapascontent_admin_perms($ct)
+		);
+	}
+
+}

@@ -1,7 +1,0 @@
-<?php
-/**
- * @file
- * Code for the tapas_feature_tapascollection feature.
- */
-
-include_once 'tapas_feature_tapascollection.features.inc';

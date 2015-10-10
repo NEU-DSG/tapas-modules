@@ -1,0 +1,12 @@
+name = tapas_field_institution
+description = Connects the Project content type to the Institution taxonomy.
+core = 7.x
+package = TAPAS
+version = 7.x-0.1
+dependencies[] = features
+dependencies[] = tapas_feature_taxonomy_institution
+dependencies[] = taxonomy
+features[features_api][] = api:2
+features[field_base][] = field_tapas_institution
+features[field_instance][] = node-tapas_project-field_tapas_institution
+project path = profiles/buildtapas/modules/tapas-modules/features/
