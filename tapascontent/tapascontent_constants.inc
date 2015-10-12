@@ -108,3 +108,18 @@ function tapas_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
 	}
 
 }
+
+function tapas_array_fieldval($node, $field_name) { 
+  $from_node = field_get_items('node', $node, $field_name); 
+  $result = [];
+
+  if ($from_node == false) { 
+    return $result;
+  }
+
+  foreach($from_node as $key => $value){
+    $result[] = $value['value'];
+  }
+
+  return $result;
+}

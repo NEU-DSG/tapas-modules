@@ -276,9 +276,7 @@ function _tapascontent_projcol_hydradata($node) {
 	);
 
 	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
-	if ($thumb_file) {
-		$result['thumbnail'] = $thumb_file;
-	}
+  _tapascontent_assign_if_present($result, 'thumbnail', $thumb_file);
 
 	return $result;
 }
@@ -298,19 +296,27 @@ function _tapascontent_record_hydradata($node) {
 	$data = array(
 		'uniqueid' => $node->uuid,
 		'depositor' => $node->uid,
+    'display_title' => $node->title,
     'collection_dids' => _tapascontent_get_parent_slugs($node),
 	);
 
   $file_types = [];
   _tapascontent_assign_if_present($data, 'file_types', $file_types);
 
+  $tf = TAPAS_FIELD_PREFIX;
 
-  $display_date = tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'display_date'); 
+  $display_date = tapas_simple_fieldval($node, $tf . 'display_date'); 
   _tapascontent_assign_if_present($data, 'display_date', $display_date);
 
-
-  $tei = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
+  $tei = tapashydra_filestring_from_field($node, $tf . 'tei_file');
   _tapascontent_assign_if_present($data, 'tei', $tei);
+
+  $authors = tapas_array_fieldval($node, $tf . 'display_auth');
+  _tapascontent_assign_if_present($data, 'display_authors', $authors);
+
+  $contribs = tapas_array_fieldval($node, $tf . 'display_contrib');
+  _tapascontent_assign_if_present($data, 'display_contributors', $contribs);
+
 	
 	return $data;
 
