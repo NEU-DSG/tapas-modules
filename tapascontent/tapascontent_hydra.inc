@@ -24,10 +24,11 @@ include_once('tapascontent_constants.inc');
 // "members[2]" => "joe"}
 function _tapashydra_associative_arrays($data) {
 	foreach($data as $key => $value) {
-		if is_array($value){
+		if(is_array($value)){
 			foreach($value as $vkey => $vvalue) {
         $data[$key.'['.$vkey.']'] = $vvalue; 
 			}	
+      unset($data[$key]);
 		}
 	}
 
