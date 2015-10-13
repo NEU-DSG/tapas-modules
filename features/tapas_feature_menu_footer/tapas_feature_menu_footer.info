@@ -1,6 +1,6 @@
 name = Tapas Feature Menu Footer
 core = 7.x
-package = TAPAS
+package = Menus
 version = 7.x-0.1
 project = tapas_feature_menu_footer
 dependencies[] = features

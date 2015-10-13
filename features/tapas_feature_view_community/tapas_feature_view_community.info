@@ -1,7 +1,7 @@
 name = Tapas Feature View Activity Feed
 description = Featurization of the view for the community page
 core = 7.x
-package = TAPAS
+package = Views
 version = 7.x-0.1
 project = tapas_feature_view_community
 dependencies[] = ctools

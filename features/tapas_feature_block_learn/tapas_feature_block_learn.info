@@ -1,6 +1,6 @@
 name = Tapas Feature Block Learn
 core = 7.x
-package = TAPAS
+package = Blocks
 version = 7.x-0.1
 project = tapas_feature_block_learn
 dependencies[] = fe_block

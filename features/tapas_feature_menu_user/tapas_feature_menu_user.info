@@ -1,7 +1,7 @@
 name = Tapas Feature Menu User
 description = User Menu
 core = 7.x
-package = TAPAS
+package = Menus
 version = 7.x-0.1
 project = tapas_feature_menu_user
 dependencies[] = features
