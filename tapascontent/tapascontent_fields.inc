@@ -299,14 +299,14 @@ function tapas_fields_record() {
 			tapas_instance_filefield('tei xml') 
 		),
 
-		TAPAS_R_INSTANCE_PRE . 'attatchments' => (
+		TAPAS_R_INSTANCE_PRE . 'attachments' => (
 			tapas_instance_common(
-				'attatchments',
+				'attachments',
 				t('Auxillary Files'),
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_ATTATCH
 			) +
-			tapas_instance_filefield('jpeg') 
+			tapas_instance_filefield('png jpg gif jpeg') 
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'display_auth' => (
