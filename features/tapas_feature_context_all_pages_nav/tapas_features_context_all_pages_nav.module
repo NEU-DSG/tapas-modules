@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas Features Context All Pages Nav feature.
+ */
+
+include_once 'tapas_features_context_all_pages_nav.features.inc';
