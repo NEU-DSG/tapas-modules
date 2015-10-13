@@ -47,7 +47,7 @@ define ('TAPAS_INSTANCE_DESC_PARENTSLUG', t(''));
 
 define ('TAPAS_INSTANCE_DESC_PERSISTID', t(''));
 define ('TAPAS_INSTANCE_DESC_TEIFILE', t(''));
-define ('TAPAS_INSTANCE_DESC_ATTATCH', t(''));
+define ('TAPAS_INSTANCE_DESC_ATTACH', t(''));
 define ('TAPAS_INSTANCE_DESC_AUTHORS', t(''));
 define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
 define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
@@ -118,7 +118,7 @@ function tapas_field_bases() {
 		'migration_instnames' => _tapas_fieldarray('migration_instnames', -1, 'text', 'text'),
 		'parent_slug' => _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
 		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
-		'attatchments' => _tapas_fieldarray('attatchments', -1, 'file', 'file'),
+		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
@@ -304,7 +304,7 @@ function tapas_fields_record() {
 				'attachments',
 				t('Auxillary Files'),
 				TAPAS_RECORD,
-				TAPAS_INSTANCE_DESC_ATTATCH
+				TAPAS_INSTANCE_DESC_ATTACH
 			) +
 			tapas_instance_filefield('png jpg gif jpeg') 
 		),
