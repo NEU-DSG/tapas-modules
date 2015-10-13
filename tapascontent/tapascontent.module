@@ -177,9 +177,7 @@ function add_viewhydra_action($type, $object) {
  */
 
 function _tapascontent_get_group_members($node) {
-	$members = og_get_group_members_properties($node, [], OG_STATE_ACTIVE, 'node');
-  drupal_set_message('node had ' . count($members) . ' members');
-  return $members;
+	return og_get_group_members_properties($node, [], OG_STATE_ACTIVE, 'node');
 }
 
 /**
@@ -234,24 +232,28 @@ function _tapascontent_insert_update($node) {
 
 	drupal_set_message("node_insert_update called for " . $node->type); 
 
-	//switch($node->type) {
-		//case TAPAS_PROJECT:
-			//$data = _tapascontent_projcol_hydradata($node);
-			//$data['members'] = _tapascontent_get_group_members($node);
-			//tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-			//break;
-		//case TAPAS_COLLECTION:
-			//$data = _tapascontent_projcol_hydradata($node);
-			//$proj_as_array = _tapascontent_get_parent_slugs($node);
-			//$data['project_did'] = $proj_as_array[0];
-			//tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-			//break;
-		//case TAPAS_RECORD:
-			//$data = _tapascontent_record_hydradata($node);
-			//tapashydra_post($data, TAPAS_POST_TEI_URL);
-			//break;
-	//}
+	switch($node->type) {
+		case TAPAS_PROJECT:
+      $members = _tapascontent_get_group_members($node);
 
+			$data = _tapascontent_projcol_hydradata($node);
+      foreach($members as $key => $value) { 
+        $data["members"."[$key]"] = $value; 
+      }
+
+			tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+			break;
+		case TAPAS_COLLECTION:
+			$data = _tapascontent_projcol_hydradata($node);
+			$proj_as_array = _tapascontent_get_parent_slugs($node);
+		  $data['project_did'] = $proj_as_array[0];
+			tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+			break;
+		case TAPAS_RECORD:
+			$data = _tapascontent_record_hydradata($node);
+			tapashydra_post($data, TAPAS_POST_TEI_URL);
+			break;
+	}
 }
 
 // ====================================================================================
@@ -281,9 +283,8 @@ function _tapascontent_projcol_hydradata($node) {
 	}
 
 	return $result;
-
-
 }
+
 /**
  * @internal Post-data for Records
  *
@@ -294,9 +295,6 @@ function _tapascontent_projcol_hydradata($node) {
  */
 
 function _tapascontent_record_hydradata($node) {
-
-	//return array('dummy'=>'dummy');
-
 	//$collection_dids = tapashydra_php_to_http_array(
 	$collection_data = tapashydra_http_array(
 		_tapascontent_get_parent_slugs($node),
@@ -320,20 +318,6 @@ function _tapascontent_record_hydradata($node) {
 		'depositor' => $node->uid,
 		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
 	)+ $collection_data + $filetype_data;
-
-	//$array_fields = array(
-		//'tei_type' => 'file_types',
-		//'display_auth' => 'display_authors',
-		//'display_contrib' => 'display_contributors'
-	//);
-
-	//foreach($array_fields as $fieldname => $paramname) {
-		//$data[$paramname] = tapashydra_field_to_http_array(
-			//$node,
-			//TAPAS_FIELD_PREFIX . $fieldname,
-			//$paramname
-		//);
-	//}
 
 	$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
 	if($tei_file) {

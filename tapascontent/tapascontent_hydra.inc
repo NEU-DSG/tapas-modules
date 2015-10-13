@@ -17,31 +17,6 @@ include_once('tapascontent_constants.inc');
 // POST and DELETE functions called from outside the file.
 // ====================================================================================
 
-function _tapashydra_sanitize_query_string($data) {
-  $checked_keys = array();
-
-  // If data is an array, add the key name to the list of key names
-  // to be sanizied
-  foreach($data as $key => $value){
-    if (is_array($value)) {
-      array_push($checked_keys, $key);
-    } 
-  }
-
-  $data_string = http_build_query($data);
-
-  // Fix [0...n] to [] for all parts of the string that look like they are 
-  // definitely keys and not just bits of user input.
-  foreach($checked_keys as $key) {
-    $regex_string = "&".$key."%5B[0-9]+%5D=";
-    $replacement_string = "&".$key."%5B%5D=";
-    $data_string = preg_replace("/".$regex_string."/simU", $replacement_string,
-      $data_string);
-  }
-
-  return $data_string;
-}
-
 /**
  * POST new or updated project, collection, or tei recrd to Hydra.
  *
@@ -50,20 +25,12 @@ function _tapashydra_sanitize_query_string($data) {
  *
  * @return string The return message passed back by Hydra.
  */
-
 function tapashydra_post($data, $url_base) {
-	
 	$url = "$url_base/" . $data['uniqueid'];
 
-	//drupal_set_message("URL: $url");
-	drupal_set_message("data: " . http_build_query($data, '', '|'));
-
-  //Build query and ensure array values are set correctly
-  $data_string = _tapashydra_sanitize_query_string($data);
-
-    $curl_options = array(
+  $curl_options = array(
 		CURLOPT_POST => TRUE,
-		CURLOPT_POSTFIELDS => $data_string,
+		CURLOPT_POSTFIELDS => $data,
 	);
 
 	return _tapashydra_curlcall($url, $curl_options);
@@ -79,16 +46,12 @@ function tapashydra_post($data, $url_base) {
  */
 
 function tapashydra_delete($url_base, $node) {
-
 	$uniqueid = tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug');
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'DELETE');
 	
 	drupal_set_message("Calling the followign URL for delete: $url_base/$uniqueid");
 
-	//@TODO: Turn this back on before commiting.
-	//return ("WARNING: Hydra call still turned off. Turn it back on before committing.");
 	return _tapashydra_curlcall("$url_base/$uniqueid", $curl_options);
-
 }
 
 // ====================================================================================
@@ -124,6 +87,7 @@ function _tapashydra_curlcall($url, $options) {
 	}
 	
 	$ch = curl_init($url);
+
 	if (!curl_setopt_array($ch, $curlopt)) {
 		drupal_set_message("CURL error: One or more of the options falied to set.");
 	}
@@ -201,9 +165,6 @@ function tapashydra_get_tei($did, $type) {
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET');
 		
 	return _tapashydra_curlcall($url, $curl_options);
-	
-
-
 }
 
 // ====================================================================================
@@ -301,52 +262,6 @@ function tapashydra_field_to_http_array($node, $field_name, $param) {
 
 }
 
-/**
- * Helper. Converts a php array into an HTTP-formatted array.
- *
- * @param array(): The array to convert.
- * @param string: The http parameter receiving the array.
- *
- * @return string: The HTTP formatted array. (or FALSE, if the input array was empty).
- */
-
-//function tapashydra_php_to_http_array($array = array(), $param) {
-
-	//if ($array) {
-		////drupal_set_message("There IS a php-to-http array for $param.");
-		////drupal_set_message("The array is: " . http_build_query($array, '', '|'));
-	//} else {
-		////drupal_set_message("There is NOT a php-to-http array for $param.");
-		//return FALSE;
-	//}
-
-	//$outstr = '';
-
-	//foreach ($array as $key => $item) {
-		//$outstr .= $param . '[]=>' . $item . '&amp;';
-	//}
-
-	//drupal_set_message("http array string is: $outstr");
-	//return $outstr;
-//}
-
-function tapashydra_http_array($array = array(), $param) {
-	
-	$out_arr = array();
-	$array_param = $param . '[]';
-
-	if (!$array) {
-		drupal_set_message("empty array for $param");
-		return array();
-	}
-
-	foreach ($array as $key => $item) {
-		$out_key = $param . '[' . $key . ']';
-		$out_arr[$out_key] = $item;
-		drupal_set_message("out_key: $out_key");
-		drupal_set_message("item: $item");
-	}
-	
-	return $out_arr;
-
+function _tapashydra_watchdog_debug($message) { 
+  watchdog('tapascontent', $message, [], WATCHDOG_DEBUG);
 }
