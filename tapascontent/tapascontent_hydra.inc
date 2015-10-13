@@ -17,6 +17,24 @@ include_once('tapascontent_constants.inc');
 // POST and DELETE functions called from outside the file.
 // ====================================================================================
 
+// Takes all arrays detected in the $data array and translates them into arrays that 
+// php's curl functionality will actually handle.
+// So if we have $data = { "members" => ['bill', 'john', 'joe']}
+// We wind up with $data = { "members[0]" => "bill", "members[1]" => "john", 
+// "members[2]" => "joe"}
+function _tapashydra_associative_arrays($data) {
+	foreach($data as $key => $value) {
+		if(is_array($value)){
+			foreach($value as $vkey => $vvalue) {
+        $data[$key.'['.$vkey.']'] = $vvalue; 
+			}	
+      unset($data[$key]);
+		}
+	}
+
+	return $data;
+}
+
 /**
  * POST new or updated project, collection, or tei recrd to Hydra.
  *
@@ -27,10 +45,11 @@ include_once('tapascontent_constants.inc');
  */
 function tapashydra_post($data, $url_base) {
 	$url = "$url_base/" . $data['uniqueid'];
+	$data_sanitized = _tapashydra_associative_arrays($data);
 
   $curl_options = array(
 		CURLOPT_POST => TRUE,
-		CURLOPT_POSTFIELDS => $data,
+		CURLOPT_POSTFIELDS => $data_sanitized,
 	);
 
 	return _tapashydra_curlcall($url, $curl_options);
