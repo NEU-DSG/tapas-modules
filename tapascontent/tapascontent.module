@@ -76,7 +76,6 @@ function tapascontent_form($node, $form_state) {
  */
 
 function tapascontent_node_postinsert($node) {
-	drupal_set_message("hook for node insert called.");
   _tapascontent_insert_update($node);
 }
 
@@ -85,7 +84,6 @@ function tapascontent_node_postinsert($node) {
  */
 
 function tapascontent_node_postupdate($node) {
-	drupal_set_message("hook for node update called.");
 	_tapascontent_insert_update($node);
 }
 
@@ -278,9 +276,7 @@ function _tapascontent_projcol_hydradata($node) {
 	);
 
 	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
-	if ($thumb_file) {
-		$result['thumbnail'] = $thumb_file;
-	}
+  _tapascontent_assign_if_present($result, 'thumbnail', $thumb_file);
 
 	return $result;
 }
@@ -295,41 +291,50 @@ function _tapascontent_projcol_hydradata($node) {
  */
 
 function _tapascontent_record_hydradata($node) {
-	//$collection_dids = tapashydra_php_to_http_array(
-	$collection_data = tapashydra_http_array(
-		_tapascontent_get_parent_slugs($node),
-		'collection_dids'
-	);
 
-	drupal_set_message("##collection_data: ", http_build_query($collection_data, '', '|'));
-	//@TODO: filetype(s) temporarily hardcoded. 
-	//$filetypes = tapashydra_php_to_http_array(array('tapascontent'), 'file_types');
-	//drupal_set_message("filetypes: $filetypes");
-	$filetype_data = tapashydra_http_array(
-		array('personography'),
-		'file_types'
-	);
-
-	drupal_set_message("##filetype_data: ", http_build_query($filetype_data, '', '|'));
-
-
+  // Populate all items that certainly should exist
 	$data = array(
 		'uniqueid' => $node->uuid,
 		'depositor' => $node->uid,
-		'display_date' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'timeline_date'),
-	)+ $collection_data + $filetype_data;
+    'display_title' => $node->title,
+    'collection_dids' => _tapascontent_get_parent_slugs($node),
+	);
 
-	$tei_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'tei_file');
-	if($tei_file) {
-		$data['tei'] = $tei_file;
-	} else {
-		drupal_set_message("Debug WARNING! tei field seems to be empty.");
-	}
+  $file_types = [];
+  _tapascontent_assign_if_present($data, 'file_types', $file_types);
+
+  $tf = TAPAS_FIELD_PREFIX;
+
+  $display_date = tapas_simple_fieldval($node, $tf . 'display_date'); 
+  _tapascontent_assign_if_present($data, 'display_date', $display_date);
+
+  $tei = tapashydra_filestring_from_field($node, $tf . 'tei_file');
+  _tapascontent_assign_if_present($data, 'tei', $tei);
+
+  $authors = tapas_array_fieldval($node, $tf . 'display_auth');
+  _tapascontent_assign_if_present($data, 'display_authors', $authors);
+
+  $contribs = tapas_array_fieldval($node, $tf . 'display_contrib');
+  _tapascontent_assign_if_present($data, 'display_contributors', $contribs);
+
 	
 	return $data;
 
 	//@todo $data['support_files']
 
+}
+
+function _tapascontent_assign_if_present(&$data, $key, $val) { 
+  # If val is a string, check that it is nonblank
+  if (is_string($val)) {
+    $has_content = !(ctype_space($val));
+  } elseif (is_array($val)) { 
+    $has_content = !(empty($val));
+  }
+
+  if ($has_content) { 
+    $data[$key] = $val; 
+  }
 }
 // ====================================================================================
 // Record View Tab Helper Functions
