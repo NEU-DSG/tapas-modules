@@ -153,10 +153,8 @@ function tapascontent_menu() {
 */
 function add_viewhydra_action($type, $object) {
 
-	$slug = _tapascontent_slug_from_nid($object->nid);
-
 	if ($object && $object->type == TAPAS_RECORD) {
-		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($slug, 'tei');
+		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($object->uuid, 'tei');
 	} else {
 		return '<h2>Not a record</h2>';
 		return FALSE;
@@ -268,7 +266,7 @@ function _tapascontent_insert_update($node) {
 function _tapascontent_projcol_hydradata($node) {
 	
 	$result =  array(
-		'uniqueid' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
+		'uniqueid' => $node->uuid, //tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
 		'depositor' => $node->uid,
 		'title' => $node->title,
 		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
