@@ -168,11 +168,6 @@ function _tapashydra_curl_messages($ch, $result) {
 
 function tapashydra_get_tei($did, $type) {
 
-	//if (!in_array($type, $array('tei', 'teibp', 'tapas_generic'))) {
-		//drupal_set_message("Error! unrecognized tei type: $type");
-		//return FALSE;
-	//}
-
 	if(!isset($did) || !isset($type)) {
 		drupal_set_message("One of the values is not set. DID: $did Type: $type");
 	}
@@ -192,7 +187,7 @@ function tapashydra_get_tei($did, $type) {
 
 
 /**
- * Helper. Given a file handled, returns the HTTP filestring.
+ * Helper. Given a file field object, returns the HTTP filestring.
  *
  * This method (string beginning with '@') for posting files to HTTP is depricated in 
  * HTTP, but the version of PHP we are using does not yet support the new (object-based)
@@ -236,13 +231,17 @@ function tapashydra_filearray_from_field($node, $field_name) {
 		return;
 	}
 
-	$handle_array = array();
-	foreach ($fielditesm as $item) {
-		$handle_array[] = file_load($item['fid']);	
+	$file_objects = array();
+	foreach ($fielditems as $field) {
+		$file_objects[] = file_load($field['fid']);	
 	}
-	
-	return $handle_array;
 
+  $filestrings = array();
+  foreach($file_objects as $file) { 
+    $filestrings[] = drupal_realpath($file->uri);
+  }
+  
+	return $filestrings;
 }
 
 /**

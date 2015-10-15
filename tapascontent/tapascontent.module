@@ -315,11 +315,39 @@ function _tapascontent_record_hydradata($node) {
   $contribs = tapas_array_fieldval($node, $tf . 'display_contrib');
   _tapascontent_assign_if_present($data, 'display_contributors', $contribs);
 
+  $sfs = _tapascontent_zip_from_support_files($node);
+  _tapascontent_assign_if_present($data, 'support_files', $sfs);
 	
 	return $data;
+}
 
-	//@todo $data['support_files']
+function _tapascontent_zip_from_support_files($node) { 
+  $files = tapashydra_filearray_from_field($node, 'field_tapas_attachments');
 
+  if(empty($files)) { 
+    return '';
+  }
+
+  $zip = new ZipArchive(); 
+  $name = $node->nid . "_zip.zip";
+  $filename = drupal_realpath("public://$name");
+
+  $status = $zip->open($filename, ZipArchive::OVERWRITE);
+
+  if($status !== true) { 
+    $err = "Drupal zip creation failed for node with nid $node->nid." .
+      "Error message was: " . $zip->getStatusString(); 
+    _tapascontent_watchdog($err, WATCHDOG_CRITICAL);
+    return '';
+  }
+
+  foreach($files as $file) { 
+    $basename = basename($file);
+    $zip->addFile($file, "$name/page_images/$basename");
+  }
+
+  $zip->close();
+  return '@'.$filename;
 }
 
 function _tapascontent_assign_if_present(&$data, $key, $val) { 
@@ -333,6 +361,10 @@ function _tapascontent_assign_if_present(&$data, $key, $val) {
   if ($has_content) { 
     $data[$key] = $val; 
   }
+}
+
+function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) { 
+  watchdog('tapascontent', $msg, array(), $err_level);
 }
 // ====================================================================================
 // Record View Tab Helper Functions
