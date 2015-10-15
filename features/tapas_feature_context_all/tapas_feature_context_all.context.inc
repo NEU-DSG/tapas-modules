@@ -26,12 +26,6 @@ function tapas_feature_context_all_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'search-form' => array(
-          'module' => 'search',
-          'delta' => 'form',
-          'region' => 'navigation',
-          'weight' => '-9',
-        ),
         'menu-menu-footer-menu' => array(
           'module' => 'menu',
           'delta' => 'menu-footer-menu',
@@ -43,6 +37,24 @@ function tapas_feature_context_all_context_default_contexts() {
           'delta' => '2',
           'region' => 'footer',
           'weight' => '-9',
+        ),
+        'menu-menu-tools-menu' => array(
+          'module' => 'menu',
+          'delta' => 'menu-tools-menu',
+          'region' => 'toolbar',
+          'weight' => '-10',
+        ),
+        'views-news-block_3' => array(
+          'module' => 'views',
+          'delta' => 'news-block_3',
+          'region' => 'toolbar',
+          'weight' => '-9',
+        ),
+        'search-form' => array(
+          'module' => 'search',
+          'delta' => 'form',
+          'region' => 'toolbar',
+          'weight' => '-8',
         ),
       ),
     ),

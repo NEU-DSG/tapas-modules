@@ -33,6 +33,35 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'views_bootstrap_thumbnail_plugin_style';
   $handler->display->display_options['style_options']['columns'] = '2';
   $handler->display->display_options['row_plugin'] = 'fields';
+  /* Field: Content: Nid */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['nid']['element_default_classes'] = FALSE;
+  /* Field: Content: Slug */
+  $handler->display->display_options['fields']['tc_field_slug']['id'] = 'tc_field_slug';
+  $handler->display->display_options['fields']['tc_field_slug']['table'] = 'field_data_tc_field_slug';
+  $handler->display->display_options['fields']['tc_field_slug']['field'] = 'tc_field_slug';
+  $handler->display->display_options['fields']['tc_field_slug']['label'] = '';
+  $handler->display->display_options['fields']['tc_field_slug']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['tc_field_slug']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['tc_field_slug']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['tc_field_slug']['type'] = 'text_plain';
+  /* Field: Content: Edit link */
+  $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
+  $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = '';
+  $handler->display->display_options['fields']['edit_node']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['edit_node']['alter']['text'] = '<a href="/node/edit/[nid]" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</a>';
+  $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['edit_node']['element_wrapper_type'] = 'div';
+  $handler->display->display_options['fields']['edit_node']['element_wrapper_class'] = 'text-right';
+  $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['edit_node']['text'] = 'Edit';
   /* Field: Content: Image */
   $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
   $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
@@ -40,6 +69,7 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['fields']['tc_field_image']['label'] = '';
   $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['tc_field_image']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['tc_field_image']['empty'] = '<a href="/[tc_field_slug]" class="collection-no-image"><img src="/sites/default/files/tapaslogo-opaque.png" /></a>';
   $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
     'image_style' => 'medium',
@@ -52,7 +82,7 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  $handler->display->display_options['fields']['title']['element_type'] = 'p';
+  $handler->display->display_options['fields']['title']['element_type'] = 'h4';
   $handler->display->display_options['fields']['title']['element_class'] = 'text-center';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['element_default_classes'] = FALSE;

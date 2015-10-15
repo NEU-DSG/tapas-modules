@@ -1,23 +1,23 @@
 <?php
 /**
  * @file
- * tapas_feature_block_learn.features.fe_block_settings.inc
+ * tapas_feature_tools_menu.features.fe_block_settings.inc
  */
 
 /**
  * Implements hook_default_fe_block_settings().
  */
-function tapas_feature_block_learn_default_fe_block_settings() {
+function tapas_feature_tools_menu_default_fe_block_settings() {
   $export = array();
 
   $export['version'] = '2.0';
 
-  $export['block-commons_learn_block'] = array(
+  $export['menu-menu-tools-menu'] = array(
     'cache' => -1,
-    'css_class' => 'col-sm-12',
+    'css_class' => 'tools wrench',
     'custom' => 0,
-    'machine_name' => 'commons_learn_block',
-    'module' => 'block',
+    'delta' => 'menu-tools-menu',
+    'module' => 'menu',
     'node_types' => array(),
     'pages' => '',
     'roles' => array(),
@@ -44,10 +44,10 @@ function tapas_feature_block_learn_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => 26,
+        'weight' => 3,
       ),
     ),
-    'title' => 'Learn',
+    'title' => '',
     'visibility' => 0,
   );
 

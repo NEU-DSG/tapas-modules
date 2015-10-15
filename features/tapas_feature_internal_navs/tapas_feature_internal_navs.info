@@ -1,0 +1,10 @@
+name = Tapas Feature Internal Navs
+core = 7.x
+package = Menus
+version = 7.x-1.0
+dependencies[] = fe_block
+features[fe_block_boxes][] = aboutnavigation
+features[fe_block_boxes][] = communitynavigation
+features[fe_block_settings][] = block-aboutnavigation
+features[fe_block_settings][] = block-communitynavigation
+features[features_api][] = api:2

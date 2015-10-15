@@ -1,12 +1,10 @@
-name = Tapas Feature Context Home
+name = Tapas Feature Context About
 core = 7.x
 package = Contexts
-version = 7.x-0.1
-project = tapas_feature_context_home
+version = 7.x-1.0
 dependencies[] = block
 dependencies[] = context
 dependencies[] = ctools
-dependencies[] = views
-features[context][] = home
+features[context][] = about2
 features[ctools][] = context:context:3
 features[features_api][] = api:2
