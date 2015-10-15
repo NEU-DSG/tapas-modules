@@ -1,7 +1,7 @@
 name = tapas_feature_base_og
 description = Base feature for features using Organic Groups
 core = 7.x
-package = TAPAS
+package = GROUPS
 version = 7.x-0.1
 project = tapas_feature_base_og
 dependencies[] = ctools

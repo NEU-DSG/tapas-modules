@@ -1,7 +1,7 @@
 name = Tapas Feature Block Community
 description = community block for commons page
 core = 7.x
-package = TAPAS
+package = Blocks
 version = 7.x-0.1
 project = tapas_feature_block_community
 dependencies[] = fe_block

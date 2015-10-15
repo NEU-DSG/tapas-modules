@@ -1,6 +1,6 @@
 name = tapas_feature_og_settings
 core = 7.x
-package = TAPAS
+package = Groups
 version = 7.x-0.1
 dependencies[] = entityreference
 dependencies[] = features

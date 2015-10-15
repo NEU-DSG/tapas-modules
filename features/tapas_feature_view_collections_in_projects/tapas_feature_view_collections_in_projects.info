@@ -1,6 +1,6 @@
 name = Tapas Feature View Collections in Projects
 core = 7.x
-package = TAPAS
+package = Views
 version = 7.x-0.1
 project = tapas_feature_view_collections_in_projects
 dependencies[] = views

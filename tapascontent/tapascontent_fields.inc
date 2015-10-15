@@ -21,6 +21,11 @@
 
 include_once('tapascontent_constants.inc');
 
+
+define ('STATUS_INPROGRESS', 0);
+define ('STATUS_FAILED', 1);
+define ('STATUS_SUCCESS', 2);
+
 // ====================================================================================
 // Field Instance Descriptions.
 // ====================================================================================
@@ -51,6 +56,8 @@ define ('TAPAS_INSTANCE_DESC_ATTACH', t(''));
 define ('TAPAS_INSTANCE_DESC_AUTHORS', t(''));
 define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
 define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
+
+define ('TAPAS_INSTANCE_DESC_UPLOADSTATUS', t(''));
 
 
 // ====================================================================================
@@ -116,15 +123,41 @@ function tapas_field_bases() {
 		'migration_title' => _tapas_fieldarray('migration_title', 1, 'text', 'text'),
 		'migration_thumb' => _tapas_fieldarray('migration_thumb', 1, 'text', 'text'),
 		'migration_instnames' => _tapas_fieldarray('migration_instnames', -1, 'text', 'text'),
-		'parent_slug' => _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
+		'migration_parentuuid' => _tapas_fieldarray('migration_parentuuid', 1, 'text', 'text'),
 		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
 		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
+		'upload_state' => _tapas_fieldarray('upload_state', 1, 'list', 'list_integer'),
 	);
 
 }
+
+/**
+ * Upload status instance template
+ */
+
+function _tapas_uploadstatus_template($type) {
+
+	$fielddata = array(
+		tapas_instance_common(
+			'upload_status',
+			t('Upload Status'),
+			$type,
+			TAPAS_INSTANCE_DESC_UPLOADSTATUS
+		) 
+	);
+
+	$fielddata['settings']['allowed_values'] = array(
+		STATUS_INPROGRESS => t('In Progress'),
+		STATUS_FAILED => t('Upload Failed'),
+		STATUS_SUCCESS => t('Uploaded Successfully')
+	);
+
+	return $fielddata;
+}
+  
 
 
 /**
@@ -204,6 +237,9 @@ function tapas_fields_project() {
 			) +
 			tapas_instance_hiddentext()
 		),
+
+		TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_PROJECT),
+
 	);
 }
 
@@ -249,10 +285,10 @@ function tapas_fields_collection() {
 			tapas_instance_uniqueid()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'parent_slug' => (
+		TAPAS_C_INSTANCE_PRE . 'migration_parentuuid' => (
 			tapas_instance_common(
-				'parent_slug',
-				t('Parent Slug'),
+				'migration_parentuuid',
+				t('Parent UUID (for migration only)'),
 				TAPAS_COLLECTION,
 				TAPAS_INSTANCE_DESC_PARENTSLUG
 			) +
@@ -278,6 +314,7 @@ function tapas_fields_collection() {
 			) +
 			tapas_instance_hiddentext()
 		),
+		TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_COLLECTION),
 	);
 }
 
@@ -338,6 +375,8 @@ function tapas_fields_record() {
 			) +
 			tapas_instance_datefield() // @todo: write this function.
 		),
+
+		TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
 	);
 
 }
