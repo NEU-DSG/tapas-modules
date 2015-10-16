@@ -129,7 +129,6 @@ function tapas_field_bases() {
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
-//		'upload_status' => _tapas_fieldarray('upload_status', 1, 'list', 'list_integer'),
 	);
 
 }
@@ -237,9 +236,6 @@ function tapas_fields_project() {
 			) +
 			tapas_instance_hiddentext()
 		),
-
-//		TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_PROJECT),
-
 	);
 }
 
@@ -314,7 +310,6 @@ function tapas_fields_collection() {
 			) +
 			tapas_instance_hiddentext()
 		),
-//		TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_COLLECTION),
 	);
 }
 
@@ -375,8 +370,6 @@ function tapas_fields_record() {
 			) +
 			tapas_instance_datefield() // @todo: write this function.
 		),
-
-//		TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
 	);
 
 }
