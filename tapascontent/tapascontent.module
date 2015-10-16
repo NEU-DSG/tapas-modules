@@ -1,7 +1,7 @@
 <?php
 
-/** 
- * @file 
+/**
+ * @file
  * tapascontent.module
  *
  * @author Linda Moss (GitHub LindaJeanne) <l.moss@neu.edu>
@@ -61,7 +61,7 @@ function tapascontent_node_info() {
 /**
  * Implements hook_form().
  *
- * Debugging Note: this has to be present, even if it's just a pass-trough, 
+ * Debugging Note: this has to be present, even if it's just a pass-trough,
  *   otherwise the content type won't appear in the admin/structure/types list.
  */
 
@@ -86,7 +86,7 @@ function tapascontent_node_postupdate($node) {
 	_tapascontent_insert_update($node);
 }
 
-/** 
+/**
  * Implements hook_node_delete().
  *
  * Calls the Hydra API to delete the record.
@@ -121,7 +121,7 @@ function tapascontent_menu() {
 		'access callback' => TRUE,
 		'type' => MENU_LOCAL_TASK,
 		'page arguments' => array('node', 1),
-		'access arguments' => array('access content'), 
+		'access arguments' => array('access content'),
 	);
 
 	return $items;
@@ -185,7 +185,7 @@ function _tapascontent_get_group_members($node) {
 function _tapascontent_slug_from_nid($nodeid) {
 
 	//drupal_set_message("getting slug for $nodeid");
-	
+
 	$item = field_get_items(
 		'node',
 		node_load($nodeid),
@@ -230,8 +230,8 @@ function _tapascontent_insert_update($node) {
     case TAPAS_PROJECT:
       $members = _tapascontent_get_group_members($node);
       $data = _tapascontent_projcol_hydradata($node);
-      foreach($members as $key => $value) { 
-        $data["members"."[$key]"] = $value; 
+      foreach($members as $key => $value) {
+        $data["members"."[$key]"] = $value;
       }
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_PROJECT_URL);
@@ -264,9 +264,9 @@ function _tapascontent_insert_update($node) {
  */
 
 function _tapascontent_projcol_hydradata($node) {
-	
+
 	$result =  array(
-		'uniqueid' => $node->uuid, 
+		'uniqueid' => $node->uuid,
 		'depositor' => $node->uid,
 		'title' => $node->title,
 		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
@@ -305,7 +305,7 @@ function _tapascontent_record_hydradata($node) {
 
   $tf = TAPAS_FIELD_PREFIX;
 
-  $display_date = tapas_simple_fieldval($node, $tf . 'display_date'); 
+  $display_date = tapas_simple_fieldval($node, $tf . 'display_date');
   _tapascontent_assign_if_present($data, 'display_date', $display_date);
 
   $tei = tapashydra_filestring_from_field($node, $tf . 'tei_file');
@@ -319,31 +319,31 @@ function _tapascontent_record_hydradata($node) {
 
   $sfs = _tapascontent_zip_from_support_files($node);
   _tapascontent_assign_if_present($data, 'support_files', $sfs);
-	
+
 	return $data;
 }
 
-function _tapascontent_zip_from_support_files($node) { 
+function _tapascontent_zip_from_support_files($node) {
   $files = tapashydra_filearray_from_field($node, 'field_tapas_attachments');
 
-  if(empty($files)) { 
+  if(empty($files)) {
     return '';
   }
 
-  $zip = new ZipArchive(); 
+  $zip = new ZipArchive();
   $name = $node->nid . "_zip.zip";
   $filename = drupal_realpath("public://$name");
 
   $status = $zip->open($filename, ZipArchive::OVERWRITE);
 
-  if($status !== true) { 
+  if($status !== true) {
     $err = "Drupal zip creation failed for node with nid $node->nid." .
-      "Error message was: " . $zip->getStatusString(); 
+      "Error message was: " . $zip->getStatusString();
     _tapascontent_watchdog($err, WATCHDOG_CRITICAL);
     return '';
   }
 
-  foreach($files as $file) { 
+  foreach($files as $file) {
     $basename = basename($file);
     $zip->addFile($file, "$name/page_images/$basename");
   }
@@ -352,22 +352,22 @@ function _tapascontent_zip_from_support_files($node) {
   return '@'.$filename;
 }
 
-function _tapascontent_assign_if_present(&$data, $key, $val) { 
+function _tapascontent_assign_if_present(&$data, $key, $val) {
   # If val is a string, check that it is nonblank
   if (is_string($val)) {
-    $has_content = !(ctype_space($val));
-  } elseif (is_array($val)) { 
+    $has_content = !(ctype_space($val)) && !(empty($val));
+  } elseif (is_array($val)) {
     $has_content = !(empty($val));
   } else {
     return;
   }
 
-  if ($has_content) { 
-    $data[$key] = $val; 
+  if ($has_content) {
+    $data[$key] = $val;
   }
 }
 
-function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) { 
+function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) {
   watchdog('tapascontent', $msg, array(), $err_level);
 }
 // ====================================================================================
@@ -402,7 +402,7 @@ function _tapas_drupaltab() {
  * @return array The render array for the reader tab.
  */
 function _tapas_readertab() {
-	
+
 	$readingtab = array(
 		'#type' => 'fieldset',
 		'#title' => TAPAS_READER_TAB,
@@ -448,4 +448,3 @@ function _tapas_metatab() {
 	$metatab[TAPAS_FIELD_PREFIX . 'display_auth']['#group'] = TAPAS_DTAB;
 	$metatab[TAPAS_FIELD_PREFIX . 'display_date']['#group'] = TAPAS_DTAB;
 }
-
