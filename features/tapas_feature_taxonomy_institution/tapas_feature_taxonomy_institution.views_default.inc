@@ -43,7 +43,7 @@ function tapas_feature_taxonomy_institution_views_default_views() {
   $handler->display->display_options['fields']['field_institution_image']['label'] = 'Image';
   $handler->display->display_options['fields']['field_institution_image']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_institution_image']['settings'] = array(
-    'image_style' => 'tapas_tiny',
+    'image_style' => 'thumbnail',
     'image_link' => '',
   );
   /* Field: Taxonomy term: Name */
