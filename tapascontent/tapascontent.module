@@ -8,8 +8,6 @@
  * @since 2.0
  * @version 2.0
  *
- * @TODO: Disallow editing slug after creation.
- * @TODO: Enforce slug rules. 
  * @TODO: Enfore Record group must 1. be Collection (not project) 2. Collections from same group.
  */
 
@@ -76,6 +74,7 @@ function tapascontent_form($node, $form_state) {
  */
 
 function tapascontent_node_postinsert($node) {
+   watchdog('debug_tapascontent_node_postinsert', '<pre>'.print_r($node, TRUE).'</pre>');
   _tapascontent_insert_update($node);
 }
 
@@ -237,7 +236,8 @@ function _tapascontent_insert_update($node) {
         $data["members"."[$key]"] = $value; 
       }
 
-			tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+			watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
+                        tapashydra_post($data, TAPAS_POST_PROJECT_URL);
 			break;
 		case TAPAS_COLLECTION:
 			$data = _tapascontent_projcol_hydradata($node);
