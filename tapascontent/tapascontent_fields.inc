@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file 
+ * @file
  * tapascontent_fields.inc
  *
  * Contains the information for the field bases created by the
@@ -97,7 +97,7 @@ define ('TAPAS_FILE_MAXSIZE', '');
 // Field Definitions
 // ====================================================================================
 /**
- * Custom base fields for TAPAS content types. 
+ * Custom base fields for TAPAS content types.
  *
  * Excludes 'title' (which is inherited from 'node' when we create
  *   the content type) and og fields (some of which are added via
@@ -146,7 +146,7 @@ function tapas_field_bases() {
 			//t('Upload Status'),
 			//$type,
 			//TAPAS_INSTANCE_DESC_UPLOADSTATUS
-		//) 
+		//)
 	//);
 
 	//$fielddata['settings']['allowed_values'] = array(
@@ -157,7 +157,7 @@ function tapas_field_bases() {
 
 	//return $fielddata;
 //}
-  
+
 
 
 /**
@@ -244,7 +244,7 @@ function tapas_fields_project() {
 }
 
 
-/** 
+/**
  * Field instances for Collection fields.
  */
 
@@ -319,7 +319,7 @@ function tapas_fields_collection() {
 }
 
 
-/** 
+/**
  * Field instances for TEI Record fields.
  */
 
@@ -333,7 +333,7 @@ function tapas_fields_record() {
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_TEIFILE
 			) +
-			tapas_instance_filefield('tei xml') 
+			tapas_instance_filefield('tei xml')
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'attachments' => (
@@ -343,7 +343,7 @@ function tapas_fields_record() {
 				TAPAS_RECORD,
 				TAPAS_INSTANCE_DESC_ATTACH
 			) +
-			tapas_instance_filefield('png jpg gif jpeg') 
+			tapas_instance_filefield('png jpg gif jpeg')
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'display_auth' => (
@@ -375,8 +375,8 @@ function tapas_fields_record() {
 			) +
 			tapas_instance_datefield() // @todo: write this function.
 		),
-
 		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
+
 	);
 
 }
@@ -448,7 +448,7 @@ function tapas_instance_thumbnail() {
 	);
 }
 
-/** 
+/**
  * Returns a field instance array for a plaintext field.
  *
  * @return array A field instance array.
@@ -509,7 +509,7 @@ function tapas_instance_datefield() {
  */
 
 function tapas_instance_paragraph() {
-         
+
 	return array(
 		'display' => array(
 			'default' => array(
@@ -564,7 +564,7 @@ function tapas_instance_uniqueid() {
  */
 
 function tapas_instance_hyperlinks() {
-	
+
 	return array(
 		'display' => array(
 			'default' => array(
@@ -589,7 +589,7 @@ function tapas_instance_hyperlinks() {
 			'type' => 'link_field',
 		),
 	);
-	
+
 
 
 }
@@ -606,9 +606,9 @@ function tapas_instance_hyperlinks() {
  */
 
 function tapas_instance_common(
-	$name, 
-	$label, 
-	$bundle, 
+	$name,
+	$label,
+	$bundle,
 	$description='') {
 
 	return array(
@@ -618,4 +618,3 @@ function tapas_instance_common(
 		'bundle' => $bundle,
 		'description' => $description);
 }
-

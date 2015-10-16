@@ -26,29 +26,41 @@ function tapas_feature_context_discover_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'block-8' => array(
+          'module' => 'block',
+          'delta' => '8',
+          'region' => 'content',
+          'weight' => '2',
+        ),
         'search-form' => array(
           'module' => 'search',
           'delta' => 'form',
           'region' => 'content',
-          'weight' => '-10',
+          'weight' => '3',
         ),
         'views-featured_project_gallery-block' => array(
           'module' => 'views',
           'delta' => 'featured_project_gallery-block',
           'region' => 'content',
-          'weight' => '-9',
+          'weight' => '4',
         ),
         'views-6bfbde3df9852e23de548e1e0bf2a66d' => array(
           'module' => 'views',
           'delta' => '6bfbde3df9852e23de548e1e0bf2a66d',
           'region' => 'content',
-          'weight' => '-8',
+          'weight' => '5',
         ),
         'views-0d23e2ff80bba7e923d73b45beef2adc' => array(
           'module' => 'views',
           'delta' => '0d23e2ff80bba7e923d73b45beef2adc',
           'region' => 'content',
-          'weight' => '-7',
+          'weight' => '6',
+        ),
+        'block-9' => array(
+          'module' => 'block',
+          'delta' => '9',
+          'region' => 'content',
+          'weight' => '1',
         ),
       ),
     ),

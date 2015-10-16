@@ -56,10 +56,10 @@ define ('TAPAS_CONTENT_REC_HELP', '');
 
 // include_once('/var/www/hydratoken.php');
 // define ('TAPAS_AUTH_TOKEN', HYDRA_API_KEY);
-define ('TAPASHYDRA_AUTH_TOKEN', 'tapas12345');
+define ('TAPASHYDRA_AUTH_TOKEN', (variable_get('tapas_rails_api_key', 'tapas12345')));
 
 /** Base URL to build the API calls off of. */
-define('TAPAS_BASE_API_URL', 'http://rails_api.localhost:8080');
+define('TAPAS_BASE_API_URL', 'http://rails_api.tapasdev.neu.edu');
 
 /** Send Project POST calls to this url. */
 define('TAPAS_POST_PROJECT_URL', TAPAS_BASE_API_URL . "/communities");

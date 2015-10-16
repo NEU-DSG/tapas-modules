@@ -36,7 +36,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['row_plugin'] = 'views_bootstrap_carousel_plugin_rows';
   $handler->display->display_options['row_options']['image'] = 'tc_field_image';
   $handler->display->display_options['row_options']['title'] = 'title';
-  $handler->display->display_options['row_options']['description'] = 'tc_field_description';
+  $handler->display->display_options['row_options']['description'] = '';
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -44,6 +44,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   /* Field: Content: Description */
   $handler->display->display_options['fields']['tc_field_description']['id'] = 'tc_field_description';
   $handler->display->display_options['fields']['tc_field_description']['table'] = 'field_data_tc_field_description';
@@ -83,6 +84,19 @@ function tapas_feature_view_featured_galleries_views_default_views() {
 
   /* Display: Projects */
   $handler = $view->new_display('block', 'Projects', 'block');
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  /* Header: Global: Text area */
+  $handler->display->display_options['header']['area']['id'] = 'area';
+  $handler->display->display_options['header']['area']['table'] = 'views';
+  $handler->display->display_options['header']['area']['field'] = 'area';
+  $handler->display->display_options['header']['area']['content'] = '<a id="featured"></a>';
+  $handler->display->display_options['header']['area']['format'] = 'full_html';
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['area']['id'] = 'area';
+  $handler->display->display_options['footer']['area']['table'] = 'views';
+  $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
 
   /* Display: Collections */
   $handler = $view->new_display('block', 'Collections', 'block_1');
@@ -109,6 +123,110 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler = $view->new_display('block', 'Records', 'block_2');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Featured Records';
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'tapasrecordnode' => 'tapasrecordnode',
+  );
+
+  /* Display: Projects (homepage) */
+  $handler = $view->new_display('block', 'Projects (homepage)', 'block_3');
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_type'] = 'h5';
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Field: Content: Image */
+  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
+  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+    'image_style' => '',
+    'image_link' => '',
+  );
+
+  /* Display: Collections (homepage) */
+  $handler = $view->new_display('block', 'Collections (homepage)', 'block_4');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Featured Collections';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Field: Content: Image */
+  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
+  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+    'image_style' => '',
+    'image_link' => '',
+  );
+  $handler->display->display_options['defaults']['filter_groups'] = FALSE;
+  $handler->display->display_options['defaults']['filters'] = FALSE;
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'tapascollection_collection' => 'tapascollection_collection',
+  );
+
+  /* Display: Records (homepage) */
+  $handler = $view->new_display('block', 'Records (homepage)', 'block_5');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Featured Records';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Field: Content: Image */
+  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
+  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
+  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+    'image_style' => '',
+    'image_link' => '',
+  );
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Content: Published */

@@ -45,13 +45,14 @@ function _tapashydra_associative_arrays($data) {
  */
 function tapashydra_post($data, $url_base) {
 	$url = "$url_base/" . $data['uniqueid'];
-	$data_sanitized = _tapashydra_associative_arrays($data);
+	watchdog('debug_tapashydra_post', $url);
+        $data_sanitized = _tapashydra_associative_arrays($data);
 
   $curl_options = array(
 		CURLOPT_POST => TRUE,
 		CURLOPT_POSTFIELDS => $data_sanitized,
 	);
-
+        watchdog('debug_tapashydra_post', '<pre>'.print_r($curl_options, TRUE).'</pre>');
 	return _tapashydra_curlcall($url, $curl_options);
 }
 
@@ -65,7 +66,7 @@ function tapashydra_post($data, $url_base) {
  */
 
 function tapashydra_delete($url_base, $node) {
-	$uniqueid = tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug');
+	$uniqueid = $node->uuid;
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'DELETE');
 	
 	drupal_set_message("Calling the followign URL for delete: $url_base/$uniqueid");
@@ -88,6 +89,7 @@ function tapashydra_delete($url_base, $node) {
  */
 
 function _tapashydra_curlcall($url, $options) {
+	watchdog('_tapashydra_curlcall', "Curl called to URL: $url", array(), WATCHDOG_DEBUG);
 
 	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 
@@ -106,6 +108,7 @@ function _tapashydra_curlcall($url, $options) {
 	}
 	
 	$ch = curl_init($url);
+        watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($curlopt, TRUE).'</pre>');
 
 	if (!curl_setopt_array($ch, $curlopt)) {
 		drupal_set_message("CURL error: One or more of the options falied to set.");
@@ -115,6 +118,8 @@ function _tapashydra_curlcall($url, $options) {
 	if (TAPAS_INCLUDE_CURL_DEBUG) {
 		_tapashydra_curl_messages($ch, $result);
 	}
+        watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($ch, TRUE).'</pre>');
+        watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($result, TRUE).'</pre>');
 
 	curl_close($ch);
 	return $result;
