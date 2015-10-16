@@ -202,7 +202,7 @@ function _tapascontent_slug_from_nid($nodeid) {
  * @param array An array of strings, containing slugs. (or FALSE)
  */
 
-function _tapascontent_get_parent_slugs($node) {
+function _tapascontent_get_parent_uuids($node) {
 
 	$parent_ids = og_get_entity_groups('node', $node);
 
@@ -212,10 +212,11 @@ function _tapascontent_get_parent_slugs($node) {
 	}
 
 	foreach ($parent_ids['node'] as $parent) {
-		$slugs[] = _tapascontent_slug_from_nid($parent);
+		$node = node_load($parent);
+		$ids[] = $node->uuid;
 	}
 
-	return $slugs;
+	return $ids;
 }
 
 /**
@@ -225,31 +226,30 @@ function _tapascontent_get_parent_slugs($node) {
  */
 function _tapascontent_insert_update($node) {
 
-	drupal_set_message("node_insert_update called for " . $node->type); 
-
-	switch($node->type) {
-		case TAPAS_PROJECT:
+  switch($node->type) {
+    case TAPAS_PROJECT:
       $members = _tapascontent_get_group_members($node);
-
-			$data = _tapascontent_projcol_hydradata($node);
+      $data = _tapascontent_projcol_hydradata($node);
       foreach($members as $key => $value) { 
         $data["members"."[$key]"] = $value; 
       }
-
-			watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
-                        tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-			break;
-		case TAPAS_COLLECTION:
-			$data = _tapascontent_projcol_hydradata($node);
-			$proj_as_array = _tapascontent_get_parent_slugs($node);
-		  $data['project_did'] = $proj_as_array[0];
-			tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-			break;
-		case TAPAS_RECORD:
-			$data = _tapascontent_record_hydradata($node);
-			tapashydra_post($data, TAPAS_POST_TEI_URL);
-			break;
-	}
+      watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
+      tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+      break;
+    case TAPAS_COLLECTION:
+      watchdog('debug_tapascontent_insert_update', "Insert/Update called for TAPAS_COLLECTION");
+      $data = _tapascontent_projcol_hydradata($node);
+      $proj_as_array = _tapascontent_get_parent_uuids($node);
+      $data['project_did'] = $proj_as_array[0];
+      watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
+      tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+      break;
+    case TAPAS_RECORD:
+      $data = _tapascontent_record_hydradata($node);
+      tapashydra_post($data, TAPAS_POST_TEI_URL);
+      watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
+      break;
+  }
 }
 
 // ====================================================================================
@@ -266,7 +266,7 @@ function _tapascontent_insert_update($node) {
 function _tapascontent_projcol_hydradata($node) {
 	
 	$result =  array(
-		'uniqueid' => $node->uuid, //tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'slug'),
+		'uniqueid' => $node->uuid, 
 		'depositor' => $node->uid,
 		'title' => $node->title,
 		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
@@ -274,7 +274,9 @@ function _tapascontent_projcol_hydradata($node) {
 	);
 
 	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
-  _tapascontent_assign_if_present($result, 'thumbnail', $thumb_file);
+	if (isset($thumb_file)) {
+		$result['thumbnail']=$thumb_file;
+	}
 
 	return $result;
 }
@@ -295,7 +297,7 @@ function _tapascontent_record_hydradata($node) {
 		'uniqueid' => $node->uuid,
 		'depositor' => $node->uid,
     'display_title' => $node->title,
-    'collection_dids' => _tapascontent_get_parent_slugs($node),
+    'collection_dids' => _tapascontent_get_parent_uuids($node),
 	);
 
   $file_types = [];
@@ -356,6 +358,9 @@ function _tapascontent_assign_if_present(&$data, $key, $val) {
     $has_content = !(ctype_space($val));
   } elseif (is_array($val)) { 
     $has_content = !(empty($val));
+  } else {
+    $has_content = NULL; // neccesary or error will be thrown if neither true.
+    _tapascontent_watchdog("assign_if_present sent invalid value for key $key");
   }
 
   if ($has_content) { 

@@ -89,6 +89,7 @@ function tapashydra_delete($url_base, $node) {
  */
 
 function _tapashydra_curlcall($url, $options) {
+	watchdog('_tapashydra_curlcall', "Curl called to URL: $url", array(), WATCHDOG_DEBUG);
 
 	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 
