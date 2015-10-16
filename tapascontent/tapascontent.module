@@ -359,8 +359,7 @@ function _tapascontent_assign_if_present(&$data, $key, $val) {
   } elseif (is_array($val)) { 
     $has_content = !(empty($val));
   } else {
-    $has_content = NULL; // neccesary or error will be thrown if neither true.
-    _tapascontent_watchdog("assign_if_present sent invalid value for key $key");
+    return;
   }
 
   if ($has_content) { 
