@@ -12,6 +12,45 @@ function tapas_feature_block_homepage_default_fe_block_settings() {
 
   $export['version'] = '2.0';
 
+  $export['block-home_page_4_components'] = array(
+    'cache' => -1,
+    'css_class' => '',
+    'custom' => 0,
+    'machine_name' => 'home_page_4_components',
+    'module' => 'block',
+    'node_types' => array(),
+    'pages' => '',
+    'roles' => array(),
+    'themes' => array(
+      'bootstrap' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'bootstrap',
+        'weight' => 0,
+      ),
+      'garland' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'garland',
+        'weight' => -15,
+      ),
+      'seven' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'seven',
+        'weight' => 0,
+      ),
+      'tapas_redesign' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'tapas_redesign',
+        'weight' => -15,
+      ),
+    ),
+    'title' => '',
+    'visibility' => 0,
+  );
+
   $export['block-home_page_bottom'] = array(
     'cache' => -1,
     'css_class' => '',
@@ -22,17 +61,17 @@ function tapas_feature_block_homepage_default_fe_block_settings() {
     'pages' => '',
     'roles' => array(),
     'themes' => array(
-      'bartik' => array(
-        'region' => '',
-        'status' => 0,
-        'theme' => 'bartik',
-        'weight' => 0,
-      ),
       'bootstrap' => array(
         'region' => '',
         'status' => 0,
         'theme' => 'bootstrap',
         'weight' => 0,
+      ),
+      'garland' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'garland',
+        'weight' => -14,
       ),
       'seven' => array(
         'region' => '',
@@ -45,6 +84,45 @@ function tapas_feature_block_homepage_default_fe_block_settings() {
         'status' => 0,
         'theme' => 'tapas_redesign',
         'weight' => -14,
+      ),
+    ),
+    'title' => '',
+    'visibility' => 0,
+  );
+
+  $export['block-home_page_header'] = array(
+    'cache' => -1,
+    'css_class' => '',
+    'custom' => 0,
+    'machine_name' => 'home_page_header',
+    'module' => 'block',
+    'node_types' => array(),
+    'pages' => '',
+    'roles' => array(),
+    'themes' => array(
+      'bootstrap' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'bootstrap',
+        'weight' => 0,
+      ),
+      'garland' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'garland',
+        'weight' => -13,
+      ),
+      'seven' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'seven',
+        'weight' => 0,
+      ),
+      'tapas_redesign' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'tapas_redesign',
+        'weight' => -13,
       ),
     ),
     'title' => '',
