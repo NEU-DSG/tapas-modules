@@ -153,7 +153,7 @@ function tapascontent_menu() {
 function add_viewhydra_action($type, $object) {
 
 	if ($object && $object->type == TAPAS_RECORD) {
-		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($object->uuid, 'tei');
+		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($object->uuid, 'tapas_generic');
 	} else {
 		return '<h2>Not a record</h2>';
 		return FALSE;
