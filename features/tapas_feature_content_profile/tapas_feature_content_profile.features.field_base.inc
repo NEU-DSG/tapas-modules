@@ -79,7 +79,7 @@ function tapas_feature_content_profile_field_default_field_bases() {
   // Exported field_base: 'field_profile_institution'
   $field_bases['field_profile_institution'] = array(
     'active' => 1,
-    'cardinality' => 1,
+    'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_profile_institution',
@@ -93,7 +93,7 @@ function tapas_feature_content_profile_field_default_field_bases() {
     'settings' => array(
       'allowed_values' => array(
         0 => array(
-          'vocabulary' => 'institution',
+          'vocabulary' => 'tapas_institution',
           'parent' => 0,
         ),
       ),
