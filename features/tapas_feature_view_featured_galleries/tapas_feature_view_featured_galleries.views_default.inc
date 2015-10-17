@@ -34,7 +34,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['style_plugin'] = 'views_bootstrap_carousel_plugin_style';
   $handler->display->display_options['row_plugin'] = 'views_bootstrap_carousel_plugin_rows';
-  $handler->display->display_options['row_options']['image'] = 'tc_field_image';
+  $handler->display->display_options['row_options']['image'] = 'field_tapas_thumbnail';
   $handler->display->display_options['row_options']['title'] = 'title';
   $handler->display->display_options['row_options']['description'] = '';
   /* Field: Content: Title */
@@ -45,20 +45,12 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Field: Content: Description */
-  $handler->display->display_options['fields']['tc_field_description']['id'] = 'tc_field_description';
-  $handler->display->display_options['fields']['tc_field_description']['table'] = 'field_data_tc_field_description';
-  $handler->display->display_options['fields']['tc_field_description']['field'] = 'tc_field_description';
-  $handler->display->display_options['fields']['tc_field_description']['label'] = '';
-  $handler->display->display_options['fields']['tc_field_description']['element_label_colon'] = FALSE;
-  /* Field: Content: Image */
-  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
-  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+  /* Field: Content: Collection Thumbnail */
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
     'image_style' => '',
     'image_link' => '',
   );
@@ -79,7 +71,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapascollection_project' => 'tapascollection_project',
+    'tapas_project' => 'tapas_project',
   );
 
   /* Display: Projects */
@@ -97,6 +89,24 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['footer']['area']['table'] = 'views';
   $handler->display->display_options['footer']['area']['field'] = 'area';
   $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
+  $handler->display->display_options['defaults']['fields'] = FALSE;
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = '';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  /* Field: Content: Collection Thumbnail */
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
+    'image_style' => '',
+    'image_link' => '',
+  );
 
   /* Display: Collections */
   $handler = $view->new_display('block', 'Collections', 'block_1');
@@ -116,7 +126,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapascollection_collection' => 'tapascollection_collection',
+    'tapas_collection' => 'tapas_collection',
   );
 
   /* Display: Records */
@@ -137,7 +147,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapasrecordnode' => 'tapasrecordnode',
+    'tapas_record' => 'tapas_record',
   );
 
   /* Display: Projects (homepage) */
@@ -152,14 +162,12 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_type'] = 'h5';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Field: Content: Image */
-  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
-  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+  /* Field: Content: Collection Thumbnail */
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
     'image_style' => '',
     'image_link' => '',
   );
@@ -176,14 +184,12 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Image */
-  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
-  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+  /* Field: Content: Collection Thumbnail */
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
     'image_style' => '',
     'image_link' => '',
   );
@@ -201,7 +207,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapascollection_collection' => 'tapascollection_collection',
+    'tapas_collection' => 'tapas_collection',
   );
 
   /* Display: Records (homepage) */
@@ -216,14 +222,12 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Image */
-  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
-  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+  /* Field: Content: Collection Thumbnail */
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
     'image_style' => '',
     'image_link' => '',
   );
@@ -241,7 +245,7 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapasrecordnode' => 'tapasrecordnode',
+    'tapas_record' => 'tapas_record',
   );
   $export['featured_project_gallery'] = $view;
 
