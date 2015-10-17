@@ -448,3 +448,118 @@ function _tapas_metatab() {
 	$metatab[TAPAS_FIELD_PREFIX . 'display_auth']['#group'] = TAPAS_DTAB;
 	$metatab[TAPAS_FIELD_PREFIX . 'display_date']['#group'] = TAPAS_DTAB;
 }
+
+// Implements hook_user_login to perform wild apricot checking
+function tapascontent_user_login(&$edit, $user) { 
+  $key = variable_get('wild_apricot_api_key', false);
+
+  // No API key set - this is a dev environment and we don't care
+  // about paid vs nonpaid members.  Skip.
+  if (!$key) { 
+    return null;
+  }
+
+  $member_rid = user_role_load_by_name('paidmember')->rid;
+
+  // Checks if Wild Apricot says the user is a paid member
+  $is_paid_member = _tapascontent_is_paid_member($user->mail);
+
+  // Checks if the user is currently flagged as a paid member
+  $currently_member = array_key_exists($member_rid, $user->roles);
+
+  if (($is_paid_member === true) and ($currently_member === false)) {
+    user_multiple_role_edit([$user->uid], 'add_role', $member_rid);
+    drupal_set_message("Congratulations!  You are now a paid member of TAPAS.");
+  } elseif (($is_paid_member === false) and ($currently_member === true)) {
+    user_multiple_role_edit([$user->uid], 'remove_role', $member_rid);
+    drupal_set_message("You are no longer a paid member of TAPAS.");
+  } elseif ($is_paid_member === null) {
+    $msg = "Failed to contact Wild Apricot about membership status of"
+      . " $user->mail.   Proceeding without changes made to user status";
+    _tapascontent_watchdog($msg, WATCHDOG_NOTICE);
+  }
+}
+
+// Fair Warning: If you call this function from boris multiple times every call
+// after the first will hang on getting $async_result back and eventually the 
+// function returns null.  I have 100% no idea why this is happening, but it 
+// doesn't seem to be buggy outside of the boris environment.
+function _tapascontent_is_paid_member($email) { 
+  $key = variable_get('wild_apricot_api_key', false);
+  $aid = '66796';
+
+  $query_url  = "https://api.wildapricot.org/v1/Accounts/$aid/Contacts?apikey=$key&\$filter=";
+  $query_url .= "'e-Mail'%20eq%20'".$email."'";
+  $query_url .= "&\$select='Membership%20Status'";
+
+  // This is the JSON response returned by the API call in toto
+  $async_result = _tapascontent_curl_get_apricot($query_url);
+
+  // Check the WildApricot server once every ten seconds or until our
+  // query is complete.
+  $i = 0; 
+  while((($async_result === null) or ($async_result->State != 'Complete')) and ($i <= 10)) { 
+    sleep(1);
+    $async_result = _tapascontent_curl_get_apricot($query_url);
+    $i += 1;
+  }
+
+  if(is_object($async_result) and ($async_result->State === 'Complete')) { 
+    $result_url = $async_result->ResultUrl."&apikey=$key";
+    $result = _tapascontent_curl_get_apricot($result_url);
+
+    // In the case where $result is null, goofily loop hoping that Wild Apricot
+    // will snap out of it.
+    $step_two_i = 0;
+    while(($result === null) and ($step_two_i <= 10)) { 
+      sleep(1);
+      $result = _tapascontent_curl_get_apricot($result_url);
+      $step_two_i += 1;
+    }
+
+    if ($result === null) { 
+      return null;
+    }
+
+    $users = $result->Contacts;
+    $user_count = count($users);
+
+    // In the case where no users were returned, the email address
+    // we entered is associated with a user that doesn't exist according to
+    // the TEIC.  Not a paid member.
+    if($user_count === 0) { 
+      return false;
+    }
+
+    // Too many users were returned by the query - 
+    // email addresses should not be ambiguous so we return null
+    if($user_count > 1) { 
+      $msg = "Wild Apricot returned $user_count users when asked for the user" .
+        " with email address $email.  Skipping paid member status grant/revoke.";
+      _tapascontent_watchdog($msg, WATCHDOG_ERROR);
+      return null; 
+    }
+
+    $status = $users[0]->Status;
+
+    if ($status === 'Active') { 
+      return true;
+    } elseif ($status != null) { 
+      return false;
+    } else { 
+      return null;
+    }
+  } else { 
+    return null;
+  }
+}
+
+function _tapascontent_curl_get_apricot($url) { 
+  $curl = curl_init($url);
+  curl_setopt($curl, CURLOPT_HTTPHEADER, ["Accept: application/json"]);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+  $result = json_decode(curl_exec($curl));
+  curl_close($curl);
+  return($result);
+}
