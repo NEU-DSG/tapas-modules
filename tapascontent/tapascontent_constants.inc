@@ -59,7 +59,7 @@ define ('TAPAS_CONTENT_REC_HELP', '');
 define ('TAPASHYDRA_AUTH_TOKEN', (variable_get('tapas_rails_api_key', 'tapas12345')));
 
 /** Base URL to build the API calls off of. */
-define('TAPAS_BASE_API_URL', 'http://rails_api.localhost:8080');
+define('TAPAS_BASE_API_URL', (variable_get('tapas_rails_api_url', 'http://rails_api.localhost:8080')));
 
 /** Send Project POST calls to this url. */
 define('TAPAS_POST_PROJECT_URL', TAPAS_BASE_API_URL . "/communities");
@@ -69,7 +69,7 @@ define('TAPAS_POST_COLLECTION_URL', TAPAS_BASE_API_URL . "/collections");
 define('TAPAS_POST_TEI_URL', TAPAS_BASE_API_URL . "/files");
 
 /* The following three constants tell which view of a tei record is being
- * Fetched by a GET command. 
+ * Fetched by a GET command.
  */
 define('TAPAS_GET_RAW', 'tei');
 define('TAPAS_GET_BP', 'teibp');
@@ -109,11 +109,11 @@ function tapas_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
 
 }
 
-function tapas_array_fieldval($node, $field_name) { 
-  $from_node = field_get_items('node', $node, $field_name); 
+function tapas_array_fieldval($node, $field_name) {
+  $from_node = field_get_items('node', $node, $field_name);
   $result = [];
 
-  if ($from_node == false) { 
+  if ($from_node == false) {
     return $result;
   }
 
