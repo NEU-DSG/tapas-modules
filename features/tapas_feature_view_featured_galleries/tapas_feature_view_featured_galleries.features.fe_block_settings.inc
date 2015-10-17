@@ -14,7 +14,7 @@ function tapas_feature_view_featured_galleries_default_fe_block_settings() {
 
   $export['views-0d23e2ff80bba7e923d73b45beef2adc'] = array(
     'cache' => -1,
-    'css_class' => '',
+    'css_class' => 'col-sm-3',
     'custom' => 0,
     'delta' => '0d23e2ff80bba7e923d73b45beef2adc',
     'module' => 'views',
@@ -47,7 +47,7 @@ function tapas_feature_view_featured_galleries_default_fe_block_settings() {
         'weight' => 12,
       ),
     ),
-    'title' => '',
+    'title' => 'Featured Records',
     'visibility' => 0,
   );
 
@@ -92,7 +92,7 @@ function tapas_feature_view_featured_galleries_default_fe_block_settings() {
 
   $export['views-6bfbde3df9852e23de548e1e0bf2a66d'] = array(
     'cache' => -1,
-    'css_class' => 'col-sm-4',
+    'css_class' => 'col-sm-3',
     'custom' => 0,
     'delta' => '6bfbde3df9852e23de548e1e0bf2a66d',
     'module' => 'views',
@@ -209,7 +209,7 @@ function tapas_feature_view_featured_galleries_default_fe_block_settings() {
 
   $export['views-featured_project_gallery-block'] = array(
     'cache' => -1,
-    'css_class' => 'col-sm-4',
+    'css_class' => 'col-sm-3',
     'custom' => 0,
     'delta' => 'featured_project_gallery-block',
     'module' => 'views',

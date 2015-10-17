@@ -49,10 +49,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
-    'image_style' => '',
-    'image_link' => '',
+    'image_style' => 'medium',
+    'image_link' => 'content',
   );
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
@@ -102,10 +103,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
-    'image_style' => '',
-    'image_link' => '',
+    'image_style' => 'medium',
+    'image_link' => 'content',
   );
 
   /* Display: Collections */
@@ -166,10 +168,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
-    'image_style' => '',
-    'image_link' => '',
+    'image_style' => 'medium',
+    'image_link' => 'content',
   );
 
   /* Display: Collections (homepage) */
@@ -188,10 +191,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
-    'image_style' => '',
-    'image_link' => '',
+    'image_style' => 'medium',
+    'image_link' => 'content',
   );
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
@@ -226,10 +230,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
-    'image_style' => '',
-    'image_link' => '',
+    'image_style' => 'medium',
+    'image_link' => 'content',
   );
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
