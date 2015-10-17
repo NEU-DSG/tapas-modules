@@ -469,10 +469,12 @@ function tapascontent_user_login(&$edit, $user) {
 
   if (($is_paid_member === true) and ($currently_member === false)) {
     user_multiple_role_edit([$user->uid], 'add_role', $member_rid);
-    drupal_set_message("Congratulations!  You are now a paid member of TAPAS.");
+    drupal_set_message("TEI Membership confirmed, you now have full access to the TAPAS service.");
   } elseif (($is_paid_member === false) and ($currently_member === true)) {
     user_multiple_role_edit([$user->uid], 'remove_role', $member_rid);
-    drupal_set_message("You are no longer a paid member of TAPAS.");
+    $msg = "Our records indicate that you are no longer a TEI Member.  You now have limited access to" .
+      " the TAPAS Service.  If this was done in error, please contact us.";
+    drupal_set_message($msg);
   } elseif ($is_paid_member === null) {
     $msg = "Failed to contact Wild Apricot about membership status of"
       . " $user->mail.   Proceeding without changes made to user status";
