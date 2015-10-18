@@ -1,13 +1,12 @@
 <?php
 
 function tapascontent_apachesolr_index_document_build_node(ApacheSolrDocument $document, $node, $env_id) { 
-  _tapascontent_watchdog('solr index hook fired', WATCHDOG_NOTICE);
 
-  if ($node->type === 'tapas_project') { 
+  if ($node->type === TAPAS_PROJECT) { 
     tapascontent_apachesolr_index_project($document, $node); 
-  } elseif ($node->type === 'tapas_collection') { 
+  } elseif ($node->type === TAPAS_COLLECTION) { 
     tapascontent_apachesolr_index_collection($document, $node); 
-  } elseif ($node->type === 'tapas_record') { 
+  } elseif ($node->type === TAPAS_RECORD) { 
     tapascontent_apachesolr_index_record($document, $node); 
   }
 }
@@ -39,4 +38,12 @@ function _set_teaser_and_description(&$document, $node) {
     $document->content = $desc; 
     $document->teaser = $desc;
   }
+}
+
+// Doesn't work in boris, works fine in the project
+function _tapascontent_index_content($node) { 
+  $env  = apachesolr_default_environment(); 
+  _tapascontent_watchdog('indexing', WATCHDOG_NOTICE);
+  $docs = apachesolr_convert_entity_to_documents($node, 'node', $env);
+  apachesolr_index_send_to_solr($env, $docs); 
 }
