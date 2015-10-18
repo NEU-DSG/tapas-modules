@@ -1,5 +1,8 @@
 <?php
 
+
+// Implements the apachesolr hook that lets you modify the solr doc
+// representation of your entity before its sent off for processing.
 function tapascontent_apachesolr_index_document_build_node(ApacheSolrDocument $document, $node, $env_id) { 
 
   if ($node->type === TAPAS_PROJECT) { 
@@ -23,6 +26,12 @@ function tapascontent_apachesolr_index_record(&$document, $record) {
 
 }
 
+// Implements the apachesolr hook for changing the query sent to Solr.
+// Necessary for searching multiple fields, weighting, sorting, etc.
+function tapascontent_apachesolr_query_alter($query) { 
+  $query->addParam('qf', ['label']);
+}
+
 #------------------------------------------------------------------------------
 # Helper functions
 #------------------------------------------------------------------------------
@@ -41,6 +50,7 @@ function _set_teaser_and_description(&$document, $node) {
 }
 
 // Doesn't work in boris, works fine in the project
+// Immediately indexes the given node.
 function _tapascontent_index_content($node) { 
   $env  = apachesolr_default_environment(); 
   _tapascontent_watchdog('indexing', WATCHDOG_NOTICE);
