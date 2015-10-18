@@ -41,37 +41,27 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['nid']['element_default_classes'] = FALSE;
-  /* Field: Content: Slug */
-  $handler->display->display_options['fields']['tc_field_slug']['id'] = 'tc_field_slug';
-  $handler->display->display_options['fields']['tc_field_slug']['table'] = 'field_data_tc_field_slug';
-  $handler->display->display_options['fields']['tc_field_slug']['field'] = 'tc_field_slug';
-  $handler->display->display_options['fields']['tc_field_slug']['label'] = '';
-  $handler->display->display_options['fields']['tc_field_slug']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['tc_field_slug']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_slug']['element_default_classes'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_slug']['type'] = 'text_plain';
   /* Field: Content: Edit link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['label'] = '';
   $handler->display->display_options['fields']['edit_node']['alter']['alter_text'] = TRUE;
-  $handler->display->display_options['fields']['edit_node']['alter']['text'] = '<a href="/node/edit/[nid]" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</a>';
+  $handler->display->display_options['fields']['edit_node']['alter']['text'] = '<a href="/node/[nid]/edit" class="btn btn-xs btn-default"><span class="fa fa-pencil"></span> Edit</a>';
   $handler->display->display_options['fields']['edit_node']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['element_wrapper_type'] = 'div';
   $handler->display->display_options['fields']['edit_node']['element_wrapper_class'] = 'text-right';
   $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['text'] = 'Edit';
-  /* Field: Content: Image */
-  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['label'] = '';
-  $handler->display->display_options['fields']['tc_field_image']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_image']['element_default_classes'] = FALSE;
-  $handler->display->display_options['fields']['tc_field_image']['empty'] = '<a href="/[tc_field_slug]" class="collection-no-image"><img src="/sites/default/files/tapaslogo-opaque.png" /></a>';
-  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
+  /* Field: Content: Project Thumbnail */
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = '';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<a href="/node/[nid]" class="collection-no-image"><img src="/sites/default/files/tapaslogo-opaque.png" /></a>';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
     'image_style' => 'medium',
     'image_link' => 'content',
   );
@@ -91,15 +81,15 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Contextual filter: Content: Parent Project (og_collection_to_project_ref) */
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['id'] = 'og_collection_to_project_ref_target_id';
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['table'] = 'og_membership';
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['field'] = 'og_collection_to_project_ref_target_id';
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['default_argument_type'] = 'og_context';
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['og_collection_to_project_ref_target_id']['summary_options']['items_per_page'] = '25';
+  /* Contextual filter: OG membership: Group ID */
+  $handler->display->display_options['arguments']['gid']['id'] = 'gid';
+  $handler->display->display_options['arguments']['gid']['table'] = 'og_membership';
+  $handler->display->display_options['arguments']['gid']['field'] = 'gid';
+  $handler->display->display_options['arguments']['gid']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['gid']['default_argument_type'] = 'og_context';
+  $handler->display->display_options['arguments']['gid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['gid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['gid']['summary_options']['items_per_page'] = '25';
   /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
@@ -107,6 +97,13 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['filters']['status']['value'] = 1;
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'tapas_collection' => 'tapas_collection',
+  );
 
   /* Display: Block */
   $handler = $view->new_display('block', 'Block', 'block');
