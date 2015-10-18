@@ -19,7 +19,7 @@ function tapas_feature_context_project_context_default_contexts() {
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        'tapascollection_project' => 'tapascollection_project',
+        'tapas_project' => 'tapas_project',
       ),
       'options' => array(
         'node_form' => '1',
@@ -33,7 +33,7 @@ function tapas_feature_context_project_context_default_contexts() {
           'module' => 'views',
           'delta' => 'collections_in_project-block',
           'region' => 'content',
-          'weight' => '-10',
+          'weight' => '-39',
         ),
       ),
     ),
