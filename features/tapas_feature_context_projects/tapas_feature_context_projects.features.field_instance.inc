@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * tapas_feature_context_project.features.field_instance.inc
+ * tapas_feature_context_projects.features.field_instance.inc
  */
 
 /**
  * Implements hook_field_default_field_instances().
  */
-function tapas_feature_context_project_field_default_field_instances() {
+function tapas_feature_context_projects_field_default_field_instances() {
   $field_instances = array();
 
   // Exported field_instance: 'node-tapas_project-field_tapas_description'
@@ -22,7 +22,7 @@ function tapas_feature_context_project_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 0,
+        'weight' => 1,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -62,7 +62,7 @@ function tapas_feature_context_project_field_default_field_instances() {
         'module' => 'link',
         'settings' => array(),
         'type' => 'link_default',
-        'weight' => 3,
+        'weight' => 2,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -113,7 +113,7 @@ function tapas_feature_context_project_field_default_field_instances() {
         'label' => 'hidden',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 2,
+        'weight' => 7,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -155,7 +155,7 @@ function tapas_feature_context_project_field_default_field_instances() {
           'image_style' => 'large',
         ),
         'type' => 'image',
-        'weight' => 1,
+        'weight' => 0,
       ),
       'teaser' => array(
         'label' => 'hidden',
@@ -211,7 +211,7 @@ function tapas_feature_context_project_field_default_field_instances() {
         'module' => 'list',
         'settings' => array(),
         'type' => 'list_default',
-        'weight' => 8,
+        'weight' => 4,
       ),
       'teaser' => array(
         'label' => 'above',
@@ -264,7 +264,7 @@ function tapas_feature_context_project_field_default_field_instances() {
           'field_name' => FALSE,
         ),
         'type' => 'og_group_subscribe',
-        'weight' => 7,
+        'weight' => 3,
       ),
       'teaser' => array(
         'label' => 'above',

@@ -1,13 +1,13 @@
 <?php
 /**
  * @file
- * tapas_feature_context_project.context.inc
+ * tapas_feature_context_projects.context.inc
  */
 
 /**
  * Implements hook_context_default_contexts().
  */
-function tapas_feature_context_project_context_default_contexts() {
+function tapas_feature_context_projects_context_default_contexts() {
   $export = array();
 
   $context = new stdClass();
