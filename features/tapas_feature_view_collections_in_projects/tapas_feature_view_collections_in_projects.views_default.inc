@@ -33,6 +33,13 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['style_plugin'] = 'views_bootstrap_thumbnail_plugin_style';
   $handler->display->display_options['style_options']['columns'] = '2';
   $handler->display->display_options['row_plugin'] = 'fields';
+  /* No results behavior: Global: Text area */
+  $handler->display->display_options['empty']['area']['id'] = 'area';
+  $handler->display->display_options['empty']['area']['table'] = 'views';
+  $handler->display->display_options['empty']['area']['field'] = 'area';
+  $handler->display->display_options['empty']['area']['empty'] = TRUE;
+  $handler->display->display_options['empty']['area']['content'] = 'There are no collections yet in this project. <a href="/node/add/tapas-collection" class="btn btn-xs btn-default"><span class="fa fa-plus"></span> Add Collection</a>';
+  $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
   /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
   $handler->display->display_options['fields']['nid']['table'] = 'node';
@@ -53,13 +60,13 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['element_wrapper_class'] = 'text-right';
   $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['text'] = 'Edit';
-  /* Field: Content: Project Thumbnail */
+  /* Field: Content: Collection Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = '';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<a href="/node/[nid]" class="collection-no-image"><img src="/sites/default/files/tapaslogo-opaque.png" /></a>';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<a href="/node/[nid]" class="collection-no-image"><img src="/sites/default/files/default_images/tapaslogo-opaque.png" /></a>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
     'image_style' => 'medium',
