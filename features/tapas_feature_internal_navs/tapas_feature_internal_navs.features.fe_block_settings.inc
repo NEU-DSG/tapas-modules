@@ -22,17 +22,17 @@ function tapas_feature_internal_navs_default_fe_block_settings() {
     'pages' => '',
     'roles' => array(),
     'themes' => array(
-      'bartik' => array(
-        'region' => '',
-        'status' => 0,
-        'theme' => 'bartik',
-        'weight' => 0,
-      ),
       'bootstrap' => array(
         'region' => '',
         'status' => 0,
         'theme' => 'bootstrap',
         'weight' => 0,
+      ),
+      'garland' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'garland',
+        'weight' => -29,
       ),
       'seven' => array(
         'region' => '',
@@ -61,16 +61,16 @@ function tapas_feature_internal_navs_default_fe_block_settings() {
     'pages' => '',
     'roles' => array(),
     'themes' => array(
-      'bartik' => array(
-        'region' => '',
-        'status' => 0,
-        'theme' => 'bartik',
-        'weight' => 0,
-      ),
       'bootstrap' => array(
         'region' => '',
         'status' => 0,
         'theme' => 'bootstrap',
+        'weight' => 0,
+      ),
+      'garland' => array(
+        'region' => '',
+        'status' => 0,
+        'theme' => 'garland',
         'weight' => 0,
       ),
       'seven' => array(
