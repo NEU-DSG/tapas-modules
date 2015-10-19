@@ -56,6 +56,7 @@ define ('TAPAS_INSTANCE_DESC_ATTACH', t(''));
 define ('TAPAS_INSTANCE_DESC_AUTHORS', t(''));
 define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
 define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
+define ('TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE', t(''));
 
 define ('TAPAS_INSTANCE_DESC_UPLOADSTATUS', t(''));
 
@@ -85,7 +86,6 @@ define ('TAPAS_THUMB_MIN_RES', '');
 define ('TAPAS_THUMB_PREVIEW_STYLE', 'thumbnail');
 define ('TAPAS_THUMB_PROGRESS_IND', 'throbber');
 
-
 // ====================================================================================
 // Other Files.
 // ====================================================================================
@@ -113,7 +113,28 @@ function _tapas_fieldarray($name, $cardinality, $module, $type) {
 	);
 }
 
+function _tapas_fieldarray_with_settings($name, $cardinality, $module, $type, $settings) {
+  return array(
+    'field_name' => TAPAS_FIELD_PREFIX . $name, 
+    'cardinality' => $cardinality, 
+    'module' => $module, 
+    'type' => $type, 
+    'settings' => $settings
+  );
+}
+
 function tapas_field_bases() {
+
+  $allowed_ographies = array ( 
+    'allowed_values' => array(
+      'bibliography' => 'bibliography', 
+      'odd_file' => 'odd_file', 
+      'orgography' => 'orgography', 
+      'otherography' => 'otherography', 
+      'personography' => 'personography', 
+      'placeography' => 'placeography'
+    ),
+  );
 
 	return array(
 		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
@@ -129,6 +150,8 @@ function tapas_field_bases() {
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
+    'record_ography_type' => _tapas_fieldarray_with_settings('record_ography_type', 
+      -1, 'text', 'list_text', $allowed_ographies),
 		//'upload_state' => _tapas_fieldarray('upload_state', 1, 'list', 'list_integer'),
 	);
 
@@ -157,8 +180,6 @@ function tapas_field_bases() {
 
 	//return $fielddata;
 //}
-
-
 
 /**
  * Field instances for Project fields.
@@ -375,6 +396,16 @@ function tapas_fields_record() {
 			) +
 			tapas_instance_datefield() // @todo: write this function.
 		),
+
+    TAPAS_R_INSTANCE_PRE . 'record_ography_type' => (
+      tapas_instance_common(
+        'record_ography_type', 
+        t('Ography Types'), 
+        TAPAS_RECORD, 
+        TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE
+      ) + 
+      tapas_instance_record_ography_type()
+    ),
 		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
 
 	);
@@ -406,6 +437,21 @@ function tapas_instance_hiddentext() {
 		)
 	);
 
+}
+
+/** Returns a field instance array for specifically the ography type field
+ *
+ * @return array A field instance array 
+ */
+
+function tapas_instance_record_ography_type() {
+  return array(
+    'required' => FALSE, 
+    'widget' => array(
+      'module' => 'multiselect', 
+      'type'=>'multiselect', 
+    ),
+  );
 }
 
 /**
