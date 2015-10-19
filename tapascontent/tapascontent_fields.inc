@@ -130,7 +130,7 @@ function tapas_field_bases() {
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
-    'record_ography_type' => _tapas_fieldarray('record_ography_type', -1, 'multiselect', 'list_text'),
+    'record_ography_type' => _tapas_fieldarray('record_ography_type', -1, 'text', 'list_text'),
 		//'upload_state' => _tapas_fieldarray('upload_state', 1, 'list', 'list_integer'),
 	);
 
@@ -418,11 +418,6 @@ function tapas_instance_hiddentext() {
 
 }
 
-function _tapascontent_ography_allowed_values() { 
-  return ['bibliography', 'odd_file', 'orgography', 
-    'otherography', 'personography', 'placeography'];
-}
-
 /** Returns a field instance array for specifically the ography type field
  *
  * @return array A field instance array 
@@ -431,13 +426,9 @@ function _tapascontent_ography_allowed_values() {
 function tapas_instance_record_ography_type() {
   return array(
     'required' => FALSE, 
-    'settings' => array(
-      'allowed_values' => ['bibliography', 'odd_file', 'orgography', 
-        'otherography', 'personography', 'placeography'],
-      'allowed_values_function' => '_tapascontent_ography_allowed_values'
-    ),
     'widget' => array(
       'module' => 'multiselect', 
+      'type'=>'list_text', 
     ),
   );
 }
