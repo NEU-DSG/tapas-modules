@@ -17,7 +17,7 @@ define ('TAPAS_READERTAB_DROPDOWN_DESC', t('Choose a stylesheet with which you w
 define ('TAPAS_SELECTBUTTON_CALLBACK', '_tapas_selectbutton_callback');
 define ('TAPAS_CHOOSE_STYLESHEET_MESSAGE', t('Please pick a stylesheet with which to render the TEI.'));
 
-define ('TAPAS_TABGROUP', 'tapas_reader_tabs');
+define ('TAPAS_TABGROUP', 'tapas_readertabs');
 define ('TAPAS_READERTAB', 'tapas_tab_reader');
 define ('TAPAS_METATAB', 'tapas_tab_meta');
 define ('TAPAS_FILETAB', 'tapas_tab_files');
@@ -25,6 +25,10 @@ define ('TAPAS_FILETAB', 'tapas_tab_files');
 define ('TAPAS_READERTAB_TITLE', t('Rendered TEI'));
 define ('TAPAS_METATAB_TITLE', t('Metadata'));
 define ('TAPAS_FILETAB_TITLE', t('Files'));
+
+define ('TAPAS_TEI_LABEL', t('TEI'));
+define ('TAPAS_TEIBP_LABEL', t('TEI Boilerplate'));
+define ('TAPAS_GENERIC_LABEL', t('TAPAS Generic'));
 /**
  * Provides render array for record view.
  *
@@ -33,7 +37,12 @@ define ('TAPAS_FILETAB_TITLE', t('Files'));
 
 function tapascontent_view_tei_record($node) {
 
-	$node['content'][TAPAS_TABGROUP] = _tapascontent_alltabs();
+	$node['content'][TAPAS_TABGROUP] = array(
+		'#prefix' => '<div class="tapas_tabset">',
+		'#suffix' => '</div>',
+		'#type' => 'fieldset',
+	);
+
 	$node['content'][TAPAS_READERTAB] = _tapascontent_readertab();
 	$node['content'][TAPAS_METATAB] = _tapascontent_metatab();
 	$node['content'][TAPAS_FILETAB] - _tapascontent_filetab();
@@ -54,18 +63,6 @@ function tapascontent_view_tei_record($node) {
 }
 
 
-/**
- * Provides the render information for the tabset.
- */
-
-function tapascontent_alltabs($node) {
-
-	$tabset = array(
-		'#prefix' => '<div class="tapas_tabset">',
-		'#suffix' => '</div>',
-		'#type' => 'fieldset',
-	);
-}
 
 /**
  * @internal. Provides render array for reader tab of records.
@@ -77,7 +74,6 @@ function tapascontent_record_readertab($choices, $did) {
 
 	$styledrop = _tapas_stylesheet_dropdown($choices);
 	$content = _tapas_readertab_content();
-	$go_button = _tapas_readertab_gobutton(TAPAS_SELECTBUTTON_CALLBACK);
 
 	$readingtab = array(
 		'#prefix' => '<div class="tapas_readertab">',
@@ -85,51 +81,35 @@ function tapascontent_record_readertab($choices, $did) {
 		'#type' => 'fieldset',
 		'#title' => TAPAS_READERTAB_TITLE,
 		'#collapsible' => TRUE,
-		'#group' => TAPAS_TABSET,
+		'#group' => TAPAS_TABGROUP,
 		TAPAS_VFIELD_PREFIX . 'styledrop' => $styledrop,
-		TAPAS_VFIELD_PREFIX . 'gobutton' => $gobutton,
-		TAPAS_VFIELD_PREFIX . 'content' => tapas_readertab_content($did),
+		TAPAS_VFIELD_PREFIX . 'content' => array(
+			'#prefix' => '<div class="tapas_readercontent">',
+			'#suffix' => '</div>'
+		),
 	);
 
 	return $readingtab;
 }
 
-/** @internal. Provides the style drop-down on the rendered tei view.
-*
-* @param array An array of valid stylesheet choices.
-* @param string The callback function for the 'go' button
-*
-* @return array A render array for the dropdown.
-*/
+/** 
+ * @internal. Provides the style drop-down on the rendered tei view.
+ */
 
-function _tapas_readertab_dropdown($choices, $callback) {
+function _tapas_readertab_dropdown() {
 
 	return array (
 			'#type' => 'select',
 			'#title' => t('Choose Stylesheet'),
-			'#options' => $choices,
 			'#required' => TRUE,
 			'#description' => TAPAS_READERTAB_DROPDOWN_DESC,
+			'#group' => TAPAS_READERTAB,
+			'#options' => array(
+				'teibp' => TAPAS_TEIBP_LABEL,
+				'tei' => TAPAS_TEI_LABEL,
+				'tapas_generic' => TAPAS_GENERIC_LABEL,
+			),
 	);
-
-}
-
-/**
- * @internal. Renter array for the rendered TEI on the reading interface tab.
- */
-
-function _tapas_readertab_content($did, $type=NULL) {
-
-	$msg = TAPAS_CHOOSE_STYLESHEET_MESSAGE;
-
-	$content = $type?tapashydra_get_tei($did, $type):$msg;
-
-	return array(
-		'#markdown' => $content,
-	);
-}
-
-function _tapas_readertab_gobutton($callback) {
 
 }
 
@@ -140,22 +120,17 @@ function _tapas_readertab_gobutton($callback) {
  */
 function _tapas_metatab() {
 
-	$metatab = array(
+	return array(
 		'#prefix' => '<div class="tapas_metatab">',
 		'#suffix' => '</div>',
 		'#type' => 'fieldset',
-		'#title' => TAPAS_METADATA_TAB,
-		'#collapsible' => TRUE,
-		'#group' => TAPAS_TABSET,
+		'#title' => TAPAS_METATAB_TITLE,
+		'#group' => TAPAS_TABGROUP,
+		TAPAS_VFIELD_PREFIX . 'mods' => array(
+			'#markup' => 'MODS will go here.'
+		),
+			
 	);
-
-	$metatab[TAPAS_VIEW_FIELD . 'rend_meta'] = array(
-		'#markup' => '<h2>metadata tab</h2>',
-	);
-
-	$metatab[TAPAS_FIELD_PREFIX . 'display_contrib']['#group'] = TAPAS_DTAB;
-	$metatab[TAPAS_FIELD_PREFIX . 'display_auth']['#group'] = TAPAS_DTAB;
-	$metatab[TAPAS_FIELD_PREFIX . 'display_date']['#group'] = TAPAS_DTAB;
 }
 
 
@@ -165,5 +140,12 @@ function _tapas_metatab() {
 
 function _tapas_filetab() {
 
+	return array(
+		'#prefix' => '<div class="tapas_filetab">',
+		'#suffix' => '</div>',
+		'#type' => 'fieldset',
+		'#title' => TAPAS_FILETAB_TITLE,
+		'#group' => TAPAS_TABGROUP,
+	);
 
 }
