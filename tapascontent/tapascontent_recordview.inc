@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @file 
+ * @file
  * tapascontent_recordview.inc
  *
  * Rendering information for the TAPAS_RECORD content type.
- * 
+ *
  * @author Linda Moss (GitHub LindaJeanne) <l.moss@neu.edu>
  * @since 2.0
  * @version 2.0
@@ -37,16 +37,17 @@ define ('TAPAS_GENERIC_LABEL', t('TAPAS Generic'));
 
 function tapascontent_view_tei_record($node) {
 
-	$node['content'][TAPAS_TABGROUP] = array(
+	$node->content[TAPAS_TABGROUP] = array(
 		'#prefix' => '<div class="tapas_tabset">',
 		'#suffix' => '</div>',
 		'#type' => 'fieldset',
 	);
 
-	$node['content'][TAPAS_READERTAB] = _tapascontent_readertab();
-	$node['content'][TAPAS_METATAB] = _tapascontent_metatab();
-	$node['content'][TAPAS_FILETAB] - _tapascontent_filetab();
-	
+	$node->content[TAPAS_READERTAB] = _tapascontent_readertab();
+	$node->content[TAPAS_METATAB] = _tapascontent_metatab();
+	$node->content[TAPAS_FILETAB] = _tapascontent_filetab();
+	dpm($node->content);
+
 	$groupsets = array(
 		'description' => TAPAS_METATAB,
 		'tei_file' => TAPAS_FILETAB,
@@ -57,7 +58,7 @@ function tapascontent_view_tei_record($node) {
 	);
 
 	foreach ($groupsets as $field => $group) {
-		$node['content'][TAPAS_FIELD_PREFIX . $field]['#group'] = $group;
+		$node->content[TAPAS_FIELD_PREFIX . $field]['#group'] = $group;
 	}
 
 }
@@ -67,7 +68,7 @@ function tapascontent_view_tei_record($node) {
 /**
  * @internal. Provides render array for reader tab of records.
  */
-function tapascontent_readertab() {
+function _tapascontent_readertab() {
 
 	$styledrop = _tapas_readertab_dropdown();
 
@@ -88,7 +89,7 @@ function tapascontent_readertab() {
 	return $readingtab;
 }
 
-/** 
+/**
  * @internal. Provides the style drop-down on the rendered tei view.
  */
 
@@ -114,7 +115,7 @@ function _tapas_readertab_dropdown() {
  *
  * @return array The render array for the metadata tab.
  */
-function _tapas_metatab() {
+function _tapascontent_metatab() {
 
 	return array(
 		'#prefix' => '<div class="tapas_metatab">',
@@ -125,7 +126,7 @@ function _tapas_metatab() {
 		TAPAS_VFIELD_PREFIX . 'mods' => array(
 			'#markup' => 'MODS will go here.'
 		),
-			
+
 	);
 }
 
@@ -134,7 +135,7 @@ function _tapas_metatab() {
  * @internal Provids the array for the fileview tab.
  */
 
-function _tapas_filetab() {
+function _tapascontent_filetab() {
 
 	return array(
 		'#prefix' => '<div class="tapas_filetab">',
