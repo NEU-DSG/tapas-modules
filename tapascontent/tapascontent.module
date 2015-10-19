@@ -320,6 +320,16 @@ function _tapascontent_record_hydradata($node) {
   $sfs = _tapascontent_zip_from_support_files($node);
   _tapascontent_assign_if_present($data, 'support_files', $sfs);
 
+  $ography_types = tapas_array_fieldval($node, $tf . 'record_ography_type'); 
+
+  // Passing an empty array ensures that a record that was once marked as an 
+  // ography has these associations cleared in the repository.
+  if (!$ography_types) { 
+    $ography_types = [null];
+  }
+
+  _tapascontent_assign_if_present($data, 'file_types', $ography_types);
+
 	return $data;
 }
 
