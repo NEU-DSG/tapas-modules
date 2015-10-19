@@ -86,7 +86,6 @@ define ('TAPAS_THUMB_MIN_RES', '');
 define ('TAPAS_THUMB_PREVIEW_STYLE', 'thumbnail');
 define ('TAPAS_THUMB_PROGRESS_IND', 'throbber');
 
-
 // ====================================================================================
 // Other Files.
 // ====================================================================================
@@ -114,7 +113,27 @@ function _tapas_fieldarray($name, $cardinality, $module, $type) {
 	);
 }
 
+function _tapas_fieldarray_with_settings($name, $cardinality, $module, $type, $settings() {
+  return array(
+    'field_name' => TAPAS_FIELD_PREFIX . $name, 
+    'cardinality' => $cardinality, 
+    'module' => $module, 
+    'type' => $type, 
+    'settings' => $settings
+}
+
 function tapas_field_bases() {
+
+  $allowed_ographies = array ( 
+    'allowed_values' => array(
+      'bibliography' => 'bibliography', 
+      'odd_file' => 'odd_file', 
+      'orgography' => 'orgography', 
+      'otherography' => 'otherography', 
+      'personography' => 'personography', 
+      'placeography' => 'placeography'
+    );
+  );
 
 	return array(
 		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
@@ -130,7 +149,8 @@ function tapas_field_bases() {
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
-    'record_ography_type' => _tapas_fieldarray('record_ography_type', -1, 'text', 'list_text'),
+    'record_ography_type' => _tapas_fieldarray_with_settings('record_ography_type', 
+      -1, 'text', 'list_text', $allowed_ographies),
 		//'upload_state' => _tapas_fieldarray('upload_state', 1, 'list', 'list_integer'),
 	);
 
