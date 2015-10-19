@@ -383,7 +383,7 @@ function tapas_fields_record() {
         TAPAS_RECORD, 
         TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE
       ) + 
-      tapas_instance_record_ography_type
+      tapas_instance_record_ography_type()
     ),
 		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
 
@@ -428,7 +428,7 @@ function _tapascontent_ography_allowed_values() {
  * @return array A field instance array 
  */
 
-function tapas_instance_record_ography_type
+function tapas_instance_record_ography_type() {
   return array(
     'required' => FALSE, 
     'settings' => array(
