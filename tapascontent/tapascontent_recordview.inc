@@ -72,7 +72,7 @@ function tapascontent_view_tei_record($node) {
  */
 function tapascontent_record_readertab($choices, $did) {
 
-	$styledrop = _tapas_stylesheet_dropdown($choices);
+	$styledrop = _tapas_readertab_dropdown();
 
 	$readingtab = array(
 		'#prefix' => '<div class="tapas_readertab">',
