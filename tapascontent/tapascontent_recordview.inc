@@ -66,11 +66,8 @@ function tapascontent_view_tei_record($node) {
 
 /**
  * @internal. Provides render array for reader tab of records.
- *
- * @param array $choices: an array with the tei type names.
- * @return array The render array.
  */
-function tapascontent_record_readertab($choices, $did) {
+function tapascontent_readertab() {
 
 	$styledrop = _tapas_readertab_dropdown();
 
