@@ -438,8 +438,8 @@ function tapas_instance_record_ography_type() {
     ),
     'widget' => array(
       'module' => 'multiselect', 
-    );
-  )
+    ),
+  );
 }
 
 /**
