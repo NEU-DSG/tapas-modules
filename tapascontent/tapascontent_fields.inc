@@ -133,7 +133,7 @@ function tapas_field_bases() {
       'otherography' => 'otherography', 
       'personography' => 'personography', 
       'placeography' => 'placeography'
-    );
+    ),
   );
 
 	return array(
