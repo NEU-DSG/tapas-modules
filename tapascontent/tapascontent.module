@@ -11,8 +11,9 @@
  * @TODO: Enfore Record group must 1. be Collection (not project) 2. Collections from same group.
  */
 
-include_once('tapascontent_constants.inc');
+//include_once('tapascontent_constants.inc');
 include_once('tapascontent_hydra.inc');
+include_once('tapascontent_recordview.inc');
 
 
 // ====================================================================================
@@ -127,6 +128,14 @@ function tapascontent_menu() {
 	return $items;
 }
 
+/**
+ * Implements hook_node_view
+ */
+function tapascontent_node_view($node, $view_mode, $langcode) {
+	if ($node->type == TAPAS_RECORD && $view_mode == 'full') {
+		tapascontent_view_tei_record($node);
+	}
+}
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
  *
@@ -370,81 +379,5 @@ function _tapascontent_assign_if_present(&$data, $key, $val) {
 function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) {
   watchdog('tapascontent', $msg, array(), $err_level);
 }
-// ====================================================================================
-// Record View Tab Helper Functions
-// ====================================================================================
-
-/**
- * @internal Provides the array for the drupalfields view tab.
- *
- * @return array The render array for the drupalfields tab.
- */
-function _tapas_drupaltab() {
-
-	$drupaltab = array(
-		'#type' => 'fieldset',
-		'#title' => TAPAS_DRUPALFIELD_TAB,
-		'#collapsible' => TRUE,
-		'#group' => TAPAS_RECORDTABS,
-	);
-
-	$drupaltab[TAPAS_FIELD_PREFIX . 'slug']['#group'] = TAPAS_DRUPALFIELD_TAB;
-	$drupaltab[TAPAS_FIELD_PREFIX . 'tei_file']['#group'] = TAPAS_DRUPALFIELD_TAB;
-	$drupaltab[TAPAS_FIELD_PREFIX . 'attatchments']['#group'] = TAPAS_DRUPALFIELD_TAB;
-
-	return $drupaltab;
-}
 
 
-/**
- * @internal Provides the array for the reader view tab.
- *
- * @return array The render array for the reader tab.
- */
-function _tapas_readertab() {
-
-	$readingtab = array(
-		'#type' => 'fieldset',
-		'#title' => TAPAS_READER_TAB,
-		'#collapsible' => TRUE,
-		'#group' => TAPAS_RECORDTABS,
-		TAPAS_VIEW_FIELD . 'styledrop' => array(
-			'#type' => 'select',
-			'#title' => t('Choose Stylesheet'),
-			'#options' => array(
-				0 => 'stylesheet1',
-				1 => 'stylesheet2',
-				2 => 'stylesheet3',
-			),
-			'#description' => t('Choose a stylesheet you would like to use to view the rendered TEI.'),
-		),
-		TAPAS_VIEW_FIELD . 'content' => array(
-			'#markup' => '<h2>Content tab</h2>',
-		),
-	);
-
-	return $readingtab;
-}
-
-/**
- * @internal Provides the array for the metadata view tab.
- *
- * @return array The render array for the metadata tab.
- */
-function _tapas_metatab() {
-
-	$metatab = array(
-		'#type' => 'fieldset',
-		'#title' => TAPAS_METADATA_TAB,
-		'#collapsible' => TRUE,
-		'#group' => TAPAS_RECORDTABS,
-	);
-
-	$metatab[TAPAS_VIEW_FIELD . 'rend_meta'] = array(
-		'#markup' => '<h2>metadata tab</h2>',
-	);
-
-	$metatab[TAPAS_FIELD_PREFIX . 'display_contrib']['#group'] = TAPAS_DTAB;
-	$metatab[TAPAS_FIELD_PREFIX . 'display_auth']['#group'] = TAPAS_DTAB;
-	$metatab[TAPAS_FIELD_PREFIX . 'display_date']['#group'] = TAPAS_DTAB;
-}
