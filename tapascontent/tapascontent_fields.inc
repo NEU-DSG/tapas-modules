@@ -428,7 +428,7 @@ function tapas_instance_record_ography_type() {
     'required' => FALSE, 
     'widget' => array(
       'module' => 'multiselect', 
-      'type'=>'list_text', 
+      'type'=>'multiselect', 
     ),
   );
 }
