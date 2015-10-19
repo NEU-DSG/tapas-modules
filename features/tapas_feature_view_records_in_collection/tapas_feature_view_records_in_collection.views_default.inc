@@ -1,35 +1,39 @@
 <?php
 /**
  * @file
- * tapas_feature_view_collections_in_projects.views_default.inc
+ * tapas_feature_view_records_in_collection.views_default.inc
  */
 
 /**
  * Implements hook_views_default_views().
  */
-function tapas_feature_view_collections_in_projects_views_default_views() {
+function tapas_feature_view_records_in_collection_views_default_views() {
   $export = array();
 
   $view = new view();
-  $view->name = 'collections_in_project';
-  $view->description = '';
-  $view->tag = 'default';
+  $view->name = 'records_in_collection_view';
+  $view->description = 'Show all content (nodes) of a group.';
+  $view->tag = 'tapas, og';
   $view->base_table = 'node';
-  $view->human_name = 'Collections in Project';
-  $view->core = 7;
+  $view->human_name = 'Records in Collection View';
+  $view->core = 0;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
-  /* Display: Master */
-  $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Collections in Project';
+  /* Display: Defaults */
+  $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->display->display_options['title'] = 'Records';
   $handler->display->display_options['use_more_always'] = FALSE;
-  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['type'] = 'none';
   $handler->display->display_options['cache']['type'] = 'none';
   $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
-  $handler->display->display_options['pager']['type'] = 'some';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '10';
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '6';
+  $handler->display->display_options['pager']['options']['offset'] = '0';
+  $handler->display->display_options['pager']['options']['id'] = '0';
+  $handler->display->display_options['pager']['options']['quantity'] = '9';
   $handler->display->display_options['style_plugin'] = 'views_bootstrap_thumbnail_plugin_style';
   $handler->display->display_options['style_options']['columns'] = '2';
   $handler->display->display_options['row_plugin'] = 'fields';
@@ -38,16 +42,13 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area']['content'] = 'There are no collections yet in this project. <a href="/node/add/tapas-collection" class="btn btn-xs btn-default"><span class="fa fa-plus"></span> Add Collection</a>';
+  $handler->display->display_options['empty']['area']['content'] = 'There are no records for this collection yet. <a href=\'/node/add/tapas-record\' class="btn btn-xs btn-default"><span class="fa fa-plus"></span> Add a Record</a>';
   $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
-  /* Field: Content: Nid */
-  $handler->display->display_options['fields']['nid']['id'] = 'nid';
-  $handler->display->display_options['fields']['nid']['table'] = 'node';
-  $handler->display->display_options['fields']['nid']['field'] = 'nid';
-  $handler->display->display_options['fields']['nid']['label'] = '';
-  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['nid']['element_default_classes'] = FALSE;
+  /* Relationship: OG membership: OG membership from Node */
+  $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
+  $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'node';
+  $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
+  $handler->display->display_options['relationships']['og_membership_rel']['required'] = TRUE;
   /* Field: Content: Edit link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
@@ -60,7 +61,7 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['element_wrapper_class'] = 'text-right';
   $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['text'] = 'Edit';
-  /* Field: Content: Collection Thumbnail */
+  /* Field: Content: Project Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
@@ -77,8 +78,6 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
-  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
-  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_type'] = 'h4';
   $handler->display->display_options['fields']['title']['element_class'] = 'text-center';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
@@ -88,33 +87,40 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Contextual filter: OG membership: Group ID */
-  $handler->display->display_options['arguments']['gid']['id'] = 'gid';
-  $handler->display->display_options['arguments']['gid']['table'] = 'og_membership';
-  $handler->display->display_options['arguments']['gid']['field'] = 'gid';
-  $handler->display->display_options['arguments']['gid']['default_action'] = 'default';
-  $handler->display->display_options['arguments']['gid']['default_argument_type'] = 'og_context';
-  $handler->display->display_options['arguments']['gid']['summary']['number_of_records'] = '0';
-  $handler->display->display_options['arguments']['gid']['summary']['format'] = 'default_summary';
-  $handler->display->display_options['arguments']['gid']['summary_options']['items_per_page'] = '25';
+  /* Contextual filter: Content: Groups audience (og_tapas_r_to_c) */
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['id'] = 'og_tapas_r_to_c_target_id';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['table'] = 'og_membership';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['field'] = 'og_tapas_r_to_c_target_id';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['relationship'] = 'og_membership_rel';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['default_action'] = 'default';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['default_argument_type'] = 'og_context';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['summary_options']['items_per_page'] = '25';
   /* Filter criterion: Content: Published */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
-  $handler->display->display_options['filters']['status']['value'] = 1;
-  $handler->display->display_options['filters']['status']['group'] = 1;
-  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  $handler->display->display_options['filters']['status']['value'] = '1';
+  /* Filter criterion: OG membership: Group_type */
+  $handler->display->display_options['filters']['group_type']['id'] = 'group_type';
+  $handler->display->display_options['filters']['group_type']['table'] = 'og_membership';
+  $handler->display->display_options['filters']['group_type']['field'] = 'group_type';
+  $handler->display->display_options['filters']['group_type']['relationship'] = 'og_membership_rel';
+  $handler->display->display_options['filters']['group_type']['value'] = array(
+    'node' => 'node',
+  );
   /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapas_collection' => 'tapas_collection',
+    'tapas_record' => 'tapas_record',
   );
 
   /* Display: Block */
-  $handler = $view->new_display('block', 'Block', 'block');
-  $export['collections_in_project'] = $view;
+  $handler = $view->new_display('block', 'Block', 'block_1');
+  $export['records_in_collection_view'] = $view;
 
   return $export;
 }

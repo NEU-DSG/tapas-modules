@@ -1,23 +1,23 @@
 <?php
 /**
  * @file
- * tapas_feature_search_form.features.fe_block_settings.inc
+ * tapas_feature_view_records_in_collection.features.fe_block_settings.inc
  */
 
 /**
  * Implements hook_default_fe_block_settings().
  */
-function tapas_feature_search_form_default_fe_block_settings() {
+function tapas_feature_view_records_in_collection_default_fe_block_settings() {
   $export = array();
 
   $export['version'] = '2.0';
 
-  $export['search-form'] = array(
+  $export['views-ece40a341bd3abd96179414c41afa18d'] = array(
     'cache' => -1,
-    'css_class' => 'search search',
+    'css_class' => 'col-sm-9 pull-right',
     'custom' => 0,
-    'delta' => 'form',
-    'module' => 'search',
+    'delta' => 'ece40a341bd3abd96179414c41afa18d',
+    'module' => 'views',
     'node_types' => array(),
     'pages' => '',
     'roles' => array(),
@@ -32,7 +32,7 @@ function tapas_feature_search_form_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'garland',
-        'weight' => -2,
+        'weight' => 23,
       ),
       'seven' => array(
         'region' => '',
@@ -44,10 +44,10 @@ function tapas_feature_search_form_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => -2,
+        'weight' => 23,
       ),
     ),
-    'title' => 'Search',
+    'title' => 'Records',
     'visibility' => 0,
   );
 

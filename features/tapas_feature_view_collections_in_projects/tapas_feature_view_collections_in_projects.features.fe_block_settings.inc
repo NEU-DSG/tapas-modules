@@ -1,23 +1,23 @@
 <?php
 /**
  * @file
- * tapas_feature_search_form.features.fe_block_settings.inc
+ * tapas_feature_view_collections_in_projects.features.fe_block_settings.inc
  */
 
 /**
  * Implements hook_default_fe_block_settings().
  */
-function tapas_feature_search_form_default_fe_block_settings() {
+function tapas_feature_view_collections_in_projects_default_fe_block_settings() {
   $export = array();
 
   $export['version'] = '2.0';
 
-  $export['search-form'] = array(
+  $export['views-collections_in_project-block'] = array(
     'cache' => -1,
-    'css_class' => 'search search',
+    'css_class' => 'col-sm-9 pull-right',
     'custom' => 0,
-    'delta' => 'form',
-    'module' => 'search',
+    'delta' => 'collections_in_project-block',
+    'module' => 'views',
     'node_types' => array(),
     'pages' => '',
     'roles' => array(),
@@ -32,7 +32,7 @@ function tapas_feature_search_form_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'garland',
-        'weight' => -2,
+        'weight' => 7,
       ),
       'seven' => array(
         'region' => '',
@@ -44,10 +44,10 @@ function tapas_feature_search_form_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => -2,
+        'weight' => 7,
       ),
     ),
-    'title' => 'Search',
+    'title' => 'Collections',
     'visibility' => 0,
   );
 

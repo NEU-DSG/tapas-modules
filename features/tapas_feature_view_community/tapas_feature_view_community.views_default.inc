@@ -117,9 +117,9 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapascollection_collection' => 'tapascollection_collection',
-    'tapascollection_project' => 'tapascollection_project',
-    'tapasrecordnode' => 'tapasrecordnode',
+    'tapas_collection' => 'tapas_collection',
+    'tapas_project' => 'tapas_project',
+    'tapas_record' => 'tapas_record',
   );
   $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
   $handler->display->display_options['filters']['type']['expose']['label'] = 'Type';
@@ -156,7 +156,7 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'views_bootstrap_carousel_plugin_rows';
-  $handler->display->display_options['row_options']['image'] = 'tc_field_image';
+  $handler->display->display_options['row_options']['image'] = 'field_tapas_thumbnail';
   $handler->display->display_options['row_options']['title'] = 'title';
   $handler->display->display_options['row_options']['description'] = 'body';
   $handler->display->display_options['defaults']['row_options'] = FALSE;
@@ -190,15 +190,6 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['fields']['title']['element_wrapper_type'] = 'div';
   $handler->display->display_options['fields']['title']['element_wrapper_class'] = 'panel-[type]';
   $handler->display->display_options['fields']['title']['element_default_classes'] = FALSE;
-  /* Field: Content: Image */
-  $handler->display->display_options['fields']['tc_field_image']['id'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['table'] = 'field_data_tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['field'] = 'tc_field_image';
-  $handler->display->display_options['fields']['tc_field_image']['click_sort_column'] = 'fid';
-  $handler->display->display_options['fields']['tc_field_image']['settings'] = array(
-    'image_style' => 'thumbnail',
-    'image_link' => 'content',
-  );
   /* Field: Content: Updated date */
   $handler->display->display_options['fields']['changed']['id'] = 'changed';
   $handler->display->display_options['fields']['changed']['table'] = 'node';
@@ -230,6 +221,16 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['fields']['name']['table'] = 'users';
   $handler->display->display_options['fields']['name']['field'] = 'name';
   $handler->display->display_options['fields']['name']['relationship'] = 'uid';
+  /* Field: Content: Project Thumbnail */
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = 'Collection Thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
+    'image_style' => '',
+    'image_link' => '',
+  );
   $handler->display->display_options['defaults']['sorts'] = FALSE;
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
@@ -251,9 +252,9 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
-    'tapascollection_collection' => 'tapascollection_collection',
-    'tapascollection_project' => 'tapascollection_project',
-    'tapasrecordnode' => 'tapasrecordnode',
+    'tapas_collection' => 'tapas_collection',
+    'tapas_project' => 'tapas_project',
+    'tapas_record' => 'tapas_record',
   );
   $handler->display->display_options['filters']['type']['exposed'] = TRUE;
   $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';

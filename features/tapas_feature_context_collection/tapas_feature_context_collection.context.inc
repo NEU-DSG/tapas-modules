@@ -1,39 +1,39 @@
 <?php
 /**
  * @file
- * tapas_feature_context_project.context.inc
+ * tapas_feature_context_collection.context.inc
  */
 
 /**
  * Implements hook_context_default_contexts().
  */
-function tapas_feature_context_project_context_default_contexts() {
+function tapas_feature_context_collection_context_default_contexts() {
   $export = array();
 
   $context = new stdClass();
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
-  $context->name = 'projects';
-  $context->description = 'Projects';
+  $context->name = 'collections';
+  $context->description = 'Collections';
   $context->tag = '';
   $context->conditions = array(
     'node' => array(
       'values' => array(
-        'tapascollection_project' => 'tapascollection_project',
+        'tapas_collection' => 'tapas_collection',
       ),
       'options' => array(
-        'node_form' => '1',
+        'node_form' => '0',
       ),
     ),
   );
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'views-collections_in_project-block' => array(
+        'views-ece40a341bd3abd96179414c41afa18d' => array(
           'module' => 'views',
-          'delta' => 'collections_in_project-block',
+          'delta' => 'ece40a341bd3abd96179414c41afa18d',
           'region' => 'content',
-          'weight' => '-10',
+          'weight' => '-39',
         ),
       ),
     ),
@@ -42,8 +42,8 @@ function tapas_feature_context_project_context_default_contexts() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Projects');
-  $export['projects'] = $context;
+  t('Collections');
+  $export['collections'] = $context;
 
   return $export;
 }
