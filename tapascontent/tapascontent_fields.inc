@@ -130,7 +130,7 @@ function tapas_field_bases() {
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
-    'record_ography_type' => _tapas_fieldarray('record_ography_type', -1, 'list', 'list_text'),
+    'record_ography_type' => _tapas_fieldarray('record_ography_type', -1, 'multiselect', 'list_text'),
 		//'upload_state' => _tapas_fieldarray('upload_state', 1, 'list', 'list_integer'),
 	);
 
