@@ -113,13 +113,14 @@ function _tapas_fieldarray($name, $cardinality, $module, $type) {
 	);
 }
 
-function _tapas_fieldarray_with_settings($name, $cardinality, $module, $type, $settings() {
+function _tapas_fieldarray_with_settings($name, $cardinality, $module, $type, $settings) {
   return array(
     'field_name' => TAPAS_FIELD_PREFIX . $name, 
     'cardinality' => $cardinality, 
     'module' => $module, 
     'type' => $type, 
     'settings' => $settings
+  );
 }
 
 function tapas_field_bases() {
