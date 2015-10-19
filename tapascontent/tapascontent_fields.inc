@@ -56,6 +56,7 @@ define ('TAPAS_INSTANCE_DESC_ATTACH', t(''));
 define ('TAPAS_INSTANCE_DESC_AUTHORS', t(''));
 define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
 define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
+define ('TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE', t(''));
 
 define ('TAPAS_INSTANCE_DESC_UPLOADSTATUS', t(''));
 
@@ -129,6 +130,7 @@ function tapas_field_bases() {
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
 		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
+    'record_ography_type' => _tapas_fieldarray('record_ography_type', -1, 'text', 'text'),
 		//'upload_state' => _tapas_fieldarray('upload_state', 1, 'list', 'list_integer'),
 	);
 
@@ -157,8 +159,6 @@ function tapas_field_bases() {
 
 	//return $fielddata;
 //}
-
-
 
 /**
  * Field instances for Project fields.
@@ -375,6 +375,16 @@ function tapas_fields_record() {
 			) +
 			tapas_instance_datefield() // @todo: write this function.
 		),
+
+    TAPAS_R_INSTANCE_PRE . 'record_ography_type' => (
+      tapas_instance_common(
+        'record_ography_type', 
+        t('Ography Types'), 
+        TAPAS_RECORD, 
+        TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE
+      ) + 
+      tapas_instance_record_ography_type
+    ),
 		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
 
 	);
@@ -406,6 +416,30 @@ function tapas_instance_hiddentext() {
 		)
 	);
 
+}
+
+function _tapascontent_ography_allowed_values() { 
+  return ['bibliography', 'odd_file', 'orgography', 
+    'otherography', 'personography', 'placeography'];
+}
+
+/** Returns a field instance array for specifically the ography type field
+ *
+ * @return array A field instance array 
+ */
+
+function tapas_instance_record_ography_type
+  return array(
+    'required' => FALSE, 
+    'settings' => array(
+      'allowed_values' => ['bibliography', 'odd_file', 'orgography', 
+        'otherography', 'personography', 'placeography'],
+      'allowed_values_function' => '_tapascontent_ography_allowed_values'
+    ),
+    'widget' => array(
+      'module' => 'multiselect', 
+    );
+  )
 }
 
 /**
