@@ -13,6 +13,7 @@
 
 include_once('tapascontent_constants.inc');
 include_once('tapascontent_hydra.inc');
+include_once('tapascontent_solr_indexing.inc');
 
 
 // ====================================================================================
@@ -74,7 +75,6 @@ function tapascontent_form($node, $form_state) {
  */
 
 function tapascontent_node_postinsert($node) {
-   watchdog('debug_tapascontent_node_postinsert', '<pre>'.print_r($node, TRUE).'</pre>');
   _tapascontent_insert_update($node);
 }
 
@@ -235,6 +235,7 @@ function _tapascontent_insert_update($node) {
       }
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+      _tapascontent_index_content($node);
       break;
     case TAPAS_COLLECTION:
       watchdog('debug_tapascontent_insert_update', "Insert/Update called for TAPAS_COLLECTION");
@@ -243,10 +244,12 @@ function _tapascontent_insert_update($node) {
       $data['project_did'] = $proj_as_array[0];
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+      _tapascontent_index_content($node);
       break;
     case TAPAS_RECORD:
       $data = _tapascontent_record_hydradata($node);
       tapashydra_post($data, TAPAS_POST_TEI_URL);
+      _tapascontent_index_content($node);
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       break;
   }
