@@ -14,6 +14,7 @@
 //include_once('tapascontent_constants.inc');
 include_once('tapascontent_hydra.inc');
 include_once('tapascontent_recordview.inc');
+include_once('tapascontent_solr_indexing.inc');
 
 
 // ====================================================================================
@@ -75,7 +76,6 @@ function tapascontent_form($node, $form_state) {
  */
 
 function tapascontent_node_postinsert($node) {
-   watchdog('debug_tapascontent_node_postinsert', '<pre>'.print_r($node, TRUE).'</pre>');
   _tapascontent_insert_update($node);
 }
 
@@ -244,6 +244,7 @@ function _tapascontent_insert_update($node) {
       }
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+      _tapascontent_index_content($node);
       break;
     case TAPAS_COLLECTION:
       watchdog('debug_tapascontent_insert_update', "Insert/Update called for TAPAS_COLLECTION");
@@ -252,10 +253,12 @@ function _tapascontent_insert_update($node) {
       $data['project_did'] = $proj_as_array[0];
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+      _tapascontent_index_content($node);
       break;
     case TAPAS_RECORD:
       $data = _tapascontent_record_hydradata($node);
       tapashydra_post($data, TAPAS_POST_TEI_URL);
+      _tapascontent_index_content($node);
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       break;
   }
@@ -329,11 +332,11 @@ function _tapascontent_record_hydradata($node) {
   $sfs = _tapascontent_zip_from_support_files($node);
   _tapascontent_assign_if_present($data, 'support_files', $sfs);
 
-  $ography_types = tapas_array_fieldval($node, $tf . 'record_ography_type'); 
+  $ography_types = tapas_array_fieldval($node, $tf . 'record_ography_type');
 
-  // Passing an empty array ensures that a record that was once marked as an 
+  // Passing an empty array ensures that a record that was once marked as an
   // ography has these associations cleared in the repository.
-  if (!$ography_types) { 
+  if (!$ography_types) {
     $ography_types = [null];
   }
 
@@ -391,12 +394,12 @@ function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) {
 }
 
 // Implements hook_user_login to perform wild apricot checking
-function tapascontent_user_login(&$edit, $user) { 
+function tapascontent_user_login(&$edit, $user) {
   $key = variable_get('wild_apricot_api_key', false);
 
   // No API key set - this is a dev environment and we don't care
   // about paid vs nonpaid members.  Skip.
-  if (!$key) { 
+  if (!$key) {
     return null;
   }
 
@@ -424,10 +427,10 @@ function tapascontent_user_login(&$edit, $user) {
 }
 
 // Fair Warning: If you call this function from boris multiple times every call
-// after the first will hang on getting $async_result back and eventually the 
-// function returns null.  I have 100% no idea why this is happening, but it 
+// after the first will hang on getting $async_result back and eventually the
+// function returns null.  I have 100% no idea why this is happening, but it
 // doesn't seem to be buggy outside of the boris environment.
-function _tapascontent_is_paid_member($email) { 
+function _tapascontent_is_paid_member($email) {
   $key = variable_get('wild_apricot_api_key', false);
   $aid = '66796';
 
@@ -440,27 +443,27 @@ function _tapascontent_is_paid_member($email) {
 
   // Check the WildApricot server once every ten seconds or until our
   // query is complete.
-  $i = 0; 
-  while((($async_result === null) or ($async_result->State != 'Complete')) and ($i <= 10)) { 
+  $i = 0;
+  while((($async_result === null) or ($async_result->State != 'Complete')) and ($i <= 10)) {
     sleep(1);
     $async_result = _tapascontent_curl_get_apricot($query_url);
     $i += 1;
   }
 
-  if(is_object($async_result) and ($async_result->State === 'Complete')) { 
+  if(is_object($async_result) and ($async_result->State === 'Complete')) {
     $result_url = $async_result->ResultUrl."&apikey=$key";
     $result = _tapascontent_curl_get_apricot($result_url);
 
     // In the case where $result is null, goofily loop hoping that Wild Apricot
     // will snap out of it.
     $step_two_i = 0;
-    while(($result === null) and ($step_two_i <= 10)) { 
+    while(($result === null) and ($step_two_i <= 10)) {
       sleep(1);
       $result = _tapascontent_curl_get_apricot($result_url);
       $step_two_i += 1;
     }
 
-    if ($result === null) { 
+    if ($result === null) {
       return null;
     }
 
@@ -470,34 +473,34 @@ function _tapascontent_is_paid_member($email) {
     // In the case where no users were returned, the email address
     // we entered is associated with a user that doesn't exist according to
     // the TEIC.  Not a paid member.
-    if($user_count === 0) { 
+    if($user_count === 0) {
       return false;
     }
 
-    // Too many users were returned by the query - 
+    // Too many users were returned by the query -
     // email addresses should not be ambiguous so we return null
-    if($user_count > 1) { 
+    if($user_count > 1) {
       $msg = "Wild Apricot returned $user_count users when asked for the user" .
         " with email address $email.  Skipping paid member status grant/revoke.";
       _tapascontent_watchdog($msg, WATCHDOG_ERROR);
-      return null; 
+      return null;
     }
 
     $status = $users[0]->Status;
 
-    if ($status === 'Active') { 
+    if ($status === 'Active') {
       return true;
-    } elseif ($status != null) { 
+    } elseif ($status != null) {
       return false;
-    } else { 
+    } else {
       return null;
     }
-  } else { 
+  } else {
     return null;
   }
 }
 
-function _tapascontent_curl_get_apricot($url) { 
+function _tapascontent_curl_get_apricot($url) {
   $curl = curl_init($url);
   curl_setopt($curl, CURLOPT_HTTPHEADER, ["Accept: application/json"]);
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
