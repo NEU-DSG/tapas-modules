@@ -137,6 +137,7 @@ function tapas_field_bases() {
 		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
 		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
 		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
+    'parent_slug' => tapas_fieldarray('parent_slug', 1, 'text', 'text'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
 		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
 		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
