@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas Feature Record Field Groups feature.
+ */
+
+include_once 'tapas_feature_record_field_groups.features.inc';

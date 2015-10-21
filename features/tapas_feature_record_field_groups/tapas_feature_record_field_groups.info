@@ -1,0 +1,16 @@
+name = Tapas Feature Record Field Groups
+core = 7.x
+package = Content Types
+version = 7.x-1.0
+dependencies[] = ctools
+dependencies[] = field_group
+features[ctools][] = field_group:field_group:1
+features[features_api][] = api:2
+features[field_group][] = group_record_file_content|node|tapas_record|full
+features[field_group][] = group_record_files|node|tapas_record|full
+features[field_group][] = group_record_metadata_content|node|tapas_record|full
+features[field_group][] = group_record_metadata|node|tapas_record|full
+features[field_group][] = group_record_reader_content|node|tapas_record|full
+features[field_group][] = group_record_reader|node|tapas_record|full
+features[field_group][] = group_record_settings|node|tapas_record|full
+features[field_group][] = group_tei_record|node|tapas_record|full
