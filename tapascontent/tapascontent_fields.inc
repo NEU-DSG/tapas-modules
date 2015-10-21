@@ -270,7 +270,7 @@ function tapas_fields_collection() {
 
     TAPAS_C_INSTANCE_PRE . 'parent_slug' => (
       tapas_instance_common(
-        'slug', 
+        'parent_slug', 
         t('Parent Slug'), 
         TAPAS_COLLECTION, 
         TAPAS_INSTANCE_DESC_PARENT_SLUG
@@ -351,7 +351,7 @@ function tapas_fields_record() {
 
     TAPAS_R_INSTANCE_PRE . 'parent_slug' => (
       tapas_instance_common(
-        'slug',
+        'parent_slug',
         t('Parent Slug'),
         TAPAS_RECORD, 
         TAPAS_INSTANCE_DESC_PARENT_SLUG
