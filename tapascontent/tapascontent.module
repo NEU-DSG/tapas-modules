@@ -15,6 +15,7 @@
 include_once('tapascontent_hydra.inc');
 include_once('tapascontent_recordview.inc');
 include_once('tapascontent_solr_indexing.inc');
+include_once('tapascontent_validations.inc');
 
 // ====================================================================================
 // Functions implementing hooks
