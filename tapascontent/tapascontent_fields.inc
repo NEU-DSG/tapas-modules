@@ -35,7 +35,6 @@ define ('STATUS_SUCCESS', 2);
  * custom fields.
  */
 
-//define ('TAPAS_INSTANCE_DESC_TAGS', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJDESCRIPTION', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJTHUMB', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJSLUG', t(''));
@@ -55,6 +54,8 @@ define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
 define ('TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE', t(''));
 
 define ('TAPAS_INSTANCE_DESC_UPLOADSTATUS', t(''));
+
+define ('TAPAS_INSTANCE_DESC_PARENT_SLUG', t(''));
 
 
 // ====================================================================================
@@ -136,6 +137,7 @@ function tapas_field_bases() {
 		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
 		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
 		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
+    'parent_slug' => _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
 		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
 		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
@@ -219,10 +221,6 @@ function tapas_fields_project() {
 			) +
 			tapas_instance_hyperlinks()
 		),
-
-
-		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_PROJECT),
-
 	);
 }
 
@@ -268,7 +266,15 @@ function tapas_fields_collection() {
 			tapas_instance_uniqueid()
 		),
 
-		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_COLLECTION),
+    TAPAS_C_INSTANCE_PRE . 'parent_slug' => (
+      tapas_instance_common(
+        'parent_slug', 
+        t('Parent Slug'), 
+        TAPAS_COLLECTION, 
+        TAPAS_INSTANCE_DESC_PARENT_SLUG
+      ) + 
+      tapas_instance_hiddentext()
+    ),
 	);
 }
 
@@ -338,6 +344,16 @@ function tapas_fields_record() {
         TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE
       ) + 
       tapas_instance_record_ography_type()
+    ),
+
+    TAPAS_R_INSTANCE_PRE . 'parent_slug' => (
+      tapas_instance_common(
+        'parent_slug',
+        t('Parent Slug'),
+        TAPAS_RECORD, 
+        TAPAS_INSTANCE_DESC_PARENT_SLUG
+      ) + 
+      tapas_instance_hiddentext()
     ),
 		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
 
@@ -568,9 +584,6 @@ function tapas_instance_hyperlinks() {
 			'type' => 'link_field',
 		),
 	);
-
-
-
 }
 
 /**
