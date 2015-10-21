@@ -15,7 +15,6 @@ include_once('tapascontent_constants.inc');
 include_once('tapascontent_hydra.inc');
 include_once('tapascontent_solr_indexing.inc');
 
-
 // ====================================================================================
 // Functions implementing hooks
 // ====================================================================================
@@ -219,13 +218,58 @@ function _tapascontent_get_parent_uuids($node) {
 	return $ids;
 }
 
+// This function currently handles populating the field_parent_slug field, 
+// which I hacked into existence so that we could get working path rewrites
+// for collections and records.
+function tapascontent_node_presave($node) { 
+  switch($node->type) { 
+  case TAPAS_PROJECT : 
+  case TAPAS_COLLECTION : 
+    _tapascontent_watchdog("Running node presave hook", WATCHDOG_NOTICE);
+    $parent_id = $node->og_tapas_c_to_p['und'][0]['target_id'];
+    $project = node_load($parent_id);
+
+    _tapascontent_watchdog("Attempted to load project", WATCHDOG_NOTICE);
+
+    if ($project) { 
+      $parent_slug = $project->field_tapas_slug['und'][0]['safe_value'];
+      $node->field_parent_slug['und'][0]['value'] = $parent_slug;
+      $node->field_parent_slug['und'][0]['safe_value'] = $parent_slug;
+    } else { 
+      $title = $node->title;
+      _tapascontent_watchdog("Collection '$title' failed to find its parent".
+        " record.", WATCHDOG_ERROR);
+    }
+  case TAPAS_RECORD : 
+    $parent_id = $node->og_tapas_r_to_c['und'][0]['target_id'];
+    $collection = node_load($parent_id); 
+
+    if ($collection) { 
+      $project_id = $collection->og_tapas_c_to_p['und'][0]['target_id'];
+      $project = node_load($project_id);
+
+      if ($project) { 
+        $project_slug = $project->field_tapas_slug['und'][0]['safe_value'];
+        $node->field_parent_slug['und'][0]['value'] = $project_slug;
+        $node->field_parent_slug['und'][0]['safe_value'] = $project_slug;
+      } else {
+        $title = $node->title;
+        _tapascontent_watchdog("Record '$title' failed to find its project",
+          WATCHDOG_ERROR);
+      }
+    } else { 
+      $title = $node->title;
+      _tapascontent_watchdog("Record '$title' failed to finds its collection");
+    }
+  }
+}
+
 /**
  * @internal Performs the POST for inserts and for updates.
  *
  * @param node $node The node object being created or updated.
  */
 function _tapascontent_insert_update($node) {
-
   switch($node->type) {
     case TAPAS_PROJECT:
       $members = _tapascontent_get_group_members($node);
@@ -235,7 +279,7 @@ function _tapascontent_insert_update($node) {
       }
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-      _tapascontent_index_content($node);
+      _tapascontent_insert_update_common_tasks($node);
       break;
     case TAPAS_COLLECTION:
       watchdog('debug_tapascontent_insert_update', "Insert/Update called for TAPAS_COLLECTION");
@@ -244,15 +288,21 @@ function _tapascontent_insert_update($node) {
       $data['project_did'] = $proj_as_array[0];
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-      _tapascontent_index_content($node);
+      _tapascontent_insert_update_common_tasks($node);
       break;
     case TAPAS_RECORD:
       $data = _tapascontent_record_hydradata($node);
       tapashydra_post($data, TAPAS_POST_TEI_URL);
-      _tapascontent_index_content($node);
+      _tapascontent_insert_update_common_tasks($node);
       watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
       break;
   }
+}
+
+function _tapascontent_insert_update_common_tasks($node) { 
+  // Index the content
+  $node = node_load($node->nid);
+  _tapascontent_index_content($node);
 }
 
 // ====================================================================================
