@@ -17,14 +17,8 @@ define ('TAPAS_READERTAB_DROPDOWN_DESC', t('Choose a stylesheet with which you w
 define ('TAPAS_SELECTBUTTON_CALLBACK', '_tapas_selectbutton_callback');
 define ('TAPAS_CHOOSE_STYLESHEET_MESSAGE', t('Please pick a stylesheet with which to render the TEI.'));
 
-define ('TAPAS_TABGROUP', 'tapas_readertabs');
 define ('TAPAS_READERTAB', 'tapas_tab_reader');
 define ('TAPAS_METATAB', 'tapas_tab_meta');
-define ('TAPAS_FILETAB', 'tapas_tab_files');
-
-define ('TAPAS_READERTAB_TITLE', t('Rendered TEI'));
-define ('TAPAS_METATAB_TITLE', t('Metadata'));
-define ('TAPAS_FILETAB_TITLE', t('Files'));
 
 define ('TAPAS_TEI_LABEL', t('TEI'));
 define ('TAPAS_TEIBP_LABEL', t('TEI Boilerplate'));
@@ -35,54 +29,32 @@ define ('TAPAS_GENERIC_LABEL', t('TAPAS Generic'));
  * @param node The node being rendered.
  */
 
+
 function tapascontent_view_tei_record($node) {
-
-	$node->content[TAPAS_TABGROUP] = array(
-		'#prefix' => '<div class="tapas_tabset">',
-		'#suffix' => '</div>',
-		'#type' => 'fieldset',
-	);
-
-	$node->content[TAPAS_READERTAB] = _tapascontent_readertab();
-	$node->content[TAPAS_METATAB] = _tapascontent_metatab();
-	$node->content[TAPAS_FILETAB] = _tapascontent_filetab();
-	dpm($node->content);
-
-	$groupsets = array(
-		'description' => TAPAS_METATAB,
-		'tei_file' => TAPAS_FILETAB,
-		'attatchments' => TAPAS_FILETAB,
-		'display_auth' => TAPAS_METATAB,
-		'display_contrib' => TAPAS_METATAB,
-		'display_date' => TAPAS_METATAB
-	);
-
-	foreach ($groupsets as $field => $group) {
-		$node->content[TAPAS_FIELD_PREFIX . $field]['#group'] = $group;
-	}
-
+	$uuid = $node->uuid;
+	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid);
+	$node->content[TAPAS_METATAB][0] = _tapascontent_metatab($uuid);
 }
-
-
 
 /**
  * @internal. Provides render array for reader tab of records.
  */
-function _tapascontent_readertab() {
+function _tapascontent_readertab($uuid) {
 
 	$styledrop = _tapas_readertab_dropdown();
+	$tei = tapashydra_get_tei($uuid, 'tei');
+	$tapas_generic = tapashydra_get_tei($uuid, 'tapas_generic');
+	$teibp = tapashydra_get_tei($uuid, 'teibp');
+
 
 	$readingtab = array(
-		'#prefix' => '<div class="tapas_readertab">',
-		'#suffix' => '</div>',
-		'#type' => 'fieldset',
-		'#title' => TAPAS_READERTAB_TITLE,
-		'#collapsible' => TRUE,
-		'#group' => TAPAS_TABGROUP,
+		"#type" => "text",
 		TAPAS_VFIELD_PREFIX . 'styledrop' => $styledrop,
 		TAPAS_VFIELD_PREFIX . 'content' => array(
-			'#prefix' => '<div class="tapas_readercontent">',
-			'#suffix' => '</div>'
+			'#prefix' => '<div class="reading">',
+			'#suffix' => '</div>',
+			'#markup' => '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei"><code>'.$tei.'</code></div><div class="reader_tapas_generic">'.$tapas_generic.'</div>',
+			// '#markup' => '<div class="reader_tei">'.$tei.'</div>',
 		),
 	);
 
@@ -96,11 +68,11 @@ function _tapascontent_readertab() {
 function _tapas_readertab_dropdown() {
 
 	return array (
+			'#name'=>'reading_selector',
 			'#type' => 'select',
 			'#title' => t('Choose Stylesheet'),
 			'#required' => TRUE,
 			'#description' => TAPAS_READERTAB_DROPDOWN_DESC,
-			'#group' => TAPAS_READERTAB,
 			'#options' => array(
 				'teibp' => TAPAS_TEIBP_LABEL,
 				'tei' => TAPAS_TEI_LABEL,
@@ -115,34 +87,13 @@ function _tapas_readertab_dropdown() {
  *
  * @return array The render array for the metadata tab.
  */
-function _tapascontent_metatab() {
+function _tapascontent_metatab($uuid) {
+	$mods = tapashydra_get_tei($uuid, 'mods');
 
 	return array(
-		'#prefix' => '<div class="tapas_metatab">',
-		'#suffix' => '</div>',
-		'#type' => 'fieldset',
-		'#title' => TAPAS_METATAB_TITLE,
-		'#group' => TAPAS_TABGROUP,
-		TAPAS_VFIELD_PREFIX . 'mods' => array(
-			'#markup' => 'MODS will go here.'
+		'#type' => 'text',
+		TAPAS_VFIELD_PREFIX . 'content' => array(
+			'#markup' => '<div class="mods">'.$mods.'</div>',
 		),
-
 	);
-}
-
-
-/**
- * @internal Provids the array for the fileview tab.
- */
-
-function _tapascontent_filetab() {
-
-	return array(
-		'#prefix' => '<div class="tapas_filetab">',
-		'#suffix' => '</div>',
-		'#type' => 'fieldset',
-		'#title' => TAPAS_FILETAB_TITLE,
-		'#group' => TAPAS_TABGROUP,
-	);
-
 }
