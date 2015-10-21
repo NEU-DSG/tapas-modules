@@ -5,7 +5,7 @@
  * tapascontent_hydra.inc
  *
  * Encapsulates the calls to the Hydra API.
- * 
+ *
  * @author Linda Moss (Github LindaJeanne) <l.moss@neu.edu>
  * @since 2.0
  * @version 2.0
@@ -17,17 +17,17 @@ include_once('tapascontent_constants.inc');
 // POST and DELETE functions called from outside the file.
 // ====================================================================================
 
-// Takes all arrays detected in the $data array and translates them into arrays that 
+// Takes all arrays detected in the $data array and translates them into arrays that
 // php's curl functionality will actually handle.
 // So if we have $data = { "members" => ['bill', 'john', 'joe']}
-// We wind up with $data = { "members[0]" => "bill", "members[1]" => "john", 
+// We wind up with $data = { "members[0]" => "bill", "members[1]" => "john",
 // "members[2]" => "joe"}
 function _tapashydra_associative_arrays($data) {
 	foreach($data as $key => $value) {
 		if(is_array($value)){
 			foreach($value as $vkey => $vvalue) {
-        $data[$key.'['.$vkey.']'] = $vvalue; 
-			}	
+        $data[$key.'['.$vkey.']'] = $vvalue;
+			}
       unset($data[$key]);
 		}
 	}
@@ -68,7 +68,7 @@ function tapashydra_post($data, $url_base) {
 function tapashydra_delete($url_base, $node) {
 	$uniqueid = $node->uuid;
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'DELETE');
-	
+
 	drupal_set_message("Calling the followign URL for delete: $url_base/$uniqueid");
 
 	return _tapashydra_curlcall("$url_base/$uniqueid", $curl_options);
@@ -89,8 +89,6 @@ function tapashydra_delete($url_base, $node) {
  */
 
 function _tapashydra_curlcall($url, $options) {
-	watchdog('_tapashydra_curlcall', "Curl called to URL: $url", array(), WATCHDOG_DEBUG);
-
 	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 
 	$common_opts = array(
@@ -100,15 +98,14 @@ function _tapashydra_curlcall($url, $options) {
 
 
 	if (TAPAS_INCLUDE_CURL_DEBUG) {
-		// Deubuggin node: if array_merge is used, the keys change to 0, 1, 2, 3, etc, 
+		// Deubuggin node: if array_merge is used, the keys change to 0, 1, 2, 3, etc,
 		// and everything breaks.
 		$curlopt = $options + _tapashydra_debugopts() + $common_opts;
 	} else {
 		$curlopt = $options + $common_opts;
 	}
-	
+
 	$ch = curl_init($url);
-        watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($curlopt, TRUE).'</pre>');
 
 	if (!curl_setopt_array($ch, $curlopt)) {
 		drupal_set_message("CURL error: One or more of the options falied to set.");
@@ -117,9 +114,11 @@ function _tapashydra_curlcall($url, $options) {
 
 	if (TAPAS_INCLUDE_CURL_DEBUG) {
 		_tapashydra_curl_messages($ch, $result);
+		watchdog('_tapashydra_curlcall', "Curl called to URL: $url", array(), WATCHDOG_DEBUG);
+		watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($curlopt, TRUE).'</pre>');
+		watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($ch, TRUE).'</pre>');
+		watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($result, TRUE).'</pre>');
 	}
-        watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($ch, TRUE).'</pre>');
-        watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($result, TRUE).'</pre>');
 
 	curl_close($ch);
 	return $result;
@@ -180,11 +179,12 @@ function tapashydra_get_tei($did, $type) {
 	$url = TAPAS_BASE_API_URL . "/files/$did/$type";
 
 	drupal_set_message("URL is $url");
-	
-	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET');
-		
+
+	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET', CURLOPT_RETURNTRANSFER => TRUE);
+
 	return _tapashydra_curlcall($url, $curl_options);
 }
+
 
 // ====================================================================================
 // Other helper functions, used internally and externally.
@@ -194,7 +194,7 @@ function tapashydra_get_tei($did, $type) {
 /**
  * Helper. Given a file field object, returns the HTTP filestring.
  *
- * This method (string beginning with '@') for posting files to HTTP is depricated in 
+ * This method (string beginning with '@') for posting files to HTTP is depricated in
  * HTTP, but the version of PHP we are using does not yet support the new (object-based)
  * way of posting files, so we need to stick with this.
  */
@@ -221,7 +221,7 @@ function tapashydra_filestring_from_field($node, $field_name) {
 }
 
 /**
- * Helper. Get an array of file handles from a filefield on a node. 
+ * Helper. Get an array of file handles from a filefield on a node.
  *
  * @param node $node The node.
  * @param string $field_name the name of the field to get the files from.
@@ -238,14 +238,14 @@ function tapashydra_filearray_from_field($node, $field_name) {
 
 	$file_objects = array();
 	foreach ($fielditems as $field) {
-		$file_objects[] = file_load($field['fid']);	
+		$file_objects[] = file_load($field['fid']);
 	}
 
   $filestrings = array();
-  foreach($file_objects as $file) { 
+  foreach($file_objects as $file) {
     $filestrings[] = drupal_realpath($file->uri);
   }
-  
+
 	return $filestrings;
 }
 
@@ -285,6 +285,6 @@ function tapashydra_field_to_http_array($node, $field_name, $param) {
 
 }
 
-function _tapashydra_watchdog_debug($message) { 
+function _tapashydra_watchdog_debug($message) {
   watchdog('tapascontent', $message, [], WATCHDOG_DEBUG);
 }

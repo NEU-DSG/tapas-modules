@@ -36,10 +36,6 @@ define ('STATUS_SUCCESS', 2);
  */
 
 //define ('TAPAS_INSTANCE_DESC_TAGS', t(''));
-define ('TAPAS_INSTANCE_DESC_MIGRATIONTITLE', t(''));
-define ('TAPAS_INSTANCE_DESC_MIGRATIONIMAGE', t(''));
-define ('TAPAS_INSTANCE_DESC_MIGRATIONINST', t(''));
-
 define ('TAPAS_INSTANCE_DESC_PROJDESCRIPTION', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJTHUMB', t(''));
 define ('TAPAS_INSTANCE_DESC_PROJSLUG', t(''));
@@ -141,10 +137,6 @@ function tapas_field_bases() {
 		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
 		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
-		'migration_title' => _tapas_fieldarray('migration_title', 1, 'text', 'text'),
-		'migration_thumb' => _tapas_fieldarray('migration_thumb', 1, 'text', 'text'),
-		'migration_instnames' => _tapas_fieldarray('migration_instnames', -1, 'text', 'text'),
-		'migration_parentuuid' => _tapas_fieldarray('migration_parentuuid', 1, 'text', 'text'),
 		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
 		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
 		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
@@ -228,36 +220,6 @@ function tapas_fields_project() {
 			tapas_instance_hyperlinks()
 		),
 
-		TAPAS_P_INSTANCE_PRE . 'migration_title' => (
-			tapas_instance_common(
-				'migration_title',
-				t('Migration Title'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_MIGRATIONTITLE
-			) +
-			tapas_instance_hiddentext()
-		),
-
-		TAPAS_P_INSTANCE_PRE . 'migration_thumb' => (
-			tapas_instance_common(
-				'migration_thumb',
-				t('Migration Thumb'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_MIGRATIONIMAGE
-			) +
-			tapas_instance_hiddentext()
-		),
-
-
-		TAPAS_P_INSTANCE_PRE . 'migration_instnames' => (
-			tapas_instance_common(
-				'migration_instnames',
-				t('Institutionname'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_MIGRATIONINST
-			) +
-			tapas_instance_hiddentext()
-		),
 
 		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_PROJECT),
 
@@ -306,35 +268,6 @@ function tapas_fields_collection() {
 			tapas_instance_uniqueid()
 		),
 
-		TAPAS_C_INSTANCE_PRE . 'migration_parentuuid' => (
-			tapas_instance_common(
-				'migration_parentuuid',
-				t('Parent UUID (for migration only)'),
-				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_PARENTSLUG
-			) +
-			tapas_instance_hiddentext()
-		),
-
-		TAPAS_C_INSTANCE_PRE . 'migration_title' => (
-			tapas_instance_common(
-				'migration_title',
-				t('Migration Title'),
-				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_MIGRATIONTITLE
-			) +
-			tapas_instance_hiddentext()
-		),
-
-		TAPAS_C_INSTANCE_PRE . 'migration_thumb' => (
-			tapas_instance_common(
-				'migration_thumb',
-				t('Migration Thumb'),
-				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_MIGRATIONIMAGE
-			) +
-			tapas_instance_hiddentext()
-		),
 		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_COLLECTION),
 	);
 }
