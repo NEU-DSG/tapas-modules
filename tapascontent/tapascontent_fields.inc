@@ -355,8 +355,6 @@ function tapas_fields_record() {
       ) + 
       tapas_instance_hiddentext()
     ),
-		//TAPAS_P_INSTANCE_PRE . 'upload_status' => _tapas_uploadstatus_template(TAPAS_RECORD),
-
 	);
 
 }
