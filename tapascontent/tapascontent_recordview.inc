@@ -53,7 +53,7 @@ function _tapascontent_readertab($uuid) {
 		TAPAS_VFIELD_PREFIX . 'content' => array(
 			'#prefix' => '<div class="reading">',
 			'#suffix' => '</div>',
-			'#markup' => '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei"><code>'.$tei.'</code></div><div class="reader_tapas_generic">'.$tapas_generic.'</div>',
+			'#markup' => '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei"><pre>'.htmlentities($tei).'</pre></div><div class="reader_tapas_generic">'.$tapas_generic.'</div>',
 			// '#markup' => '<div class="reader_tei">'.$tei.'</div>',
 		),
 	);
