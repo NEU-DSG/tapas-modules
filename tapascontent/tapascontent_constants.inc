@@ -76,7 +76,7 @@ define('TAPAS_GET_BP', 'teibp');
 define('TAPAS_GET_GENERIC', 'tapas_generic');
 
 /** Whether to include debug output. Not intended for production! */
-define("TAPAS_INCLUDE_CURL_DEBUG", TRUE);
+define("TAPAS_INCLUDE_CURL_DEBUG", FALSE);
 
 // ====================================================================================
 // Helper Functions

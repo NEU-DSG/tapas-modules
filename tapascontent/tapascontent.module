@@ -94,7 +94,7 @@ function tapascontent_node_postupdate($node) {
  */
 function tapascontent_node_delete($node) {
 
-	drupal_set_message("node delete called against type: " . $node->type);
+	//drupal_set_message("node delete called against type: " . $node->type);
 
 	switch($node->type) {
 	case TAPAS_PROJECT:
@@ -203,7 +203,7 @@ function _tapascontent_get_parent_uuids($node) {
 	$parent_ids = og_get_entity_groups('node', $node);
 
 	if (!$parent_ids) {
-		drupal_set_message("No parents found.");
+		//drupal_set_message("No parents found.");
 		return FALSE;
 	}
 
@@ -400,12 +400,12 @@ function tapascontent_user_login(&$edit, $user) {
 
   if (($is_paid_member === true) and ($currently_member === false)) {
     user_multiple_role_edit([$user->uid], 'add_role', $member_rid);
-    drupal_set_message("TEI Membership confirmed, you now have full access to the TAPAS service.");
+    //drupal_set_message("TEI Membership confirmed, you now have full access to the TAPAS service.");
   } elseif (($is_paid_member === false) and ($currently_member === true)) {
     user_multiple_role_edit([$user->uid], 'remove_role', $member_rid);
     $msg = "Our records indicate that you are no longer a TEI Member.  You now have limited access to" .
       " the TAPAS Service.  If this was done in error, please contact us.";
-    drupal_set_message($msg);
+    //drupal_set_message($msg);
   } elseif ($is_paid_member === null) {
     $msg = "Failed to contact Wild Apricot about membership status of"
       . " $user->mail.   Proceeding without changes made to user status";

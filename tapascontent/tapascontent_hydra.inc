@@ -69,7 +69,7 @@ function tapashydra_delete($url_base, $node) {
 	$uniqueid = $node->uuid;
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'DELETE');
 
-	drupal_set_message("Calling the followign URL for delete: $url_base/$uniqueid");
+	//drupal_set_message("Calling the followign URL for delete: $url_base/$uniqueid");
 
 	return _tapashydra_curlcall("$url_base/$uniqueid", $curl_options);
 }
@@ -108,7 +108,7 @@ function _tapashydra_curlcall($url, $options) {
 	$ch = curl_init($url);
 
 	if (!curl_setopt_array($ch, $curlopt)) {
-		drupal_set_message("CURL error: One or more of the options falied to set.");
+		//drupal_set_message("CURL error: One or more of the options falied to set.");
 	}
 	$result = curl_exec($ch);
 
@@ -160,9 +160,9 @@ function _tapashydra_curl_messages($ch, $result) {
 		$return_header = substr($result, 0, $header_size);
 		$body = substr($result, $header_size);
 
-		drupal_set_message("### Header ### " . $return_header);
-		drupal_set_message("### Body ### " . $body);
-		drupal_set_message("### Header Out ### " . curl_getinfo($ch, CURLINFO_HEADER_OUT));
+		//drupal_set_message("### Header ### " . $return_header);
+		//drupal_set_message("### Body ### " . $body);
+		//drupal_set_message("### Header Out ### " . curl_getinfo($ch, CURLINFO_HEADER_OUT));
 
 }
 
@@ -173,12 +173,12 @@ function _tapashydra_curl_messages($ch, $result) {
 function tapashydra_get_tei($did, $type) {
 
 	if(!isset($did) || !isset($type)) {
-		drupal_set_message("One of the values is not set. DID: $did Type: $type");
+		//drupal_set_message("One of the values is not set. DID: $did Type: $type");
 	}
 
 	$url = TAPAS_BASE_API_URL . "/files/$did/$type";
 
-	drupal_set_message("URL is $url");
+	//drupal_set_message("URL is $url");
 
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET', CURLOPT_RETURNTRANSFER => TRUE);
 
