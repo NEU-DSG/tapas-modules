@@ -110,32 +110,36 @@ function tapascontent_node_delete($node) {
 
 }
 
-/**
-* Implements hook_menu().
-*/
-function tapascontent_menu() {
-	$items = array();
-
-	$items['node/%node/hydra'] = array(
-		'title' => 'View Hydra HTML',
-		'page callback' => 'add_viewhydra_action',
-		'access callback' => TRUE,
-		'type' => MENU_LOCAL_TASK,
-		'page arguments' => array('node', 1),
-		'access arguments' => array('access content'),
-	);
-
-	return $items;
-}
 
 /**
  * Implements hook_node_view
  */
+
 function tapascontent_node_view($node, $view_mode, $langcode) {
 	if ($node->type == TAPAS_RECORD && $view_mode == 'full') {
 		tapascontent_view_tei_record($node);
 	}
 }
+
+function tapascontent_preprocess_node(&$variables){
+  $node = $variables['elements']['#node'];
+  switch($node->type){
+    case 'tapas_record':
+      // dpm($node);
+      $groups = field_group_read_groups(array(
+        'name' => 'node',
+        'bundle' => 'tapas_record',
+        'view_mode' => 'full'));
+      $reader_group = $groups['node']['tapas_record']['full']['group_record_reader_content'];
+      $reader_group->children[] = 'tapas_tab_reader';
+      field_group_group_save($reader_group);
+			$meta_group = $groups['node']['tapas_record']['full']['group_record_metadata_content'];
+			$meta_group->children[] = 'tapas_tab_meta';
+			field_group_group_save($meta_group);
+      break;
+  }
+}
+
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
  *
@@ -151,23 +155,6 @@ function tapascontent_node_view($node, $view_mode, $langcode) {
 
 ////}
 
-
-// ====================================================================================
-// Callback Functions
-// ====================================================================================
-
-/**
-* Menu hook page callback.
-*/
-function add_viewhydra_action($type, $object) {
-
-	if ($object && $object->type == TAPAS_RECORD) {
-		return '<h2>' . t('Hello') . '</h2>' . tapashydra_get_tei($object->uuid, 'tapas_generic');
-	} else {
-		return '<h2>Not a record</h2>';
-		return FALSE;
-	}
-}
 
 // ====================================================================================
 // Helper functions
