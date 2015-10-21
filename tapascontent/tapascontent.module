@@ -214,12 +214,13 @@ function _tapascontent_get_parent_uuids($node) {
 	return $ids;
 }
 
-// This function currently handles populating the field_parent_slug field, 
+// This function currently handles populating the field_tapas_parent_slug field, 
 // which I hacked into existence so that we could get working path rewrites
 // for collections and records.
 function tapascontent_node_presave($node) { 
   switch($node->type) { 
   case TAPAS_PROJECT : 
+    break;
   case TAPAS_COLLECTION : 
     _tapascontent_watchdog("Running node presave hook", WATCHDOG_NOTICE);
     $parent_id = $node->og_tapas_c_to_p['und'][0]['target_id'];
@@ -229,13 +230,14 @@ function tapascontent_node_presave($node) {
 
     if ($project) { 
       $parent_slug = $project->field_tapas_slug['und'][0]['safe_value'];
-      $node->field_parent_slug['und'][0]['value'] = $parent_slug;
-      $node->field_parent_slug['und'][0]['safe_value'] = $parent_slug;
+      $node->field_tapas_parent_slug['und'][0]['value'] = $parent_slug;
+      $node->field_tapas_parent_slug['und'][0]['safe_value'] = $parent_slug;
     } else { 
       $title = $node->title;
       _tapascontent_watchdog("Collection '$title' failed to find its parent".
         " record.", WATCHDOG_ERROR);
     }
+    break;
   case TAPAS_RECORD : 
     $parent_id = $node->og_tapas_r_to_c['und'][0]['target_id'];
     $collection = node_load($parent_id); 
@@ -246,8 +248,8 @@ function tapascontent_node_presave($node) {
 
       if ($project) { 
         $project_slug = $project->field_tapas_slug['und'][0]['safe_value'];
-        $node->field_parent_slug['und'][0]['value'] = $project_slug;
-        $node->field_parent_slug['und'][0]['safe_value'] = $project_slug;
+        $node->field_tapas_parent_slug['und'][0]['value'] = $project_slug;
+        $node->field_tapas_parent_slug['und'][0]['safe_value'] = $project_slug;
       } else {
         $title = $node->title;
         _tapascontent_watchdog("Record '$title' failed to find its project",
@@ -257,6 +259,7 @@ function tapascontent_node_presave($node) {
       $title = $node->title;
       _tapascontent_watchdog("Record '$title' failed to finds its collection");
     }
+    break;
   }
 }
 
