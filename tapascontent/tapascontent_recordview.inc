@@ -31,6 +31,13 @@ define ('TAPAS_GENERIC_LABEL', t('TAPAS Generic'));
 
 
 function tapascontent_view_tei_record($node) {
+	$theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
+	drupal_add_js($theme_path.'/assets/js/record.js', array('type'=>'file', 'requires_jquery'=>true));
+	drupal_add_library('system','ui.dialog');
+	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/teibp/js/teibp.js', array('type'=>'file'));
+	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
+	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/contextualItems.js', array('type'=>'file'));
+	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
 	$uuid = $node->uuid;
 	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid);
 	$node->content[TAPAS_METATAB][0] = _tapascontent_metatab($uuid);
