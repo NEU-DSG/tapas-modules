@@ -138,6 +138,7 @@ function tapas_field_bases() {
 		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
 		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
     'parent_slug' => _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
+    'project' => _tapas_fieldarray('project', 1, 'entityreference', 'entityreference'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
 		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
 		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
@@ -355,6 +356,16 @@ function tapas_fields_record() {
       ) + 
       tapas_instance_hiddentext()
     ),
+
+    TAPAS_R_INSTANCE_PRE . 'project' => (
+      tapas_instance_common(
+        'project', 
+        t('Record Project'), 
+        TAPAS_RECORD,
+        t('')
+      ) + 
+      tapas_instance_project()
+    ),
 	);
 
 }
@@ -384,6 +395,21 @@ function tapas_instance_hiddentext() {
 		)
 	);
 
+}
+
+/** Returns a field instance array for entitytext using the checkbox widget
+ * @return array A field instance array
+ */
+
+function tapas_instance_project() { 
+  return array(
+    'required' => FALSE, 
+    'display' => array('default' => array('type' => 'hidden')),
+    'widget' => array(
+      'module' => 'options',
+      'type' => 'options_buttons'
+    ),
+  );
 }
 
 /** Returns a field instance array for specifically the ography type field
