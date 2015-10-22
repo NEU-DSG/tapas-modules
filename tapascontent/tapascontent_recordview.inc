@@ -35,9 +35,9 @@ function tapascontent_view_tei_record($node) {
 	drupal_add_js($theme_path.'/assets/js/record.js', array('type'=>'file', 'requires_jquery'=>true));
 	drupal_add_library('system','ui.dialog');
 	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/teibp/js/teibp.js', array('type'=>'file'));
-	drupal_add_js('http://localhost/~beekerz/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
-	drupal_add_js('http://localhost/~beekerz/tapas-generic/js/contextualItems.js', array('type'=>'file'));
-	drupal_add_js('http://localhost/~beekerz/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
+	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
+	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/contextualItems.js', array('type'=>'file'));
+	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
 	$uuid = $node->uuid;
 	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid);
 	$node->content[TAPAS_METATAB][0] = _tapascontent_metatab($uuid);
