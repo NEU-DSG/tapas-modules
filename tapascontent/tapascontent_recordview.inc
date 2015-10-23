@@ -35,24 +35,32 @@ function tapascontent_view_tei_record($node) {
 	drupal_add_js($theme_path.'/assets/js/record.js', array('type'=>'file', 'requires_jquery'=>true));
 	drupal_add_library('system','ui.dialog');
 	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/teibp/js/teibp.js', array('type'=>'file'));
-	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
-	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/contextualItems.js', array('type'=>'file'));
-	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
+	if (isset($node->field_tapas_record_ography_type['und'][0]['value'])){
+		$ography = true;
+	} else {
+		$ography = false;
+		drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
+		drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/contextualItems.js', array('type'=>'file'));
+		drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
+	}
 	$uuid = $node->uuid;
-	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid);
+	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid, $ography);
 	$node->content[TAPAS_METATAB][0] = _tapascontent_metatab($uuid);
 }
 
 /**
  * @internal. Provides render array for reader tab of records.
  */
-function _tapascontent_readertab($uuid) {
+function _tapascontent_readertab($uuid, $ography) {
 
-	$styledrop = _tapas_readertab_dropdown();
+	$styledrop = _tapas_readertab_dropdown($ography);
 	$tei = tapashydra_get_tei($uuid, 'tei');
 	$tapas_generic = tapashydra_get_tei($uuid, 'tapas_generic');
 	$teibp = tapashydra_get_tei($uuid, 'teibp');
-
+	$markup = '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei"><pre>'.htmlentities($tei).'</pre></div>';
+	if (!$ography){
+		$markup .= '<div class="reader_tapas_generic">'.$tapas_generic.'</div>';
+	}
 
 	$readingtab = array(
 		"#type" => "text",
@@ -60,8 +68,7 @@ function _tapascontent_readertab($uuid) {
 		TAPAS_VFIELD_PREFIX . 'content' => array(
 			'#prefix' => '<div class="reading">',
 			'#suffix' => '</div>',
-			'#markup' => '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei"><pre>'.htmlentities($tei).'</pre></div><div class="reader_tapas_generic">'.$tapas_generic.'</div>',
-			// '#markup' => '<div class="reader_tei">'.$tei.'</div>',
+			'#markup' => $markup,
 		),
 	);
 
@@ -72,7 +79,15 @@ function _tapascontent_readertab($uuid) {
  * @internal. Provides the style drop-down on the rendered tei view.
  */
 
-function _tapas_readertab_dropdown() {
+function _tapas_readertab_dropdown($ography) {
+	$options = array(
+		'teibp' => TAPAS_TEIBP_LABEL,
+		'tei' => TAPAS_TEI_LABEL,
+	);
+
+	if (!$ography){
+		$options['tapas_generic'] = TAPAS_GENERIC_LABEL;
+	}
 
 	return array (
 			'#name'=>'reading_selector',
@@ -80,11 +95,7 @@ function _tapas_readertab_dropdown() {
 			'#title' => t('Choose Stylesheet'),
 			'#required' => TRUE,
 			'#description' => TAPAS_READERTAB_DROPDOWN_DESC,
-			'#options' => array(
-				'teibp' => TAPAS_TEIBP_LABEL,
-				'tei' => TAPAS_TEI_LABEL,
-				'tapas_generic' => TAPAS_GENERIC_LABEL,
-			),
+			'#options' => $options,
 	);
 
 }
