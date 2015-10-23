@@ -20,8 +20,28 @@ function tapas_feature_context_collection_field_default_field_instances() {
       'default' => array(
         'label' => 'hidden',
         'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
+        'settings' => array(
+          'trim_length' => 300,
+        ),
+        'type' => 'text_trimmed',
+        'weight' => 1,
+      ),
+      'search_index' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(
+          'trim_length' => 300,
+        ),
+        'type' => 'text_trimmed',
+        'weight' => 1,
+      ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(
+          'trim_length' => 600,
+        ),
+        'type' => 'text_trimmed',
         'weight' => 1,
       ),
       'teaser' => array(
@@ -50,6 +70,52 @@ function tapas_feature_context_collection_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-tapas_collection-field_tapas_parent_slug'
+  $field_instances['node-tapas_collection-field_tapas_parent_slug'] = array(
+    'bundle' => 'tapas_collection',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 6,
+      ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_tapas_parent_slug',
+    'label' => 'Parent Slug',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 5,
+    ),
+  );
+
   // Exported field_instance: 'node-tapas_collection-field_tapas_slug'
   $field_instances['node-tapas_collection-field_tapas_slug'] = array(
     'bundle' => 'tapas_collection',
@@ -58,6 +124,18 @@ function tapas_feature_context_collection_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 2,
+      ),
+      'search_index' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 2,
+      ),
+      'search_result' => array(
         'label' => 'hidden',
         'settings' => array(),
         'type' => 'hidden',
@@ -97,12 +175,20 @@ function tapas_feature_context_collection_field_default_field_instances() {
     'display' => array(
       'default' => array(
         'label' => 'hidden',
-        'module' => 'image',
-        'settings' => array(
-          'image_link' => '',
-          'image_style' => '',
-        ),
-        'type' => 'image',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'search_index' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+      'search_result' => array(
+        'label' => 'hidden',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
       'teaser' => array(
@@ -119,13 +205,12 @@ function tapas_feature_context_collection_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'field_tapas_thumbnail',
     'label' => 'Collection Thumbnail',
-    'required' => FALSE,
+    'required' => 0,
     'settings' => array(
       'alt_field' => 0,
       'default_image' => 0,
-      'file_directory' => '',
+      'file_directory' => '[current-date:raw]/thumbnail',
       'file_extensions' => 'png gif jpg jpeg',
-      'file_extentions' => 'png gif jpg jpeg',
       'max_filesize' => '',
       'max_resolution' => '',
       'min_resolution' => '',
@@ -133,6 +218,7 @@ function tapas_feature_context_collection_field_default_field_instances() {
       'user_register_form' => FALSE,
     ),
     'widget' => array(
+      'active' => 1,
       'module' => 'image',
       'settings' => array(
         'preview_image_style' => 'thumbnail',
@@ -148,6 +234,7 @@ function tapas_feature_context_collection_field_default_field_instances() {
   t('Collection Description');
   t('Collection Slug');
   t('Collection Thumbnail');
+  t('Parent Slug');
 
   return $field_instances;
 }

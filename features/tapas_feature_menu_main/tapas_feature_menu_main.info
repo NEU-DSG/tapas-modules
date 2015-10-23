@@ -25,7 +25,6 @@ features[menu_links][] = menu-primary-menu_more:<front>
 features[menu_links][] = menu-primary-menu_my-tapas:my_tapas
 features[menu_links][] = menu-primary-menu_news:news
 features[menu_links][] = menu-primary-menu_people-:http://tapasdev.neu.edu/?q=commons
-features[menu_links][] = menu-primary-menu_site-support-forums:http://tapasdev.neu.edu/?q=node/234/
 features[menu_links][] = menu-primary-menu_support:http://tapasdev.neu.edu/?q=node/234/
 features[menu_links][] = menu-primary-menu_tapas--dev:http://tapasdev.neu.edu/?q=node/228
 features[menu_links][] = menu-primary-menu_tapas--learn:http://tapasdev.neu.edu/?q=commons
@@ -33,4 +32,3 @@ features[menu_links][] = menu-primary-menu_tei-forums:http://tapasdev.neu.edu/?q
 features[menu_links][] = menu-primary-menu_tei-guidelines:http://tapasdev.neu.edu/?q=commons
 features[menu_links][] = menu-primary-menu_tei-help:http://tapasdev.neu.edu/?q=commons
 features[menu_links][] = menu-primary-menu_tei-resources-and-support:http://tapasdev.neu.edu/?q=commons
-features[menu_links][] = menu-primary-menu_tickets:http://tapasdev.neu.edu/?q=node/234/

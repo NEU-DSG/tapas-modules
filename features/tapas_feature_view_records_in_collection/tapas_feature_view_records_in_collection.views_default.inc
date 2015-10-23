@@ -49,6 +49,24 @@ function tapas_feature_view_records_in_collection_views_default_views() {
   $handler->display->display_options['relationships']['og_membership_rel']['table'] = 'node';
   $handler->display->display_options['relationships']['og_membership_rel']['field'] = 'og_membership_rel';
   $handler->display->display_options['relationships']['og_membership_rel']['required'] = TRUE;
+  /* Field: Content: Nid */
+  $handler->display->display_options['fields']['nid']['id'] = 'nid';
+  $handler->display->display_options['fields']['nid']['table'] = 'node';
+  $handler->display->display_options['fields']['nid']['field'] = 'nid';
+  $handler->display->display_options['fields']['nid']['label'] = '';
+  $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
+  /* Field: Content: Ography Types */
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['id'] = 'field_tapas_record_ography_type';
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['table'] = 'field_data_field_tapas_record_ography_type';
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['field'] = 'field_tapas_record_ography_type';
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['label'] = '';
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['alter']['text'] = 'support-file';
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['element_default_classes'] = FALSE;
+  $handler->display->display_options['fields']['field_tapas_record_ography_type']['delta_offset'] = '0';
   /* Field: Content: Edit link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
@@ -61,7 +79,7 @@ function tapas_feature_view_records_in_collection_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['element_wrapper_class'] = 'text-right';
   $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['text'] = 'Edit';
-  /* Field: Content: Project Thumbnail */
+  /* Field: Content: Collection Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
@@ -79,7 +97,7 @@ function tapas_feature_view_records_in_collection_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['element_type'] = 'h4';
-  $handler->display->display_options['fields']['title']['element_class'] = 'text-center';
+  $handler->display->display_options['fields']['title']['element_class'] = 'text-center [field_tapas_record_ography_type]';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['element_default_classes'] = FALSE;
   /* Sort criterion: Content: Post date */

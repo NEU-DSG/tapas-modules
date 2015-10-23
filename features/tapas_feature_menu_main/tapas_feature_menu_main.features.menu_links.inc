@@ -341,27 +341,6 @@ function tapas_feature_menu_main_menu_default_menu_links() {
     'customized' => 1,
     'parent_identifier' => 'menu-primary-menu_community:node/2',
   );
-  // Exported menu link: menu-primary-menu_site-support-forums:http://tapasdev.neu.edu/?q=node/234/
-  $menu_links['menu-primary-menu_site-support-forums:http://tapasdev.neu.edu/?q=node/234/'] = array(
-    'menu_name' => 'menu-primary-menu',
-    'link_path' => 'http://tapasdev.neu.edu/?q=node/234/',
-    'router_path' => '',
-    'link_title' => 'Site Support Forums',
-    'options' => array(
-      'attributes' => array(
-        'title' => 'Access site support forums',
-      ),
-      'identifier' => 'menu-primary-menu_site-support-forums:http://tapasdev.neu.edu/?q=node/234/',
-    ),
-    'module' => 'menu',
-    'hidden' => 0,
-    'external' => 1,
-    'has_children' => 0,
-    'expanded' => 0,
-    'weight' => -48,
-    'customized' => 1,
-    'parent_identifier' => 'menu-primary-menu_support:http://tapasdev.neu.edu/?q=node/234/',
-  );
   // Exported menu link: menu-primary-menu_support:http://tapasdev.neu.edu/?q=node/234/
   $menu_links['menu-primary-menu_support:http://tapasdev.neu.edu/?q=node/234/'] = array(
     'menu_name' => 'menu-primary-menu',
@@ -508,27 +487,6 @@ function tapas_feature_menu_main_menu_default_menu_links() {
     'customized' => 1,
     'parent_identifier' => 'menu-primary-menu_community:node/2',
   );
-  // Exported menu link: menu-primary-menu_tickets:http://tapasdev.neu.edu/?q=node/234/
-  $menu_links['menu-primary-menu_tickets:http://tapasdev.neu.edu/?q=node/234/'] = array(
-    'menu_name' => 'menu-primary-menu',
-    'link_path' => 'http://tapasdev.neu.edu/?q=node/234/',
-    'router_path' => '',
-    'link_title' => 'Tickets',
-    'options' => array(
-      'attributes' => array(
-        'title' => 'View and submit support tickets',
-      ),
-      'identifier' => 'menu-primary-menu_tickets:http://tapasdev.neu.edu/?q=node/234/',
-    ),
-    'module' => 'menu',
-    'hidden' => 0,
-    'external' => 1,
-    'has_children' => 0,
-    'expanded' => 1,
-    'weight' => -50,
-    'customized' => 1,
-    'parent_identifier' => 'menu-primary-menu_support:http://tapasdev.neu.edu/?q=node/234/',
-  );
 
   // Translatables
   // Included for use with string extractors like potx.
@@ -548,7 +506,6 @@ function tapas_feature_menu_main_menu_default_menu_links() {
   t('My Tapas');
   t('News');
   t('People ');
-  t('Site Support Forums');
   t('Support');
   t('TAPAS | Dev');
   t('TAPAS | Learn');
@@ -556,7 +513,6 @@ function tapas_feature_menu_main_menu_default_menu_links() {
   t('TEI Guidelines');
   t('TEI Help');
   t('TEI Resources and Support');
-  t('Tickets');
 
   return $menu_links;
 }

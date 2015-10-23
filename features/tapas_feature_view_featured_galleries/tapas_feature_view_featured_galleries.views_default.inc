@@ -37,6 +37,18 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['row_options']['image'] = 'field_tapas_thumbnail';
   $handler->display->display_options['row_options']['title'] = 'title';
   $handler->display->display_options['row_options']['description'] = '';
+  /* Header: Global: Text area */
+  $handler->display->display_options['header']['area']['id'] = 'area';
+  $handler->display->display_options['header']['area']['table'] = 'views';
+  $handler->display->display_options['header']['area']['field'] = 'area';
+  $handler->display->display_options['header']['area']['format'] = 'filtered_html';
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['area']['id'] = 'area';
+  $handler->display->display_options['footer']['area']['table'] = 'views';
+  $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['content'] = '<a href="/all_collections" class="btn btn-info btn-block">View all Collections</a>
+';
+  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -45,10 +57,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Field: Content: Collection Thumbnail */
+  /* Field: Content: Project Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = 'Collection Thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
@@ -89,6 +102,8 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['footer']['area']['id'] = 'area';
   $handler->display->display_options['footer']['area']['table'] = 'views';
   $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['content'] = '<a href="/all_projects" class="btn btn-info btn-block">View all Projects</a>
+';
   $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
@@ -99,10 +114,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Field: Content: Collection Thumbnail */
+  /* Field: Content: Project Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = 'Collection Thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
@@ -135,6 +151,20 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler = $view->new_display('block', 'Records', 'block_2');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Featured Records';
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  /* Header: Global: Text area */
+  $handler->display->display_options['header']['area']['id'] = 'area';
+  $handler->display->display_options['header']['area']['table'] = 'views';
+  $handler->display->display_options['header']['area']['field'] = 'area';
+  $handler->display->display_options['header']['area']['format'] = 'filtered_html';
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['area']['id'] = 'area';
+  $handler->display->display_options['footer']['area']['table'] = 'views';
+  $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['content'] = '<a href="/all_records" class="btn btn-info btn-block">View all Records</a>
+';
+  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
   $handler->display->display_options['defaults']['filters'] = FALSE;
   /* Filter criterion: Content: Published */
@@ -154,6 +184,14 @@ function tapas_feature_view_featured_galleries_views_default_views() {
 
   /* Display: Projects (homepage) */
   $handler = $view->new_display('block', 'Projects (homepage)', 'block_3');
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['area']['id'] = 'area';
+  $handler->display->display_options['footer']['area']['table'] = 'views';
+  $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['content'] = '<a href="/all_projects" class="btn btn-info btn-block">View all Projects</a>
+';
+  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -164,10 +202,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_type'] = 'h5';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Field: Content: Collection Thumbnail */
+  /* Field: Content: Project Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = 'Collection Thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
@@ -187,10 +226,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Collection Thumbnail */
+  /* Field: Content: Project Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = 'Collection Thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
@@ -218,6 +258,14 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler = $view->new_display('block', 'Records (homepage)', 'block_5');
   $handler->display->display_options['defaults']['title'] = FALSE;
   $handler->display->display_options['title'] = 'Featured Records';
+  $handler->display->display_options['defaults']['footer'] = FALSE;
+  /* Footer: Global: Text area */
+  $handler->display->display_options['footer']['area']['id'] = 'area';
+  $handler->display->display_options['footer']['area']['table'] = 'views';
+  $handler->display->display_options['footer']['area']['field'] = 'area';
+  $handler->display->display_options['footer']['area']['content'] = '<a href="/all_records" class="btn btn-info btn-block">View all Records</a>
+';
+  $handler->display->display_options['footer']['area']['format'] = 'filtered_html';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -226,10 +274,11 @@ function tapas_feature_view_featured_galleries_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Field: Content: Collection Thumbnail */
+  /* Field: Content: Project Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
+  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = 'Collection Thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['empty'] = '<img src="/sites/default/files/default_images/tapaslogo-opaque_0.png"/>';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(

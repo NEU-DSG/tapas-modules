@@ -3,6 +3,7 @@ core = 7.x
 package = Views
 version = 7.x-0.1
 project = tapas_feature_view_my_tapas
+dependencies[] = ctools
 dependencies[] = fe_block
 dependencies[] = views
 dependencies[] = views_bootstrap
