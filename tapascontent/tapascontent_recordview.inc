@@ -93,7 +93,6 @@ function _tapas_readertab_dropdown($ography) {
 			'#name'=>'reading_selector',
 			'#type' => 'select',
 			'#title' => t('Choose Stylesheet'),
-			'#required' => TRUE,
 			'#description' => TAPAS_READERTAB_DROPDOWN_DESC,
 			'#options' => $options,
 	);
