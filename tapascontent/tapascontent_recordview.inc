@@ -20,7 +20,7 @@ define ('TAPAS_CHOOSE_STYLESHEET_MESSAGE', t('Please pick a stylesheet with whic
 define ('TAPAS_READERTAB', 'tapas_tab_reader');
 define ('TAPAS_METATAB', 'tapas_tab_meta');
 
-define ('TAPAS_TEI_LABEL', t('TEI'));
+define ('TAPAS_TEI_LABEL', t('XML View'));
 define ('TAPAS_TEIBP_LABEL', t('TEI Boilerplate'));
 define ('TAPAS_GENERIC_LABEL', t('TAPAS Generic'));
 /**
@@ -80,14 +80,13 @@ function _tapascontent_readertab($uuid, $ography) {
  */
 
 function _tapas_readertab_dropdown($ography) {
-	$options = array(
-		'teibp' => TAPAS_TEIBP_LABEL,
-		'tei' => TAPAS_TEI_LABEL,
-	);
-
+	$options = array();
 	if (!$ography){
 		$options['tapas_generic'] = TAPAS_GENERIC_LABEL;
 	}
+	$options['teibp'] = TAPAS_TEIBP_LABEL;
+	$options['tei'] TAPAS_TEI_LABEL;
+
 
 	return array (
 			'#name'=>'reading_selector',
