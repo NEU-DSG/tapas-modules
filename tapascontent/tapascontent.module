@@ -251,6 +251,8 @@ function tapascontent_node_presave($node) {
         $project_slug = $project->field_tapas_slug['und'][0]['safe_value'];
         $node->field_tapas_parent_slug['und'][0]['value'] = $project_slug;
         $node->field_tapas_parent_slug['und'][0]['safe_value'] = $project_slug;
+
+        $node->field_tapas_project['und'][0]['target_id'] = $project->nid;
       } else {
         $title = $node->title;
         _tapascontent_watchdog("Record '$title' failed to find its project",

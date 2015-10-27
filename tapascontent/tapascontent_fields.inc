@@ -53,8 +53,6 @@ define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
 define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
 define ('TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE', t(''));
 
-define ('TAPAS_INSTANCE_DESC_UPLOADSTATUS', t(''));
-
 define ('TAPAS_INSTANCE_DESC_PARENT_SLUG', t(''));
 
 
@@ -133,11 +131,20 @@ function tapas_field_bases() {
     ),
   );
 
+  $allowed_settings = array(
+    'allowed_values' => array(
+      STATUS_INPROGRESS => "This record is currently being processed.  Please check back later.",
+      STATUS_FAILED => "Record uploaded failed!",
+      STATUS_SUCCESS => "Record upload completed successfully"
+    ),
+  );
+
 	return array(
 		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
 		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
 		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
     'parent_slug' => _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
+    'project' => _tapas_fieldarray('project', 1, 'entityreference', 'entityreference'),
 		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
 		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
 		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
@@ -146,7 +153,8 @@ function tapas_field_bases() {
 		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
     'record_ography_type' => _tapas_fieldarray_with_settings('record_ography_type', 
       -1, 'text', 'list_text', $allowed_ographies),
-		//'upload_state' => _tapas_fieldarray('upload_state', 1, 'list', 'list_integer'),
+    'upload_status' => _tapas_fieldarray_with_settings('upload_status',
+      1, 'text', 'list_text', $allowed_settings),
 	);
 
 }
@@ -221,6 +229,16 @@ function tapas_fields_project() {
 			) +
 			tapas_instance_hyperlinks()
 		),
+
+    TAPAS_P_INSTANCE_PRE . 'upload_status' => (
+      tapas_instance_common(
+        'upload_status', 
+        t('Upload status'),
+        TAPAS_PROJECT,
+        t('')
+      ) + 
+      tapas_instance_multiselect()
+    ),
 	);
 }
 
@@ -274,6 +292,16 @@ function tapas_fields_collection() {
         TAPAS_INSTANCE_DESC_PARENT_SLUG
       ) + 
       tapas_instance_hiddentext()
+    ),
+
+    TAPAS_C_INSTANCE_PRE . 'upload_status' => (
+      tapas_instance_common(
+        'upload_status', 
+        t('Upload status'), 
+        TAPAS_COLLECTION, 
+        t('')
+      ) + 
+      tapas_instance_multiselect()
     ),
 	);
 }
@@ -343,7 +371,7 @@ function tapas_fields_record() {
         TAPAS_RECORD, 
         TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE
       ) + 
-      tapas_instance_record_ography_type()
+      tapas_instance_multiselect()
     ),
 
     TAPAS_R_INSTANCE_PRE . 'parent_slug' => (
@@ -354,6 +382,26 @@ function tapas_fields_record() {
         TAPAS_INSTANCE_DESC_PARENT_SLUG
       ) + 
       tapas_instance_hiddentext()
+    ),
+
+    TAPAS_R_INSTANCE_PRE . 'project' => (
+      tapas_instance_common(
+        'project', 
+        t('Record Project'), 
+        TAPAS_RECORD,
+        t('')
+      ) + 
+      tapas_instance_project()
+    ),
+
+    TAPAS_R_INSTANCE_PRE . 'upload_status' => (
+      tapas_instance_common(
+        'upload_status', 
+        t('Upload status'),
+        TAPAS_RECORD,
+        t('')
+      ) + 
+      tapas_instance_multiselect()
     ),
 	);
 
@@ -386,12 +434,27 @@ function tapas_instance_hiddentext() {
 
 }
 
+/** Returns a field instance array for entitytext using the checkbox widget
+ * @return array A field instance array
+ */
+
+function tapas_instance_project() { 
+  return array(
+    'required' => FALSE, 
+    'display' => array('default' => array('type' => 'hidden')),
+    'widget' => array(
+      'module' => 'options',
+      'type' => 'options_buttons'
+    ),
+  );
+}
+
 /** Returns a field instance array for specifically the ography type field
  *
  * @return array A field instance array 
  */
 
-function tapas_instance_record_ography_type() {
+function tapas_instance_multiselect() {
   return array(
     'required' => FALSE, 
     'widget' => array(

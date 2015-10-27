@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Tapas Feature Views All feature.
+ */
+
+include_once 'tapas_feature_views_all.features.inc';
