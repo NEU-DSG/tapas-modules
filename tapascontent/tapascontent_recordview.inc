@@ -85,7 +85,7 @@ function _tapas_readertab_dropdown($ography) {
 		$options['tapas_generic'] = TAPAS_GENERIC_LABEL;
 	}
 	$options['teibp'] = TAPAS_TEIBP_LABEL;
-	$options['tei'] TAPAS_TEI_LABEL;
+	$options['tei'] = TAPAS_TEI_LABEL;
 
 
 	return array (
