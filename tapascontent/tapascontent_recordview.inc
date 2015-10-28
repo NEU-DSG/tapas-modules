@@ -39,9 +39,9 @@ function tapascontent_view_tei_record($node) {
 		$ography = true;
 	} else {
 		$ography = false;
-		drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
-		drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/contextualItems.js', array('type'=>'file'));
-		drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
+		drupal_add_js(TAPAS_BASE_API_URL.'/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
+		drupal_add_js(TAPAS_BASE_API_URL.'/profiles/buildtapas/themes/tapas-themes/tapas_redesig/lib/tapas-generic/js/contextualItems.js', array('type'=>'file'));
+		drupal_add_js(TAPAS_BASE_API_URL.'/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
 	}
 	$uuid = $node->uuid;
 	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid, $ography);
