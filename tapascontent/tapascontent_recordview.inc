@@ -34,7 +34,7 @@ function tapascontent_view_tei_record($node) {
 	$theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
 	drupal_add_js($theme_path.'/assets/js/record.js', array('type'=>'file', 'requires_jquery'=>true));
 	drupal_add_library('system','ui.dialog');
-	drupal_add_js(TAPAS_BASE_API_URL.'/reading_interface/teibp/js/teibp.js', array('type'=>'file'));
+	drupal_add_js('/profiles/buildtapas/tapas/themes/tapas-themes/tapas_redesign/lib/teibp/js/teibp.js', array('type'=>'file'));
 	if (isset($node->field_tapas_record_ography_type['und'][0]['value'])){
 		$ography = true;
 	} else {
