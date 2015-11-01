@@ -141,6 +141,15 @@ function tapascontent_preprocess_node(&$variables){
 }
 
 /**
+ * Implements hook_form_alter().
+ *
+ * Invokes the Honeypot module's spam-prevention.
+ */
+
+function tapascollection_form_alter(&$form, &$form_state, $form_id) {
+  honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
+}
+/**
  * Implements hook_form_BASE_FORM_ID_alter().
  *
  * Used for hiding and disabling fields on the node creation and editing
