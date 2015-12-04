@@ -83,7 +83,7 @@ function tapas_feature_view_my_tapas_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => 15,
+        'weight' => 18,
       ),
     ),
     'title' => '',

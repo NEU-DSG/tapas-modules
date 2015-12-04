@@ -30,5 +30,4 @@ features[menu_links][] = menu-primary-menu_tapas--dev:http://tapasdev.neu.edu/?q
 features[menu_links][] = menu-primary-menu_tapas--learn:http://tapasdev.neu.edu/?q=commons
 features[menu_links][] = menu-primary-menu_tei-forums:http://tapasdev.neu.edu/?q=commons
 features[menu_links][] = menu-primary-menu_tei-guidelines:http://tapasdev.neu.edu/?q=commons
-features[menu_links][] = menu-primary-menu_tei-help:http://tapasdev.neu.edu/?q=commons
 features[menu_links][] = menu-primary-menu_tei-resources-and-support:http://tapasdev.neu.edu/?q=commons

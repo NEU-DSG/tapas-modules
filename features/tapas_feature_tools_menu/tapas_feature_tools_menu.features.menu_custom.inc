@@ -20,6 +20,5 @@ function tapas_feature_tools_menu_menu_default_menu_custom() {
   // Included for use with string extractors like potx.
   t('Tools Menu');
 
-
   return $menus;
 }

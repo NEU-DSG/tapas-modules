@@ -185,13 +185,13 @@ function tapas_feature_view_news_views_default_views() {
   $handler->display->display_options['fields']['title']['element_wrapper_type'] = 'div';
   $handler->display->display_options['fields']['title']['element_wrapper_class'] = 'panel-heading';
   $handler->display->display_options['fields']['title']['element_default_classes'] = FALSE;
-  /* Field: Content: Link */
-  $handler->display->display_options['fields']['view_node']['id'] = 'view_node';
-  $handler->display->display_options['fields']['view_node']['table'] = 'views_entity_node';
-  $handler->display->display_options['fields']['view_node']['field'] = 'view_node';
-  $handler->display->display_options['fields']['view_node']['label'] = '';
-  $handler->display->display_options['fields']['view_node']['exclude'] = TRUE;
-  $handler->display->display_options['fields']['view_node']['element_label_colon'] = FALSE;
+  /* Field: Content: Path */
+  $handler->display->display_options['fields']['path']['id'] = 'path';
+  $handler->display->display_options['fields']['path']['table'] = 'node';
+  $handler->display->display_options['fields']['path']['field'] = 'path';
+  $handler->display->display_options['fields']['path']['label'] = '';
+  $handler->display->display_options['fields']['path']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['path']['element_label_colon'] = FALSE;
   /* Field: Content: Body */
   $handler->display->display_options['fields']['body']['id'] = 'body';
   $handler->display->display_options['fields']['body']['table'] = 'field_data_body';
@@ -200,13 +200,13 @@ function tapas_feature_view_news_views_default_views() {
   $handler->display->display_options['fields']['body']['alter']['max_length'] = '100';
   $handler->display->display_options['fields']['body']['alter']['more_link'] = TRUE;
   $handler->display->display_options['fields']['body']['alter']['more_link_text'] = 'Read more';
-  $handler->display->display_options['fields']['body']['alter']['more_link_path'] = '[view_node]';
+  $handler->display->display_options['fields']['body']['alter']['more_link_path'] = '[path]';
   $handler->display->display_options['fields']['body']['alter']['trim'] = TRUE;
   $handler->display->display_options['fields']['body']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['body']['element_wrapper_type'] = 'div';
   $handler->display->display_options['fields']['body']['element_wrapper_class'] = 'panel-body';
   $handler->display->display_options['fields']['body']['element_default_classes'] = FALSE;
-  $handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
+  $handler->display->display_options['fields']['body']['type'] = 'text_plain';
   $handler->display->display_options['fields']['body']['settings'] = array(
     'trim_length' => '255',
   );
@@ -238,7 +238,7 @@ function tapas_feature_view_news_views_default_views() {
   $handler->display->display_options['use_more_text'] = 'More';
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '5';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '3';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
   $handler->display->display_options['style_plugin'] = 'default';
@@ -250,6 +250,18 @@ function tapas_feature_view_news_views_default_views() {
   $handler->display->display_options['row_options']['hide_empty'] = TRUE;
   $handler->display->display_options['row_options']['default_field_elements'] = FALSE;
   $handler->display->display_options['defaults']['row_options'] = FALSE;
+  $handler->display->display_options['defaults']['header'] = FALSE;
+  /* Header: Global: Unfiltered text */
+  $handler->display->display_options['header']['area_text_custom']['id'] = 'area_text_custom';
+  $handler->display->display_options['header']['area_text_custom']['table'] = 'views';
+  $handler->display->display_options['header']['area_text_custom']['field'] = 'area_text_custom';
+  $handler->display->display_options['header']['area_text_custom']['content'] = ' <h5>TAPAS Forums</h5>
+<div class="row">
+<div class="col-sm-6"><a href="http://beta.tapasproject.org/forums/support"> <i class="fa fa-question-circle fa-2x"></i> | Support Forums</a></div>
+<div class="col-sm-6"><a href="http://beta.tapasproject.org/forum/184"> <i class="fa fa-comments-o fa-2x"></i> | Community Forums</a></div>
+</div>
+<hr>
+<h5>TAPAS News</h5>';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -304,6 +316,7 @@ function tapas_feature_view_news_views_default_views() {
   								<dd>Code-Alongs are a free support workshop series that provides users guided support for developing their markup to make the best use of advanced features of the TAPAS research and publishing platform. <a href="http://tapasproject.org/workshops">Register</a> for a scheduled Code-Along today! If you would like to propose a Code-Along topic, please visit the <a href="http://tapasproject.org/code-alongs">Code-Along Forum</a>.</dd><dt>News</dt>
 </dl>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
+  $handler->display->display_options['defaults']['empty'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -348,8 +361,10 @@ function tapas_feature_view_news_views_default_views() {
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
+    'forum' => 'forum',
     'tapas_newsitem' => 'tapas_newsitem',
   );
+  $handler->display->display_options['filters']['type']['group'] = 1;
   /* Filter criterion: Content: Has taxonomy term */
   $handler->display->display_options['filters']['tid']['id'] = 'tid';
   $handler->display->display_options['filters']['tid']['table'] = 'taxonomy_index';
@@ -357,6 +372,7 @@ function tapas_feature_view_news_views_default_views() {
   $handler->display->display_options['filters']['tid']['value'] = array(
     179 => '179',
   );
+  $handler->display->display_options['filters']['tid']['group'] = 1;
   $handler->display->display_options['filters']['tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['tid']['type'] = 'select';
   $handler->display->display_options['filters']['tid']['vocabulary'] = 'news_categories';
@@ -559,10 +575,7 @@ function tapas_feature_view_news_views_default_views() {
 <dl><dt>TAPAS | Classroom</dt>
   								<dd>Coming soon!</dd><dt>News</dt>
 </dl>
-
-
-sample text . . . 
-sample text . . .sample text . . .sample text . . .sample text . . .sample text .';
+';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
@@ -636,8 +649,7 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
   $handler->display->display_options['pager']['options']['items_per_page'] = '5';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
-  $handler->display->display_options['style_plugin'] = 'views_bootstrap_grid_plugin_style';
-  $handler->display->display_options['style_options']['columns'] = '4';
+  $handler->display->display_options['style_plugin'] = 'default';
   $handler->display->display_options['defaults']['style_options'] = FALSE;
   $handler->display->display_options['defaults']['row_plugin'] = FALSE;
   $handler->display->display_options['row_plugin'] = 'views_bootstrap_thumbnail_plugin_rows';
@@ -658,25 +670,15 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
 <h1 style="text-align: center;">Workshops</h1>
 <dl>
 <dt>Workshops</dt>
-  							<dd>TAPAS offers workshops on the TEI and TAPAS support services. <a href="tapasproject.org/workshops">Register</a> for a scheduled workshop today! If you would like to host your own TAPAS workshop at your local institution, you can learn more <a href="tapasproject.org/workshops">here</a>.</dd>
+  							<dd>TAPAS offers workshops on the TEI and TAPAS support services. <a href="http://beta.tapasproject.org/workshops">Register</a> for a scheduled workshop today! If you would like to host your own TAPAS workshop at your local institution, you can learn more <a href="http://beta.tapasproject.org/workshops">here</a>.</dd>
 <dt>TAPAS Ambassadors Project</dt>
 <dd>Are you a teacher of the TEI who currently uses, or has an interest in using, TAPAS in your TEI workshops? Consider becoming a TAPAS Ambassador! Read more <a href="tapasproject.org/ambassadors">here</a> on this new initiative in TAPAS to support the teaching and learning of the TEI.</dd>
 
   					</dl>
 
-<h4>News</h4>';
+';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   $handler->display->display_options['defaults']['footer'] = FALSE;
-  /* Footer: Global: Unfiltered text */
-  $handler->display->display_options['footer']['area_text_custom']['id'] = 'area_text_custom';
-  $handler->display->display_options['footer']['area_text_custom']['table'] = 'views';
-  $handler->display->display_options['footer']['area_text_custom']['field'] = 'area_text_custom';
-  $handler->display->display_options['footer']['area_text_custom']['content'] = '<h4>Workshop Forum</h4>';
-  /* Footer: Global: View area */
-  $handler->display->display_options['footer']['view']['id'] = 'view';
-  $handler->display->display_options['footer']['view']['table'] = 'views';
-  $handler->display->display_options['footer']['view']['field'] = 'view';
-  $handler->display->display_options['footer']['view']['view_to_insert'] = 'community:block_3';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -733,7 +735,7 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
   $handler->display->display_options['use_more_text'] = 'Read More';
   $handler->display->display_options['defaults']['pager'] = FALSE;
   $handler->display->display_options['pager']['type'] = 'some';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '3';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '4';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
   $handler->display->display_options['style_plugin'] = 'default';
@@ -745,11 +747,6 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
   $handler->display->display_options['row_plugin'] = 'fields';
   $handler->display->display_options['defaults']['row_options'] = FALSE;
   $handler->display->display_options['defaults']['header'] = FALSE;
-  /* Header: Global: Unfiltered text */
-  $handler->display->display_options['header']['area_text_custom']['id'] = 'area_text_custom';
-  $handler->display->display_options['header']['area_text_custom']['table'] = 'views';
-  $handler->display->display_options['header']['area_text_custom']['field'] = 'area_text_custom';
-  $handler->display->display_options['header']['area_text_custom']['content'] = '<h1>News</h1>';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -770,7 +767,6 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
   $handler->display->display_options['fields']['body']['field'] = 'body';
   $handler->display->display_options['fields']['body']['label'] = '';
   $handler->display->display_options['fields']['body']['alter']['max_length'] = '100';
-  $handler->display->display_options['fields']['body']['alter']['more_link'] = TRUE;
   $handler->display->display_options['fields']['body']['alter']['more_link_text'] = 'Read more';
   $handler->display->display_options['fields']['body']['alter']['more_link_path'] = '[view_node]';
   $handler->display->display_options['fields']['body']['alter']['trim'] = TRUE;
@@ -778,7 +774,7 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
   $handler->display->display_options['fields']['body']['element_wrapper_type'] = 'div';
   $handler->display->display_options['fields']['body']['element_wrapper_class'] = 'panel-body';
   $handler->display->display_options['fields']['body']['element_default_classes'] = FALSE;
-  $handler->display->display_options['fields']['body']['type'] = 'text_summary_or_trimmed';
+  $handler->display->display_options['fields']['body']['type'] = 'text_plain';
   $handler->display->display_options['fields']['body']['settings'] = array(
     'trim_length' => '255',
   );
@@ -795,7 +791,6 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
   $handler->display->display_options['fields']['view_node']['label'] = '';
   $handler->display->display_options['fields']['view_node']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['view_node']['element_wrapper_type'] = 'span';
-  $handler->display->display_options['fields']['view_node']['element_wrapper_class'] = 'pull-right';
   $handler->display->display_options['fields']['view_node']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['view_node']['text'] = 'Read more';
   $handler->display->display_options['defaults']['filter_groups'] = FALSE;
@@ -804,7 +799,7 @@ sample text . . .sample text . . .sample text . . .sample text . . .sample text 
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
   $handler->display->display_options['filters']['status']['field'] = 'status';
-  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['value'] = '1';
   $handler->display->display_options['filters']['status']['group'] = 1;
   $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
   /* Filter criterion: Content: Type */

@@ -31,14 +31,14 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['pager']['type'] = 'some';
   $handler->display->display_options['pager']['options']['items_per_page'] = '10';
   $handler->display->display_options['style_plugin'] = 'views_bootstrap_thumbnail_plugin_style';
-  $handler->display->display_options['style_options']['columns'] = '2';
+  $handler->display->display_options['style_options']['columns'] = '4';
   $handler->display->display_options['row_plugin'] = 'fields';
   /* No results behavior: Global: Text area */
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area']['content'] = 'There are no collections yet in this project. <a href="/node/add/tapas-collection" class="btn btn-xs btn-default"><span class="fa fa-plus"></span> Add Collection</a>';
+  $handler->display->display_options['empty']['area']['content'] = 'There are no collections yet in this project. <!--<a href="/node/add/tapas-collection" class="btn btn-xs btn-default"><span class="fa fa-plus"></span> Add Collection</a>-->';
   $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
   /* Field: Content: Nid */
   $handler->display->display_options['fields']['nid']['id'] = 'nid';
@@ -83,6 +83,10 @@ function tapas_feature_view_collections_in_projects_views_default_views() {
   $handler->display->display_options['fields']['title']['element_class'] = 'text-center';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['element_default_classes'] = FALSE;
+  /* Sort criterion: Content: Title */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';

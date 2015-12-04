@@ -10,7 +10,7 @@
 function tapas_feature_tools_menu_menu_default_menu_links() {
   $menu_links = array();
 
-  // Exported menu link: menu-tools-menu_add-a-record:node/add/tapas-record
+  // Exported menu link: menu-tools-menu_add-a-record:node/add/tapas-record.
   $menu_links['menu-tools-menu_add-a-record:node/add/tapas-record'] = array(
     'menu_name' => 'menu-tools-menu',
     'link_path' => 'node/add/tapas-record',
@@ -21,6 +21,7 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'menu-tools-menu_add-a-record:node/add/tapas-record',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
     'hidden' => 0,
@@ -30,7 +31,7 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
     'weight' => -44,
     'customized' => 1,
   );
-  // Exported menu link: menu-tools-menu_create-a-collection:node/add/tapas-collection
+  // Exported menu link: menu-tools-menu_create-a-collection:node/add/tapas-collection.
   $menu_links['menu-tools-menu_create-a-collection:node/add/tapas-collection'] = array(
     'menu_name' => 'menu-tools-menu',
     'link_path' => 'node/add/tapas-collection',
@@ -41,16 +42,17 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'menu-tools-menu_create-a-collection:node/add/tapas-collection',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
-    'hidden' => 0,
+    'hidden' => 1,
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => -45,
+    'weight' => -46,
     'customized' => 1,
   );
-  // Exported menu link: menu-tools-menu_create-a-project:node/add/tapas-project
+  // Exported menu link: menu-tools-menu_create-a-project:node/add/tapas-project.
   $menu_links['menu-tools-menu_create-a-project:node/add/tapas-project'] = array(
     'menu_name' => 'menu-tools-menu',
     'link_path' => 'node/add/tapas-project',
@@ -61,16 +63,17 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'menu-tools-menu_create-a-project:node/add/tapas-project',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
-    'hidden' => 0,
+    'hidden' => 1,
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => -46,
+    'weight' => -48,
     'customized' => 1,
   );
-  // Exported menu link: menu-tools-menu_my-collections:my_collections
+  // Exported menu link: menu-tools-menu_my-collections:my_collections.
   $menu_links['menu-tools-menu_my-collections:my_collections'] = array(
     'menu_name' => 'menu-tools-menu',
     'link_path' => 'my_collections',
@@ -81,16 +84,17 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'menu-tools-menu_my-collections:my_collections',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
     'hidden' => 0,
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => -48,
+    'weight' => -47,
     'customized' => 1,
   );
-  // Exported menu link: menu-tools-menu_my-projects:my_projects
+  // Exported menu link: menu-tools-menu_my-projects:my_projects.
   $menu_links['menu-tools-menu_my-projects:my_projects'] = array(
     'menu_name' => 'menu-tools-menu',
     'link_path' => 'my_projects',
@@ -101,6 +105,7 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'menu-tools-menu_my-projects:my_projects',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
     'hidden' => 0,
@@ -110,7 +115,7 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
     'weight' => -49,
     'customized' => 1,
   );
-  // Exported menu link: menu-tools-menu_my-records:my_records
+  // Exported menu link: menu-tools-menu_my-records:my_records.
   $menu_links['menu-tools-menu_my-records:my_records'] = array(
     'menu_name' => 'menu-tools-menu',
     'link_path' => 'my_records',
@@ -121,16 +126,17 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'menu-tools-menu_my-records:my_records',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
     'hidden' => 0,
     'external' => 0,
     'has_children' => 0,
     'expanded' => 0,
-    'weight' => -47,
+    'weight' => -45,
     'customized' => 1,
   );
-  // Exported menu link: menu-tools-menu_my-tapas:my_tapas
+  // Exported menu link: menu-tools-menu_my-tapas:my_tapas.
   $menu_links['menu-tools-menu_my-tapas:my_tapas'] = array(
     'menu_name' => 'menu-tools-menu',
     'link_path' => 'my_tapas',
@@ -141,6 +147,7 @@ function tapas_feature_tools_menu_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'menu-tools-menu_my-tapas:my_tapas',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
     'hidden' => 0,

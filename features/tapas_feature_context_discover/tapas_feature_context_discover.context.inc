@@ -26,11 +26,11 @@ function tapas_feature_context_discover_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
-        'block-8' => array(
+        'block-9' => array(
           'module' => 'block',
-          'delta' => '8',
+          'delta' => '9',
           'region' => 'content',
-          'weight' => '2',
+          'weight' => '1',
         ),
         'search-form' => array(
           'module' => 'search',
@@ -55,12 +55,6 @@ function tapas_feature_context_discover_context_default_contexts() {
           'delta' => '0d23e2ff80bba7e923d73b45beef2adc',
           'region' => 'content',
           'weight' => '6',
-        ),
-        'block-9' => array(
-          'module' => 'block',
-          'delta' => '9',
-          'region' => 'content',
-          'weight' => '1',
         ),
       ),
     ),
