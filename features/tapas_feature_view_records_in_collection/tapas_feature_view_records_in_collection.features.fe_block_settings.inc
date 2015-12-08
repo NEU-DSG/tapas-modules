@@ -44,7 +44,7 @@ function tapas_feature_view_records_in_collection_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => 23,
+        'weight' => 31,
       ),
     ),
     'title' => 'Records',

@@ -21,25 +21,27 @@ function tapas_field_groups_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Files',
-    'weight' => '5',
+    'weight' => '3',
     'children' => array(
       0 => 'field_tapas_tei_file',
       1 => 'field_tapas_attachments',
-      2 => 'field_tapas_display_auth',
+      2 => 'field_tapas_display_date',
+      3 => 'field_tapas_record_ography_type',
     ),
     'format_type' => 'div',
     'format_settings' => array(
-      'formatter' => 'open',
+      'label' => 'Files',
       'instance_settings' => array(
-        'description' => '',
-        'show_label' => 1,
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => 'group-tapas-files field-group-div',
+        'description' => 'Provide some information about your record\'s file(s)',
+        'show_label' => '1',
         'label_element' => 'h3',
         'effect' => 'none',
         'speed' => 'fast',
-        'classes' => 'group-tapas-files field-group-div',
-        'required_fields' => 1,
-        'id' => '',
       ),
+      'formatter' => 'open',
     ),
   );
   $export['group_tapas_files|node|tapas_record|form'] = $field_group;
@@ -85,7 +87,7 @@ function tapas_field_groups_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Metadata',
-    'weight' => '5',
+    'weight' => '4',
     'children' => array(
       0 => 'group_tapas_metacontent',
     ),
@@ -179,26 +181,26 @@ function tapas_field_groups_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Tapas Web',
-    'weight' => '5',
+    'weight' => '2',
     'children' => array(
-      0 => 'field_tapas_display_contrib',
-      1 => 'field_tapas_display_date',
+      0 => 'field_tapas_display_auth',
+      1 => 'field_tapas_display_contrib',
       2 => 'og_tapas_r_to_c',
-      3 => 'field_tapas_record_ography_type',
     ),
     'format_type' => 'div',
     'format_settings' => array(
-      'formatter' => 'open',
+      'label' => 'Tapas Web',
       'instance_settings' => array(
+        'required_fields' => 1,
+        'id' => '',
+        'classes' => 'group-tapas-web field-group-div',
         'description' => '',
-        'show_label' => 1,
+        'show_label' => '0',
         'label_element' => 'h3',
         'effect' => 'none',
         'speed' => 'fast',
-        'classes' => 'group-tapas-web field-group-div',
-        'required_fields' => 1,
-        'id' => '',
       ),
+      'formatter' => 'open',
     ),
   );
   $export['group_tapas_web|node|tapas_record|form'] = $field_group;

@@ -44,7 +44,7 @@ function tapas_feature_menu_main_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => -5,
+        'weight' => -8,
       ),
     ),
     'title' => '<none>',

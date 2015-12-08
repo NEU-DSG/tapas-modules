@@ -44,7 +44,7 @@ function tapas_feature_block_learn_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => 26,
+        'weight' => 35,
       ),
     ),
     'title' => 'Learn',

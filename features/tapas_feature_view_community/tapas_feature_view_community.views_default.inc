@@ -221,11 +221,10 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['fields']['name']['table'] = 'users';
   $handler->display->display_options['fields']['name']['field'] = 'name';
   $handler->display->display_options['fields']['name']['relationship'] = 'uid';
-  /* Field: Content: Project Thumbnail */
+  /* Field: Content: Collection Thumbnail */
   $handler->display->display_options['fields']['field_tapas_thumbnail']['id'] = 'field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['table'] = 'field_data_field_tapas_thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['field'] = 'field_tapas_thumbnail';
-  $handler->display->display_options['fields']['field_tapas_thumbnail']['label'] = 'Collection Thumbnail';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['click_sort_column'] = 'fid';
   $handler->display->display_options['fields']['field_tapas_thumbnail']['settings'] = array(
     'image_style' => '',
@@ -283,7 +282,8 @@ function tapas_feature_view_community_views_default_views() {
   $handler->display->display_options['header']['area']['id'] = 'area';
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
-  $handler->display->display_options['header']['area']['content'] = '<h1 style="text-align:center;">Community Forums</h1>';
+  $handler->display->display_options['header']['area']['content'] = '<h1 style="text-align:center;">Community Forums</h1>
+<a href="http://beta.tapasproject.org/forum">Go to the Forums</a>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Type */

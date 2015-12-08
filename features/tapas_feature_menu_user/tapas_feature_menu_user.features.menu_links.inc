@@ -10,7 +10,7 @@
 function tapas_feature_menu_user_menu_default_menu_links() {
   $menu_links = array();
 
-  // Exported menu link: user-menu_log-out:user/logout
+  // Exported menu link: user-menu_log-out:user/logout.
   $menu_links['user-menu_log-out:user/logout'] = array(
     'menu_name' => 'user-menu',
     'link_path' => 'user/logout',
@@ -18,6 +18,7 @@ function tapas_feature_menu_user_menu_default_menu_links() {
     'link_title' => 'Log out',
     'options' => array(
       'identifier' => 'user-menu_log-out:user/logout',
+      'alter' => TRUE,
     ),
     'module' => 'system',
     'hidden' => 0,
@@ -27,7 +28,7 @@ function tapas_feature_menu_user_menu_default_menu_links() {
     'weight' => 10,
     'customized' => 1,
   );
-  // Exported menu link: user-menu_sign-in:user/login
+  // Exported menu link: user-menu_sign-in:user/login.
   $menu_links['user-menu_sign-in:user/login'] = array(
     'menu_name' => 'user-menu',
     'link_path' => 'user/login',
@@ -38,6 +39,7 @@ function tapas_feature_menu_user_menu_default_menu_links() {
         'title' => '',
       ),
       'identifier' => 'user-menu_sign-in:user/login',
+      'alter' => TRUE,
     ),
     'module' => 'menu',
     'hidden' => 0,

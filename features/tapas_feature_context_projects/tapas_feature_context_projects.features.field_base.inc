@@ -10,7 +10,7 @@
 function tapas_feature_context_projects_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_tapas_description'
+  // Exported field_base: 'field_tapas_description'.
   $field_bases['field_tapas_description'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -29,7 +29,7 @@ function tapas_feature_context_projects_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_tapas_links'
+  // Exported field_base: 'field_tapas_links'.
   $field_bases['field_tapas_links'] = array(
     'active' => 1,
     'cardinality' => -1,
@@ -58,7 +58,7 @@ function tapas_feature_context_projects_field_default_field_bases() {
     'type' => 'link_field',
   );
 
-  // Exported field_base: 'field_tapas_slug'
+  // Exported field_base: 'field_tapas_slug'.
   $field_bases['field_tapas_slug'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -80,7 +80,7 @@ function tapas_feature_context_projects_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_tapas_thumbnail'
+  // Exported field_base: 'field_tapas_thumbnail'.
   $field_bases['field_tapas_thumbnail'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -96,6 +96,7 @@ function tapas_feature_context_projects_field_default_field_bases() {
     'module' => 'image',
     'settings' => array(
       'default_image' => 0,
+      'profile2_private' => FALSE,
       'uri_scheme' => 'public',
     ),
     'translatable' => 0,

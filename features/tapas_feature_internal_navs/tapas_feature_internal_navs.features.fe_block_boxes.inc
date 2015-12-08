@@ -19,7 +19,6 @@ function tapas_feature_internal_navs_default_fe_block_boxes() {
     <li><a href="#people" class="page-scroll">People</a></li>
     <li><a href="#story" class="page-scroll">TAPAS Story</a></li>
 <li><a href="#partners" class="page-scroll">Partners & Supporters</a></li>
-    <li><a href="#explore" class="page-scroll">TAPAS | Explore</a></li>
  <li><a href="#accounts" class="page-scroll">Accounts & Memberships</a></li>
  <li><a href="#dev" class="page-scroll">TAPAS | Development</a></li>
   </ul>';
@@ -37,11 +36,11 @@ function tapas_feature_internal_navs_default_fe_block_boxes() {
 <li><a href="#activity" class="page-scroll">Activity</a></li>
 <li class="divider"></li>
 <li><a href="#learn" class="page-scroll">TAPAS | Learn</a></li>
-    <li><a tabindex="-1" href="#workshops" class="page-scroll">Workshops</a></li>
+    <!-- Hide Menu Items for now <li><a tabindex="-1" href="#workshops" class="page-scroll">Workshops</a></li>
     <li><a tabindex="-1" href="#codealong" class="page-scroll">Code-Alongs</a></li>
     <li><a tabindex="-1" href="#clinic" class="page-scroll">Clinics</a></li>
  <li><a tabindex="-1" href="#classroom" class="page-scroll">TAPAS | Classroom</a></li>
- <li><a tabindex="-1" href="#resources" class="page-scroll">TEI Resources</a></li>
+ <li><a tabindex="-1" href="#resources" class="page-scroll">TEI Resources</a></li> -->
  </ul>';
 
   $export['communitynavigation'] = $fe_block_boxes;

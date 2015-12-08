@@ -22,7 +22,7 @@ function tapas_feature_context_projects_context_default_contexts() {
         'tapas_project' => 'tapas_project',
       ),
       'options' => array(
-        'node_form' => '1',
+        'node_form' => '0',
       ),
     ),
   );

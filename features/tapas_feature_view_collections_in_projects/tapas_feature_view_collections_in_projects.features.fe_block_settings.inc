@@ -44,7 +44,7 @@ function tapas_feature_view_collections_in_projects_default_fe_block_settings() 
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => 7,
+        'weight' => 9,
       ),
     ),
     'title' => 'Collections',

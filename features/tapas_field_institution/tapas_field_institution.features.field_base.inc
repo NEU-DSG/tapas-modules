@@ -10,7 +10,7 @@
 function tapas_field_institution_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_tapas_institution'
+  // Exported field_base: 'field_tapas_institution'.
   $field_bases['field_tapas_institution'] = array(
     'active' => 1,
     'cardinality' => -1,

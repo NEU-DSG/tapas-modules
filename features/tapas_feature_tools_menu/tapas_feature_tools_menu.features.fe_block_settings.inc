@@ -44,10 +44,10 @@ function tapas_feature_tools_menu_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => 3,
+        'weight' => 0,
       ),
     ),
-    'title' => '',
+    'title' => 'Tools',
     'visibility' => 0,
   );
 

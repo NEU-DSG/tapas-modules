@@ -30,19 +30,19 @@ function tapas_feature_view_records_in_collection_views_default_views() {
   $handler->display->display_options['query']['options']['query_comment'] = FALSE;
   $handler->display->display_options['exposed_form']['type'] = 'basic';
   $handler->display->display_options['pager']['type'] = 'full';
-  $handler->display->display_options['pager']['options']['items_per_page'] = '6';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '8';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['pager']['options']['id'] = '0';
   $handler->display->display_options['pager']['options']['quantity'] = '9';
   $handler->display->display_options['style_plugin'] = 'views_bootstrap_thumbnail_plugin_style';
-  $handler->display->display_options['style_options']['columns'] = '2';
+  $handler->display->display_options['style_options']['columns'] = '4';
   $handler->display->display_options['row_plugin'] = 'fields';
   /* No results behavior: Global: Text area */
   $handler->display->display_options['empty']['area']['id'] = 'area';
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area']['content'] = 'There are no records for this collection yet. <a href=\'/node/add/tapas-record\' class="btn btn-xs btn-default"><span class="fa fa-plus"></span> Add a Record</a>';
+  $handler->display->display_options['empty']['area']['content'] = 'There are no records for this collection yet. <!--<a href=\'/node/add/tapas-record\' class="btn btn-xs btn-default"><span class="fa fa-plus"></span> Add a Record</a>-->';
   $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
   /* Relationship: OG membership: OG membership from Node */
   $handler->display->display_options['relationships']['og_membership_rel']['id'] = 'og_membership_rel';
@@ -56,7 +56,7 @@ function tapas_feature_view_records_in_collection_views_default_views() {
   $handler->display->display_options['fields']['nid']['label'] = '';
   $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
-  /* Field: Content: Ography Types */
+  /* Field: Content: File Type */
   $handler->display->display_options['fields']['field_tapas_record_ography_type']['id'] = 'field_tapas_record_ography_type';
   $handler->display->display_options['fields']['field_tapas_record_ography_type']['table'] = 'field_data_field_tapas_record_ography_type';
   $handler->display->display_options['fields']['field_tapas_record_ography_type']['field'] = 'field_tapas_record_ography_type';
@@ -100,12 +100,16 @@ function tapas_feature_view_records_in_collection_views_default_views() {
   $handler->display->display_options['fields']['title']['element_class'] = 'text-center [field_tapas_record_ography_type]';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['element_default_classes'] = FALSE;
+  /* Sort criterion: Content: Title */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
   /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Contextual filter: Content: Groups audience (og_tapas_r_to_c) */
+  /* Contextual filter: Content: Collections (og_tapas_r_to_c) */
   $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['id'] = 'og_tapas_r_to_c_target_id';
   $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['table'] = 'og_membership';
   $handler->display->display_options['arguments']['og_tapas_r_to_c_target_id']['field'] = 'og_tapas_r_to_c_target_id';

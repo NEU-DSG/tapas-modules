@@ -44,7 +44,7 @@ function tapas_feature_search_form_default_fe_block_settings() {
         'region' => '',
         'status' => 0,
         'theme' => 'tapas_redesign',
-        'weight' => -2,
+        'weight' => -5,
       ),
     ),
     'title' => 'Search',

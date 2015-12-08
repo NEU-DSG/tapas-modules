@@ -10,7 +10,7 @@
 function tapas_field_institution_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-tapas_project-field_tapas_institution'
+  // Exported field_instance: 'node-tapas_project-field_tapas_institution'.
   $field_instances['node-tapas_project-field_tapas_institution'] = array(
     'bundle' => 'tapas_project',
     'default_value' => NULL,
@@ -22,7 +22,13 @@ function tapas_field_institution_field_default_field_instances() {
         'module' => 'taxonomy',
         'settings' => array(),
         'type' => 'taxonomy_term_reference_link',
-        'weight' => 11,
+        'weight' => 5,
+      ),
+      'search_result' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 6,
       ),
       'teaser' => array(
         'label' => 'above',
