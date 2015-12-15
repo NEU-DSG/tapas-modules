@@ -1,7 +1,0 @@
-name = importtaxonomies
-core = 7.x
-package = TAPAS
-version = 7.x-0.1
-dependencies[] = taxonomy
-dependencies[] = features
-dependencies[] = tapas_feature_taxonomy_institution
