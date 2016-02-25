@@ -1,0 +1,16 @@
+name = tapas_feature_content_shared
+core = 7.x
+package = Content Types
+version = 7.x-1.0
+dependencies[] = ctools
+dependencies[] = features
+dependencies[] = field_group
+dependencies[] = options
+dependencies[] = tapas_feature_base_og
+dependencies[] = text
+features[features_api][] = api:2
+features[field_base][] = body
+features[field_instance][] = node-tapas_shared-body
+features[field_instance][] = node-tapas_shared-group_group
+features[node][] = tapas_shared
+project path = profiles/buildtapas/modules/tapas_modules/features
