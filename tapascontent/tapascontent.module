@@ -15,7 +15,7 @@
 include_once('tapascontent_hydra.inc');
 include_once('tapascontent_recordview.inc');
 include_once('tapascontent_solr_indexing.inc');
-include_once('tapascontent_validations.inc');
+include_once('tapascontent_forms.inc');
 
 // ====================================================================================
 // Functions implementing hooks
@@ -139,31 +139,6 @@ function tapascontent_preprocess_node(&$variables){
       break;
   }
 }
-
-/**
- * Implements hook_form_alter().
- *
- * Invokes the Honeypot module's spam-prevention.
- */
-
-function tapascollection_form_alter(&$form, &$form_state, $form_id) {
-  honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
-}
-/**
- * Implements hook_form_BASE_FORM_ID_alter().
- *
- * Used for hiding and disabling fields on the node creation and editing
- * forms for tapasproject and tapascollection content types.
- */
-//function tapascollection_form_node_form_alter(&$form, &$form_state, $form_id) {
-
-	////We want this hidden whenever it appears in any form.
-	//$form['og_roles_permissions']['#access'] = TRUE;
-//}
-
-
-////}
-
 
 // ====================================================================================
 // Helper functions
