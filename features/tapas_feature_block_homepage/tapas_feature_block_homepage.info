@@ -1,7 +1,7 @@
 name = Tapas Feature Block Homepage
 core = 7.x
 package = Blocks
-version = 7.x-0.1
+version = 7.x-0.2
 project = tapas_feature_block_homepage
 dependencies[] = fe_block
 features[fe_block_boxes][] = home_page_4_components
