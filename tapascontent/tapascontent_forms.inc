@@ -4,6 +4,9 @@
  * tapascontent_forms_inc
  */
 
+define('TAPASCONTENT_CREATE_PROJ_FIRST_HEADER', t("Please create a project first, or use the Commons."));
+define('TAPASCONTENT_CREATE_PROJ_FIRST_TEXT', t("Creating a Collection requires having a Project to attach it to (either a project that you created, or one to which the owner has given you editing privledges). You don't currently seem to be an editing member of any Projects; please create a project first! Alternately, you can upload TEI directly to the Common Repository without creating any projects or collections."));
+
 //=============================================================
 // Form Overrides
 //=============================================================
@@ -49,12 +52,28 @@ function tapascontent_form_tapas_collection_node_form_alter(&$form, &$form_state
   $form['#validate'][] = '_tapascontent_validate_collection_form';
 //	$form['field_tapas_upload_status']['#access'] = FALSE;
 	$form['field_tapas_parent_slug']['#access'] = FALSE;
+
+	$user_groups = og_get_groups_by_user(NULL, "node");
+
+	$roles = og_roles('node', TAPAS_COLLECTION);
+	$member_role = array_search('member', $roles);
+	foreach ($roles as $key=>$name) {
+		drupal_set_message("Role $key is $name");
+	}
+	drupal_set_message("Key for member role is $member_role");
+
+	$permissions = og_role_permissions($roles);
+	foreach ($permissions as $key=>$perms) {
+		drupal_set_message("Role $key:");
+		foreach($perms as $key=>$value) {
+			drupal_set_message("Permission $key is $value");
+		}
+	}
+
   
 
-	$user_groups = og_get_groups_by_user(user_load( $account=NULL, array('tapas_project')));
-
 	if(empty($user_groups)) {
-		//drupal_set_message("You are NOT a member of any projects");
+		drupal_set_message("You are NOT a member of any projects");
 		
 		$form['field_tapas_description']['#access'] = FALSE;
 		$form['field_tapas_thumbnail']['#access'] = FALSE;
@@ -72,9 +91,18 @@ function tapascontent_form_tapas_collection_node_form_alter(&$form, &$form_state
 				unset($form[$key]);
 			}
 		}
-		$form['title']['#prefix']  = "<h2>Please create a project first, or use the Commons</h2> Creating a Collection requires having a Project to attach it to (either a project that you created, or one to which the owner has given you editing privledges). You don't currently seem to be an editing member of any Projects; please create a project first! Alternately, you can upload TEI directly to the Common Repository without creating any projects or collections.";
+		$form['title']['#prefix'] = 
+			"<h2>" . TAPASCONTENT_CREATE_PROJ_FIRST_HEADER . "</h2>" . 
+			TAPASCONTENT_CREATE_PROJ_FIRST_TEXT;
 	} else {
-		//drupal_set_message("You ARE a member of at least one project");
+		drupal_set_message("You ARE a member of at least one project");
+
+		foreach ($user_groups as $gid) {
+			$roles = og_get_user_roles('node', $gid);
+			foreach ($roles as $role) {
+				drupal_set_message("User has a role of $role");
+			}
+		}
 	}
 }
 
