@@ -21,26 +21,22 @@ define ('TAPAS_R_TO_C', 'og_tapas_r_to_c');
 define ('TAPAS_R_TO_S', 'og_tapas_r_to_s');
 
 /** Name of sitewide paid-member role. Must match what's in the buildtapas profile! */
-define ('TAPAS_PAIDMEMBER_ROLE_INSTALL', 'paidmember');
+define ('TAPAS_PAIDMEMBER_ROLE_PROFILE', 'paidmember');
 /** Name of sitewide admin role. Must match what's in the buildtapas profile! */
-define ('TAPAS_ADMIN_ROLE_INSTALL', 'administrator');
+define ('TAPAS_ADMIN_ROLE_PROFILE', 'administrator');
 
 //[> Project role names <]
-//define ('TAPAS_PROJECT_ROLE_MEMBER', 'project_member');
-//define ('TAPAS_PROJECT_ROLE_EDITOR', 'project_editor');
-//define ('TAPAS_PROJECT_ROLE_ADMIN', 'project_administrator');
+define ('TAPAS_PROJECT_ROLE_MEMBER', 'project_member');
+define ('TAPAS_PROJECT_ROLE_EDITOR', 'project_editor');
+define ('TAPAS_PROJECT_ROLE_ADMIN', 'project_administrator');
 
 //[> Collection role names <]
-//define ('TAPAS_COLLECTION_ROLE_MEMBER', 'collection_member');
-//define ('TAPAS_COLLECTION_ROLE_EDITOR', 'collection_editor');
-//define ('TAPAS_COLLECTION_ROLE_ADMIN', 'collection_administrator');
-
-
+define ('TAPAS_COLLECTION_ROLE_MEMBER', 'collection_member');
+define ('TAPAS_COLLECTION_ROLE_EDITOR', 'collection_editor');
+define ('TAPAS_COLLECTION_ROLE_ADMIN', 'collection_administrator');
 
 
 include_once('tapascontent_fields.inc');
-
-
 
 /**
  * Implements hook_install()
@@ -51,16 +47,24 @@ function tapascontent_install() {
 	//make custom node types available at install
 	node_types_rebuild();
 
+	drupal_set_message("Creating field bases...");
 	//create field bases
 	$bases = tapas_field_bases();
 	foreach ($bases as $field) {
-		field_create_field($field);
+		//drupal_set_message("Checking for field " . $field['field_name']);
+		if (!field_info_field($field['field_name'])) {
+			//drupal_set_message("Creating field " . $field['field_name'] . " first entity type allowed is " . $field['entity_types'][0]);
+			field_create_field($field);
+		}
 	}
 
 	field_info_cache_clear();
 
+	drupal_set_message("Adding field instances...");
 	_tapascontent_add_field_instances();
+	drupal_set_message("Updating sitewide permissions...");
 	_tapascontent_add_sitewide_permissions();
+	drupal_set_message("Adding group roles and permissions...");
 	_tapascontent_add_og_permissions();
 
 }
@@ -71,26 +75,45 @@ function tapascontent_install() {
 
 function tapascontent_uninstall() {
 
-	_tapascontent_revoke_og_permissions();
 	_tapascontent_revoke_sitewide_permissions();
-
 	
 	$group_bundles = array(TAPAS_PROJECT, TAPAS_COLLECTION, TAPAS_SHARED);
+
+	drupal_set_message("Removing field instances...");
 	foreach($group_bundles as $bundle) {
-		_tapascontent_remove_og_group_fields($bundle);
+		//drupal_set_message("removing <s>og roles</s> and field instances from bundle $bundle");
+		//og_delete_user_roles_by_group('node', $bundle); // TODO: Commented out because of OG error. (I think remove field instance does this itself, may not be neccesary to call separately.)
+		_tapascontent_remove_field_instances($bundle);
 	}
 
+
+	drupal_set_message("Deleting fields...");
 	//Deleting the base automatically deletes all instances.
+	// (note that the reverse is also true: deleting all instances removes the base.)
 	$base_names = array_keys(tapas_field_bases());
 	foreach ($base_names as $field) {
 		field_delete_field($field);
 	}
 
 
-	node_type_delete(TAPAS_RECORD);
-	node_type_delete(TAPAS_COLLECTION);
-	node_type_delete(TAPAS_PROJECT);
+	
+	drupal_set_message("Deleting custom node types...");
+	$custom_node_types = array(
+		TAPAS_RECORD,
+		TAPAS_COLLECTION,
+		TAPAS_PROJECT,
+		TAPAS_SHARED);
+
+	foreach($custom_node_types as $type) {
+		if (node_type_load($type)) {
+			node_type_delete($type);
+		}
+	}
+
+	drupal_set_message("Batching changes...");
 	field_purge_batch(1000);
+
+	drupal_set_message("Finished uninstall.");
 }
 
 //=============================================================
@@ -102,36 +125,44 @@ function _tapascontent_add_field_instances() {
 	$allfields = _tapascontent_all_fields();
 
 	foreach($allfields as $field) {
-		field_create_instance($field);
+		//drupal_set_message("Checking if instance exists, before creatin instance of field " . $field['field_name'] . " on entity type " . $field['entity_type'] . " of bundle " . $field['bundle']);
+		if (!field_info_instance('node', $field['field_name'], $field['bundle'])) {
+			field_create_instance($field);
+			//drupal_set_message("instance created");
+		}
 	}
 
 	$groups = array(TAPAS_PROJECT, TAPAS_COLLECTION, TAPAS_SHARED);
 
 	foreach($groups as $bundle) {
+		//drupal_set_message("Adding OG Group fields to $bundle");
 		og_create_field(OG_GROUP_FIELD, 'node', $bundle);
 		og_create_field(OG_ACCESS_FIELD, 'node', $bundle);
 	}
 
 	// Add OG Audience linking fields.
+	//drupal_set_message("adding OG content audience fields");
 	_tapascontent_og_audience(TAPAS_COLLECTION, TAPAS_PROJECT, TAPAS_C_TO_P);
 	_tapascontent_og_audience(TAPAS_RECORD, TAPAS_COLLECTION, TAPAS_R_TO_C);
 	_tapascontent_og_audience(TAPAS_RECORD, TAPAS_SHARED, TAPAS_R_TO_S);
+	//drupal_set_message("Leaving _tapascontent_add_field_instances() function.");
 
 }
 
 
-function _tapascontent_remove_field_instances() {
+function _tapascontent_remove_field_instances($bundle) {
 
+	//drupal_set_message("entered remove field instances subroutine.");
 	// Remove OG field instances
 	$fields = array(OG_GROUP_FIELD, OG_ACCESS_FIELD);
 
 	foreach($fields as $field) {
+		//drupal_set_message("Deleiting $field field instance.");
 		og_field_delete_instance(
-			og_info_instance('node', $field, $bundle));
+			field_info_instance('node', $field, $bundle));
 	}
 
 }
-
 
 /**
  * Helper function to generate the OG audience field for group content.
@@ -148,7 +179,6 @@ function _tapascontent_og_audience($content_bundle, $group_bundle, $link_name) {
 	$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
 	$audience_field['field']['settings']['target_type'] = $group_bundle;
 	og_create_field($link_name, 'node', $content_bundle, $audience_field);
-
 }
 //=============================================================
 // Sitewide Drupal roles & permissions
@@ -159,13 +189,14 @@ function _tapascontent_og_audience($content_bundle, $group_bundle, $link_name) {
  * Add editing permissions for sitewide roles on installation.
  */
 
-function tapascontent_add_sitewide_permissions() {
+function _tapascontent_add_sitewide_permissions() {
 
 	$perms = _tapascontent_sitewide_permissions();
 	$roles = _tapascontent_sitewide_role_rids();
 
 	foreach($roles as $role) {
-		user_role_grant_permission($role, $perms[$role]);
+		//drupal_set_message("Adding $role role.");
+		user_role_grant_permissions($role, $perms[$role]);
 	}
 	
 }
@@ -173,13 +204,14 @@ function tapascontent_add_sitewide_permissions() {
 /**
  * Remove editing permissions from sitewide roles on uninstall.
  */
-function tapascontent_remove_sitewide_permissions() {
+function _tapascontent_revoke_sitewide_permissions() {
 
 	$perms = _tapascontent_sitewide_permissions();
 	$roles = _tapascontent_sitewide_role_rids();
 
 	foreach($roles as $role) {
-		user_role_revoke_permission($role, $perms[$role]);
+		//drupal_set_message("Removing $role role.");
+		user_role_revoke_permissions($role, $perms[$role]);
 	}
 }
 
@@ -195,21 +227,22 @@ function _tapascontent_sitewide_permissions() {
 	//   appropriate group" aspect of the permissions. OG can limit
 	//   the permissions but not expand them.
 
-	$basic_user = _tapascontent_permission_edit_own(TAPAS_RECORD);
-
+	$basic_user = _tapascontent_permissions_edit_own(TAPAS_RECORD);
+							 
 	$paidmember = 
-		_tapascontent_permission_edit_any(TAPAS_RECORD) +
-		_tapascontent_permission_edit_any(TAPAS_COLLECTION) +
-		_tapascontent_permission_eidt_own(TAPAS_PROJECT);
+		_tapascontent_permissions_edit_any(TAPAS_RECORD) +
+		_tapascontent_permissions_edit_any(TAPAS_COLLECTION) +
+		_tapascontent_permissions_edit_own(TAPAS_PROJECT);
 
 	$admin = 
-		_tapascontent_permission_edit_any(TAPAS_RECORD) +
-		_tapascontent_permission_edit_any(TAPAS_COLLECTION) +
-		_tapascontent_permission_edit_any(TAPAS_SHARED) +
-		_tapascontent_permission_edit_any(TAPAS_PROJECT);
+		_tapascontent_permissions_edit_any(TAPAS_RECORD) +
+		_tapascontent_permissions_edit_any(TAPAS_COLLECTION) +
+		_tapascontent_permissions_edit_any(TAPAS_SHARED) +
+		_tapascontent_permissions_edit_any(TAPAS_PROJECT);
 
-	$paidmember_rid = array_search(TAPAS_PAIDMEMBER_ROLE, user_roles());
-	$admin_rid = array_search(TAPAS_ADMIN_ROLE, user_roles());
+	// Get the RID's from the machine names.
+	$paidmember_rid = array_search(TAPAS_PAIDMEMBER_ROLE_PROFILE, user_roles());
+	$admin_rid = array_search(TAPAS_ADMIN_ROLE_PROFILE, user_roles());
 
 	return array(
 		DRUPAL_AUTHENTICATED_RID => $basic_user,
@@ -225,8 +258,8 @@ function _tapascontent_sitewide_permissions() {
 
 function _tapascontent_sitewide_role_rids() {
 
-	$paidmember_rid = array_search(TAPAS_PAIDMEMBER_ROLE, user_roles());
-	$admin_rid = array_search(TAPAS_ADMIN_ROLE, user_roles());
+	$paidmember_rid = array_search(TAPAS_PAIDMEMBER_ROLE_PROFILE, user_roles());
+	$admin_rid = array_search(TAPAS_ADMIN_ROLE_PROFILE, user_roles());
 
 	return array(
 		DRUPAL_AUTHENTICATED_RID,
@@ -239,12 +272,12 @@ function _tapascontent_sitewide_role_rids() {
 //=============================================================
 
 
-function tapascontent_setup_og_permissions() {
+function _tapascontent_add_og_permissions() {
 
 	// Let user create, update, and delete their own shared repo record content
 	$roles = og_roles('node', TAPAS_SHARED);
 	$role_id = array_search('member', $roles);
-	og_role_grant_permissions($role_id, _tapascontent_og_perms_edit_own(TAPAS_RECORD));
+	og_role_grant_permissions($role_id, _tapascontent_permissions_edit_own(TAPAS_RECORD));
 
 	// Create Editor roles
 	_tapascontent_create_og_editing_role(TAPAS_COLLECTION, TAPAS_RECORD, FALSE);
@@ -253,12 +286,6 @@ function tapascontent_setup_og_permissions() {
 	// Create Admin Roles
 	_tapascontent_create_og_editing_role(TAPAS_COLLECTION, TAPAS_RECORD, TRUE);
 	_tapascontent_create_og_editing_role(TAPAS_PROJECT, TAPAS_COLLECTION, TRUE);
-
-}
-
-function tapascontent_remove_og_permissions() {
-
-
 
 }
 
@@ -280,13 +307,14 @@ function _tapascontent_create_og_editing_role($type, $subtype, $admin=FALSE) {
 	$rolename = $admin?"$type Admin":"$type Editor";
 
 	$role = og_role_create($rolename, 'node', NULL, $type);
-	og_role_grant_permissions($role->rid, _tapascontent_og_perms_edit_any($subtype));
+	og_role_save($role); // seems we can't add permissions to it until after it's saved.
+	og_role_grant_permissions($role->rid, _tapascontent_permissions_edit_any($subtype));
 	
 	if ($admin) {
 		og_role_grant_permissions($role->rid, _tapascontent_og_perms_admin($type));
 	}
 
-	$og_role_save($role);
+	og_role_save($role); // need to save it again after adding the permissions.
 	return $role->rid;
 
 }
@@ -313,11 +341,11 @@ function _tapascontent_og_perms_admin($type) {
 /**
  * Helper function returning basic "edit own" permissions.
  */
-function _tapascontent_permsission_edit_own($type) {
+function _tapascontent_permissions_edit_own($type) {
 	return array(
 		'create ' . $type . ' content',
-		'edit own ' . $type . 'content',
-		'delete own ' . $type . 'content',
+		'edit own ' . $type . ' content',
+		'delete own ' . $type . ' content',
 	);
 
 }
@@ -325,7 +353,7 @@ function _tapascontent_permsission_edit_own($type) {
 /**
  * Helper function returning "edit any" permissions
  */
-function _tapascontent_permission_edit_any($type) {
+function _tapascontent_permissions_edit_any($type) {
 
 	return array(
 		'create ' . $type . ' content',

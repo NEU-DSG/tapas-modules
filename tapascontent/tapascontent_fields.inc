@@ -45,7 +45,7 @@ define ('TAPAS_INSTANCE_DESC_COLLECTIONTHUMB', t(''));
 define ('TAPAS_INSTANCE_DESC_COLLECTIONSLUG', t(''));
 
 define ('TAPAS_INSTANCE_DESC_SHAREDDESCRIPTION', t(''));
-define ('TAPAS_INSTANCE_DESC_SHARAEDTHUMB', t(''));
+define ('TAPAS_INSTANCE_DESC_SHAREDTHUMB', t(''));
 
 define ('TAPAS_INSTANCE_DESC_PERSISTID', t(''));
 define ('TAPAS_INSTANCE_DESC_TEIFILE', t(''));
@@ -123,75 +123,87 @@ function tapas_field_bases() {
   );
 
 	return array(
-		'description' => array(
+		TAPAS_FIELD_PREFIX . 'description' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'description',
+			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text_long',
 		),
-		'thumbnail' => array(
+		TAPAS_FIELD_PREFIX . 'thumbnail' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'image',
 			'type' => 'image',
 		),
-		'slug' => array(
+		TAPAS_FIELD_PREFIX . 'slug' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'slug',
+			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text',
 		),
-		'project' => array(
+		TAPAS_FIELD_PREFIX . 'project' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'project',
+			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'entityreference',
 			'type' => 'entityreference',
 		),
-		'links' => array(
+		TAPAS_FIELD_PREFIX . 'links' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'links',
+			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'link',
 			'type' => 'link_field',
 		),
-		'tei_file' => array(
+		TAPAS_FIELD_PREFIX . 'tei_file' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'tei_file',
+			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'file',
 			'type' => 'file',
 		),
-		'attatchments' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'attatchments',
+		TAPAS_FIELD_PREFIX . 'attachments' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'attachments',
+			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'file',
 			'type' => 'file',
 		),
-		'display_auth' => array(
+		TAPAS_FIELD_PREFIX . 'display_auth' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'display_auth',
+			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'text',
 			'type' => 'text',
 		),
-		'display_contrib' => array(
+		TAPAS_FIELD_PREFIX . 'display_contrib' => array(
 			'field_name' => TAPAS_FIELD_PREFIX .'display_contrib',
+			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'text',
 			'type' => 'text',
 		),
-		'display_date' => array(
+		TAPAS_FIELD_PREFIX . 'display_date' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'display_date',
+			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'date',
 			'type' => 'date',
 		),
-		'record_ography_type' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'record_ography_type',
+		TAPAS_FIELD_PREFIX . 'record_ography_type' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'record_ography_types',
+			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'text',
 			'type' => 'list_text',
 			'settings' => $allowed_status,
 		),
-		'upload_status' => array(
+		TAPAS_FIELD_PREFIX . 'upload_status' => array(
 			'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'list_text',
@@ -258,7 +270,7 @@ function _tapascontent_all_fields() {
 			array(
 				'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
 				'label' => t('Upload Status'),
-				'enity_type' => 'node',
+				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
       ) + 
       tapas_instance_multiselect() // TODO: Why is this multiselect?

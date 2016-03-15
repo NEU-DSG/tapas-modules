@@ -23,12 +23,25 @@ include_once('tapascontent_forms.inc');
 
 
 /**
+ * Implements hook hook_update_N().
+ */
+
+function tapaspcontent_update_7250(&$sandbox) { //TODO
+	
+
+}
+
+/**
  * Imlements hook_node_info().
  */
 
 function tapascontent_node_info() {
-
 	$items = array(
+		TAPAS_SHARED => array(
+			'name' => t('TAPAS Shared Repository'),
+			'base' => 'node_content',
+			'has_title' => TRUE,
+		),
 		TAPAS_PROJECT => array(
 			'name' => t('TAPAS Project'),
 			'base' => 'node_content',
