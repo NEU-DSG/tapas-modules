@@ -23,6 +23,7 @@ function tapascollection_form_alter(&$form, &$form_state, $form_id) {
 
 /**
  * Implements hook_form_BASE_ID_alter().
+ * all NODE forms
  */
 function tapascontent_form_node_form_alter(&$form, &$form_state, $form_id) {
 
@@ -39,7 +40,6 @@ function tapascontent_form_node_form_alter(&$form, &$form_state, $form_id) {
 function tapascontent_form_tapas_project_node_form_alter(&$form, &$form_state, $form_id) {
 	drupal_set_message("Project form called.");
   $form['#validate'][] = '_tapascontent_validate_project_form';
-//	$form['field_tapas_upload_status']['#access'] = FALSE;
 }
 
 
@@ -50,30 +50,56 @@ function tapascontent_form_tapas_project_node_form_alter(&$form, &$form_state, $
 function tapascontent_form_tapas_collection_node_form_alter(&$form, &$form_state, $form_id) {
 
   $form['#validate'][] = '_tapascontent_validate_collection_form';
-//	$form['field_tapas_upload_status']['#access'] = FALSE;
-	$form['field_tapas_parent_slug']['#access'] = FALSE;
+	_tapascontent_collection_form_check($form);
+}
+
+/**
+ * Verify (valid) group membership, display form
+ *
+ * In theory, if the user is not currently a member of any groups, the
+ * $user_groups array should be empty. However, during testing I encountered
+ * situations where deleted groups were not always removed properly from the
+ * user. In these cases, the $user_groups array would be non-empty, but the
+ * gid(s) in it would be invalid, and throw exceptions when used in any function
+ * acceptng a gid. This recursive function tries to check for this, clean up,
+ * and then try again to check for valid groups.
+ */
+
+function _tapascontent_collection_form_check(&$form) {
 
 	$user_groups = og_get_groups_by_user(NULL, "node");
 
-	$roles = og_roles('node', TAPAS_COLLECTION);
-	$member_role = array_search('member', $roles);
-	foreach ($roles as $key=>$name) {
-		drupal_set_message("Role $key is $name");
-	}
-	drupal_set_message("Key for member role is $member_role");
-
-	$permissions = og_role_permissions($roles);
-	foreach ($permissions as $key=>$perms) {
-		drupal_set_message("Role $key:");
-		foreach($perms as $key=>$value) {
-			drupal_set_message("Permission $key is $value");
-		}
-	}
-
-  
-
 	if(empty($user_groups)) {
-		drupal_set_message("You are NOT a member of any projects");
+		_tapascontent_disable_collection_form($form); 
+	} else {
+		try {
+			foreach($user_groups as $gid) {
+				$roles = og_get_user_roles('node', $gid);
+				foreach($roles as $role) {
+					drupal_set_message("For gid $gid, User has a role of $role");
+				}
+			}
+		} catch (Exception $e) {
+			try {
+				og_ungroup('node', $gid);
+			}
+			catch (Exception $e) {
+				drupal_set_message("We seem to be experiencing a problem. Please open a support ticket, and copy this message in. (Unable to remove invalid group $gid.)");
+			}
+			_tapascontent_collection_form_check($form);
+		} 
+
+	}
+
+}
+
+
+/**
+ * Helper function to alter collection form when no projects.
+ */
+
+function _tapascontent_disable_collection_form(&$form) {
+
 		
 		$form['field_tapas_description']['#access'] = FALSE;
 		$form['field_tapas_thumbnail']['#access'] = FALSE;
@@ -94,16 +120,6 @@ function tapascontent_form_tapas_collection_node_form_alter(&$form, &$form_state
 		$form['title']['#prefix'] = 
 			"<h2>" . TAPASCONTENT_CREATE_PROJ_FIRST_HEADER . "</h2>" . 
 			TAPASCONTENT_CREATE_PROJ_FIRST_TEXT;
-	} else {
-		drupal_set_message("You ARE a member of at least one project");
-
-		foreach ($user_groups as $gid) {
-			$roles = og_get_user_roles('node', $gid);
-			foreach ($roles as $role) {
-				drupal_set_message("User has a role of $role");
-			}
-		}
-	}
 }
 
 

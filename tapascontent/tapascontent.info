@@ -1,7 +1,7 @@
 name = tapascontent
 core = 7.x
 package = TAPAS
-version = 7.x-0.2
+version = 7.x-2.1
 decription = Defines TAPAS content types and their behaviors.
 dependencies[] = file
 dependencies[] = image

@@ -6,7 +6,7 @@
  *
  * @author Linda Moss (GitHub LindaJeanne) <l.moss@neu.edu>
  * @since 2.0
- * @version 2.0
+ * @version 2.1
  *
  * @TODO: Enfore Record group must 1. be Collection (not project) 2. Collections from same group.
  */
@@ -21,16 +21,6 @@ include_once('tapascontent_forms.inc');
 // Functions implementing hooks
 // ====================================================================================
 
-
-/**
- * Implements hook hook_update_N().
- */
-
-function tapaspcontent_update_7250(&$sandbox) { //TODO
-	
-
-}
-
 /**
  * Imlements hook_node_info().
  */
@@ -40,7 +30,10 @@ function tapascontent_node_info() {
 		TAPAS_SHARED => array(
 			'name' => t('TAPAS Shared Repository'),
 			'base' => 'node_content',
+			'description' => TAPAS_CONTENT_SHARED_DESC,
 			'has_title' => TRUE,
+			'title_label' => 'Shared Repository Title',
+			'help' => TAPAS_CONTENT_SHARED_HELP,
 		),
 		TAPAS_PROJECT => array(
 			'name' => t('TAPAS Project'),
@@ -276,7 +269,7 @@ function _tapascontent_insert_update($node) {
       foreach($members as $key => $value) {
         $data["members"."[$key]"] = $value;
       }
-      watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
+      watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_PROJECT_URL);
       _tapascontent_insert_update_common_tasks($node);
       break;
@@ -285,7 +278,7 @@ function _tapascontent_insert_update($node) {
       $data = _tapascontent_projcol_hydradata($node);
       $proj_as_array = _tapascontent_get_parent_uuids($node);
       $data['project_did'] = $proj_as_array[0];
-      watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
+      watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
       tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
       _tapascontent_insert_update_common_tasks($node);
       break;
@@ -293,7 +286,7 @@ function _tapascontent_insert_update($node) {
       $data = _tapascontent_record_hydradata($node);
       tapashydra_post($data, TAPAS_POST_TEI_URL);
       _tapascontent_insert_update_common_tasks($node);
-      watchdog('debug_tapascontent_insert_update', '<pre>'.print_r($data, TRUE).'</pre>');
+      watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
       break;
   }
 }
@@ -415,7 +408,7 @@ function _tapascontent_zip_from_support_files($node) {
 }
 
 function _tapascontent_assign_if_present(&$data, $key, $val) {
-  # If val is a string, check that it is nonblank
+
   if (is_string($val)) {
     $has_content = !(ctype_space($val)) && !(empty($val));
   } elseif (is_array($val)) {
