@@ -5,7 +5,7 @@
  *
  * @author Linda Moss (github LindaJeanne) <l.moss@neu.edu>
  * @since 2.0
- * @version 2.0
+ * @version 2.1
  */
 
 // ====================================================================================
@@ -30,10 +30,11 @@ define ('TAPAS_COLLECTION', 'tapas_collection');
 /** Machine name of the Project content type. */
 define ('TAPAS_PROJECT', 'tapas_project');
 
+/** Machine name of the Shared Repository content type. */
+define ('TAPAS_SHARED', 'tapas_shared');
+
 /** Machine name of the TEI Record content type. */
 define ('TAPAS_RECORD', 'tapas_record');
-
-
 
 
 // ====================================================================================
@@ -43,11 +44,13 @@ define ('TAPAS_RECORD', 'tapas_record');
 /* User-facing descriptions for content types. */
 define ('TAPAS_CONTENT_PROJ_DESC', '');
 define ('TAPAS_CONTENT_COLL_DESC', '');
+define ('TAPAS_CONTENT_SHARED_DESC', '');
 define ('TAPAS_CONTENT_REC_DESC', '');
 
 /* User-facing help text for content types. */
 define ('TAPAS_CONTENT_PROJ_HELP', '');
 define ('TAPAS_CONTENT_COLL_HELP', '');
+define ('TAPAS_CONTENT_SHARED_HELP', '');
 define ('TAPAS_CONTENT_REC_HELP', '');
 
 // ====================================================================================

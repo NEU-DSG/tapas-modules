@@ -15,7 +15,7 @@
  *
  * @author Linda Moss (github LindaJeanne) <l.moss@neu.edu>
  * @since 2.0
- * @version 2.0
+ * @version 2.1
  */
 
 
@@ -43,7 +43,9 @@ define ('TAPAS_INSTANCE_DESC_PROJLINKS', t(''));
 define ('TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION', t(''));
 define ('TAPAS_INSTANCE_DESC_COLLECTIONTHUMB', t(''));
 define ('TAPAS_INSTANCE_DESC_COLLECTIONSLUG', t(''));
-define ('TAPAS_INSTANCE_DESC_PARENTSLUG', t(''));
+
+define ('TAPAS_INSTANCE_DESC_SHAREDDESCRIPTION', t(''));
+define ('TAPAS_INSTANCE_DESC_SHAREDTHUMB', t(''));
 
 define ('TAPAS_INSTANCE_DESC_PERSISTID', t(''));
 define ('TAPAS_INSTANCE_DESC_TEIFILE', t(''));
@@ -53,8 +55,6 @@ define ('TAPAS_INSTANCE_DESC_CONTRIBUTORS', t(''));
 define ('TAPAS_INSTANCE_DESC_DISPLAYDATE', t(''));
 define ('TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE', t(''));
 
-define ('TAPAS_INSTANCE_DESC_PARENT_SLUG', t(''));
-
 
 // ====================================================================================
 // Instance Prefixes
@@ -63,6 +63,7 @@ define ('TAPAS_INSTANCE_DESC_PARENT_SLUG', t(''));
 define ('TAPAS_C_INSTANCE_PRE', 'fi_tapas_c_');
 define ('TAPAS_P_INSTANCE_PRE', 'fi_tapas_p_');
 define ('TAPAS_R_INSTANCE_PRE', 'fi_tapas_r_');
+define ('TAPAS_S_INSTANCE_PRE', 'fi_tapas_s_');
 
 // ====================================================================================
 // Thumbnails.
@@ -70,6 +71,7 @@ define ('TAPAS_R_INSTANCE_PRE', 'fi_tapas_r_');
 
 define ('TAPAS_C_DEFAULT_IMAGE', 0);
 define ('TAPAS_P_DEFAULT_IMAGE', 0);
+define ('TAPAS_S_DEFAULT_IMAGE', 0);
 
 define ('TAPAS_C_IMAGE_DIR', '');
 define ('TAPAS_P_IMAGE_DIR', '');
@@ -99,25 +101,6 @@ define ('TAPAS_FILE_MAXSIZE', '');
  *   the og api, others are added later via a feature.
  */
 
-function _tapas_fieldarray($name, $cardinality, $module, $type) {
-	return array(
-		'field_name' => TAPAS_FIELD_PREFIX . $name,
-		'cardinality' => $cardinality,
-		'module' => $module,
-		'type' => $type,
-	);
-}
-
-function _tapas_fieldarray_with_settings($name, $cardinality, $module, $type, $settings) {
-  return array(
-    'field_name' => TAPAS_FIELD_PREFIX . $name, 
-    'cardinality' => $cardinality, 
-    'module' => $module, 
-    'type' => $type, 
-    'settings' => $settings
-  );
-}
-
 function tapas_field_bases() {
 
   $allowed_ographies = array ( 
@@ -131,7 +114,7 @@ function tapas_field_bases() {
     ),
   );
 
-  $allowed_settings = array(
+  $allowed_status = array(
     'allowed_values' => array(
       STATUS_INPROGRESS => "This record is currently being processed.  Please check back later.",
       STATUS_FAILED => "Record uploaded failed!",
@@ -140,266 +123,305 @@ function tapas_field_bases() {
   );
 
 	return array(
-		'description' => _tapas_fieldarray('description', 1, 'text', 'text_long'),
-		'thumbnail' => _tapas_fieldarray('thumbnail', 1, 'image', 'image'),
-		'slug' => _tapas_fieldarray('slug', 1, 'text', 'text'),
-    'parent_slug' => _tapas_fieldarray('parent_slug', 1, 'text', 'text'),
-    'project' => _tapas_fieldarray('project', 1, 'entityreference', 'entityreference'),
-		'links' => _tapas_fieldarray('links', -1, 'link', 'link_field'),
-		'tei_file' => _tapas_fieldarray('tei_file', 1, 'file', 'file'),
-		'attachments' => _tapas_fieldarray('attachments', -1, 'file', 'file'),
-		'display_auth' => _tapas_fieldarray('display_auth', -1, 'text', 'text'),
-		'display_contrib' => _tapas_fieldarray('display_contrib', -1, 'text', 'text'),
-		'display_date' => _tapas_fieldarray('display_date', 1, 'date', 'date'), //@TODO: not sure on second 'date'!!
-    'record_ography_type' => _tapas_fieldarray_with_settings('record_ography_type', 
-      -1, 'text', 'list_text', $allowed_ographies),
-    'upload_status' => _tapas_fieldarray_with_settings('upload_status',
-      1, 'text', 'list_text', $allowed_settings),
+		TAPAS_FIELD_PREFIX . 'description' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'description',
+			'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'text',
+			'type' => 'text_long',
+		),
+		TAPAS_FIELD_PREFIX . 'thumbnail' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+			'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'image',
+			'type' => 'image',
+		),
+		TAPAS_FIELD_PREFIX . 'slug' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'slug',
+			'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'text',
+			'type' => 'text',
+		),
+		TAPAS_FIELD_PREFIX . 'project' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'project',
+			'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'entityreference',
+			'type' => 'entityreference',
+		),
+		TAPAS_FIELD_PREFIX . 'links' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'links',
+			'entity_types' => array('node'),
+			'cardinality' => -1,
+			'module' => 'link',
+			'type' => 'link_field',
+		),
+		TAPAS_FIELD_PREFIX . 'tei_file' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'tei_file',
+			'entity_types' => array('node'),
+			'cardinality' => -1,
+			'module' => 'file',
+			'type' => 'file',
+		),
+		TAPAS_FIELD_PREFIX . 'attachments' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'attachments',
+			'entity_types' => array('node'),
+			'cardinality' => -1,
+			'module' => 'file',
+			'type' => 'file',
+		),
+		TAPAS_FIELD_PREFIX . 'display_auth' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'display_auth',
+			'entity_types' => array('node'),
+			'cardinality' => -1,
+			'module' => 'text',
+			'type' => 'text',
+		),
+		TAPAS_FIELD_PREFIX . 'display_contrib' => array(
+			'field_name' => TAPAS_FIELD_PREFIX .'display_contrib',
+			'entity_types' => array('node'),
+			'cardinality' => -1,
+			'module' => 'text',
+			'type' => 'text',
+		),
+		TAPAS_FIELD_PREFIX . 'display_date' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'display_date',
+			'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'date',
+			'type' => 'date',
+		),
+		TAPAS_FIELD_PREFIX . 'record_ography_type' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'record_ography_types',
+			'entity_types' => array('node'),
+			'cardinality' => -1,
+			'module' => 'text',
+			'type' => 'list_text',
+			'settings' => $allowed_status,
+		),
+		TAPAS_FIELD_PREFIX . 'upload_status' => array(
+			'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+			'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'text',
+			'type' => 'list_text',
+			'settings' => $allowed_status,
+		)
 	);
 
 }
 
 /**
- * Upload status instance template
+ * Returns field instance arrays for all tapas content types.
  */
 
-//function _tapas_uploadstatus_template($type) {
+function _tapascontent_all_fields() {
 
-	//$fielddata = array(
-		//tapas_instance_common(
-			//'upload_status',
-			//t('Upload Status'),
-			//$type,
-			//TAPAS_INSTANCE_DESC_UPLOADSTATUS
-		//)
-	//);
-
-	//$fielddata['settings']['allowed_values'] = array(
-		//STATUS_INPROGRESS => t('In Progress'),
-		//STATUS_FAILED => t('Upload Failed'),
-		//STATUS_SUCCESS => t('Uploaded Successfully')
-	//);
-
-	//return $fielddata;
-//}
-
-/**
- * Field instances for Project fields.
- */
-
-function tapas_fields_project() {
+	// Title fields are added via the content type definition.
 
 	return  array(
 		TAPAS_P_INSTANCE_PRE . 'description' => (
-			tapas_instance_common(
-				'description',
-				t('Project Description'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_PROJDESCRIPTION
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'description',
+				'label' => t('Project Description'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_PROJECT,
+				'description' => TAPAS_INSTANCE_DESC_PROJDESCRIPTION,
 			) +
 			tapas_instance_paragraph()
 		),
 
 		TAPAS_P_INSTANCE_PRE . 'thumbnail' => (
-			tapas_instance_common(
-				'thumbnail',
-				t('Project Thumbnail'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_PROJTHUMB
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+				'label' => t('Project Thumbnail'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_PROJECT,
+				'description' => TAPAS_INSTANCE_DESC_PROJTHUMB,
 			) +
 			tapas_instance_thumbnail()
 		),
 
 		TAPAS_P_INSTANCE_PRE . 'slug' => (
-			tapas_instance_common(
-				'slug',
-				t('Project Slug'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_PROJSLUG
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'slug',
+				'label' => t('Projet Slug'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_PROJECT,
+				'description' => TAPAS_INSTANCE_DESC_PROJSLUG,
 			) +
 			tapas_instance_uniqueid()
 		),
 
 		TAPAS_P_INSTANCE_PRE . 'links' => (
-			tapas_instance_common(
-				'links',
-				t('External Links'),
-				TAPAS_PROJECT,
-				TAPAS_INSTANCE_DESC_PROJLINKS
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'links',
+				'label' => t('External Links'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_PROJECT,
+				'description' => TAPAS_INSTANCE_DESC_PROJLINKS,
 			) +
 			tapas_instance_hyperlinks()
 		),
 
     TAPAS_P_INSTANCE_PRE . 'upload_status' => (
-      tapas_instance_common(
-        'upload_status', 
-        t('Upload status'),
-        TAPAS_PROJECT,
-        t('')
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+				'label' => t('Upload Status'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_PROJECT,
       ) + 
-      tapas_instance_multiselect()
+      tapas_instance_multiselect() // TODO: Why is this multiselect?
     ),
-	);
-}
-
-
-/**
- * Field instances for Collection fields.
- */
-
-function tapas_fields_collection() {
-
-
-	return array(
-
-		// Title field is added by the content type definition.
 
 		TAPAS_C_INSTANCE_PRE . 'description' => (
-			tapas_instance_common(
-				'description',
-				t('Collection Description'),
-				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'description',
+				'label' => t('Collection Description'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_PROJECT,
+				'description' => TAPAS_INSTANCE_DESC_COLLECTIONDESCRIPTION,
 			) +
 			tapas_instance_paragraph()
 		),
 
 		TAPAS_C_INSTANCE_PRE . 'thumbnail' => (
-			tapas_instance_common(
-				'thumbnail',
-				t('Collection Thumbnail'),
-				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_COLLECTIONTHUMB
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+				'label' => t('Collection Thumbnail'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_COLLECTION,
+				'description' => TAPAS_INSTANCE_DESC_COLLECTIONTHUMB,
 			) +
 			tapas_instance_thumbnail()
 		),
 
 		TAPAS_C_INSTANCE_PRE . 'slug' => (
-			tapas_instance_common(
-				'slug',
-				t('Collection Slug'),
-				TAPAS_COLLECTION,
-				TAPAS_INSTANCE_DESC_COLLECTIONSLUG
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'slug',
+				'label' => t('Collection Slug'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_COLLECTION,
+				'description' => TAPAS_INSTANCE_DESC_COLLECTIONSLUG,
 			) +
 			tapas_instance_uniqueid()
 		),
 
-    TAPAS_C_INSTANCE_PRE . 'parent_slug' => (
-      tapas_instance_common(
-        'parent_slug', 
-        t('Parent Slug'), 
-        TAPAS_COLLECTION, 
-        TAPAS_INSTANCE_DESC_PARENT_SLUG
-      ) + 
-      tapas_instance_hiddentext()
-    ),
-
     TAPAS_C_INSTANCE_PRE . 'upload_status' => (
-      tapas_instance_common(
-        'upload_status', 
-        t('Upload status'), 
-        TAPAS_COLLECTION, 
-        t('')
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+				'label' => t('Upload Status'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_COLLECTION,
       ) + 
       tapas_instance_multiselect()
     ),
-	);
-}
 
+		TAPAS_S_INSTANCE_PRE . 'description' => (
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'description',
+				'label' => t('Shared Repository Description'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_SHARED,
+				'description' => TAPAS_INSTANCE_DESC_SHAREDDESCRIPTION,
+			) +
+			tapas_instance_paragraph()
+		),
 
-/**
- * Field instances for TEI Record fields.
- */
-
-function tapas_fields_record() {
-
-	return array(
+		TAPAS_P_INSTANCE_PRE . 'thumbnail' => (
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+				'label' => t('Shared Repository Thumbnail'), 
+				'entity_type' => 'node',
+				'bundle' => TAPAS_SHARED,
+				'description' => TAPAS_INSTANCE_DESC_SHAREDTHUMB,
+			) +
+			tapas_instance_thumbnail()
+		),
 		TAPAS_R_INSTANCE_PRE . 'tei_file' => (
-			tapas_instance_common(
-				'tei_file',
-				t('TEI File'),
-				TAPAS_RECORD,
-				TAPAS_INSTANCE_DESC_TEIFILE
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'tei_file',
+				'label' => t('TEI File'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
+				'description' => TAPAS_INSTANCE_DESC_TEIFILE,
 			) +
 			tapas_instance_filefield('tei xml')
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'attachments' => (
-			tapas_instance_common(
-				'attachments',
-				t('Auxillary Files'),
-				TAPAS_RECORD,
-				TAPAS_INSTANCE_DESC_ATTACH
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'attachments',
+				'label' => t('Auxillary Files'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
+				'description' => TAPAS_INSTANCE_DESC_ATTACH,
 			) +
 			tapas_instance_filefield('png jpg gif jpeg')
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'display_auth' => (
-			tapas_instance_common(
-				'display_auth',
-				t('Author Names'),
-				TAPAS_RECORD,
-				TAPAS_INSTANCE_DESC_AUTHORS
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'display_auth',
+				'label' => t('Author Names'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
+				'description' => TAPAS_INSTANCE_DESC_AUTHORS,
 			) +
-			tapas_instance_simpletext() // @todo: verify field name. Also, not written yet.
+			tapas_instance_simpletext()
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'display_contrib' => (
-			tapas_instance_common(
-				'display_contrib',
-				t('Contributor Names'),
-				TAPAS_RECORD,
-				TAPAS_INSTANCE_DESC_CONTRIBUTORS
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'display_contrib',
+				'label' => t('Contributor Names'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
+				'description' => TAPAS_INSTANCE_DESC_CONTRIBUTORS,
 			) +
-			tapas_instance_simpletext() // @todo: confirm function name, write function.
+			tapas_instance_simpletext()
 		),
 
 		TAPAS_R_INSTANCE_PRE . 'display_date' => (
-			tapas_instance_common(
-				'display_date',
-				t('Timeline Date'),
-				TAPAS_RECORD,
-				TAPAS_INSTANCE_DESC_DISPLAYDATE
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'display_date',
+				'label' => t('Timeline Date'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
+				'description' => TAPAS_INSTANCE_DESC_DISPLAYDATE,
 			) +
 			tapas_instance_datefield() // @todo: write this function.
 		),
 
     TAPAS_R_INSTANCE_PRE . 'record_ography_type' => (
-      tapas_instance_common(
-        'record_ography_type', 
-        t('Ography Types'), 
-        TAPAS_RECORD, 
-        TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'record_ography_types',
+				'label' => t('Ography Types'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
+				'description' => TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE,
       ) + 
       tapas_instance_multiselect()
     ),
 
-    TAPAS_R_INSTANCE_PRE . 'parent_slug' => (
-      tapas_instance_common(
-        'parent_slug',
-        t('Parent Slug'),
-        TAPAS_RECORD, 
-        TAPAS_INSTANCE_DESC_PARENT_SLUG
-      ) + 
-      tapas_instance_hiddentext()
-    ),
-
     TAPAS_R_INSTANCE_PRE . 'project' => (
-      tapas_instance_common(
-        'project', 
-        t('Record Project'), 
-        TAPAS_RECORD,
-        t('')
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'project',
+				'label' => t('Record Project'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
       ) + 
       tapas_instance_project()
     ),
 
     TAPAS_R_INSTANCE_PRE . 'upload_status' => (
-      tapas_instance_common(
-        'upload_status', 
-        t('Upload status'),
-        TAPAS_RECORD,
-        t('')
+			array(
+				'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+				'label' => t('Upload Status'),
+				'entity_type' => 'node',
+				'bundle' => TAPAS_RECORD,
       ) + 
       tapas_instance_multiselect()
     ),
@@ -511,7 +533,22 @@ function tapas_instance_thumbnail() {
  */
 
 function tapas_instance_simpletext() {
-	return array(); // @TODO
+	return array(
+		'required' => FALSE,
+		'display' => array(
+			'default' => array(
+				'type' => 'text_default',
+				'module' => 'text',
+				'label' => 'inline',
+			)
+		),
+		'settings' => array('text_processing' => 0),
+		'widget' => array(
+			'module' => 'text',
+			'settings' => array('size' => 60),
+			'type' => 'text_textfield',
+		)
+	);
 }
 
 /**
@@ -533,7 +570,7 @@ function tapas_instance_filefield($file_extensions) {
 				'type' => 'hidden',
 			),
 		),
-		'settings' => array( //@TODO
+		'settings' => array(
 			'description_field' => FALSE,
 			'field_directory' => '',
 			'file_extensions' => $file_extensions,
@@ -554,7 +591,20 @@ function tapas_instance_filefield($file_extensions) {
  */
 
 function tapas_instance_datefield() {
-	return array(); //@TODO
+	return array(
+		'display' => array(
+			'default' => array(
+				'label' => 'inline',
+				'module' => 'date', 
+				'type' => 'date_default', 
+			),
+		),
+		'widget' => array(
+			'type' => 'date_select',
+			'module' => 'date',
+		),
+	
+	);
 }
 
 
@@ -645,29 +695,4 @@ function tapas_instance_hyperlinks() {
 			'type' => 'link_field',
 		),
 	);
-}
-
-/**
- * The fields of the instance array common to all instances.
- *
- * @param string $name Field name (without the TAPAS_FIELD_PREFIX)
- * @param string $label The translated label.
- * @param string $bundle TAPAS_PROJECT or TAPAS_COLLECTION constant.
- * @param string $description the translated description.
- *
- * @return array A field instance array.
- */
-
-function tapas_instance_common(
-	$name,
-	$label,
-	$bundle,
-	$description='') {
-
-	return array(
-		'field_name' => TAPAS_FIELD_PREFIX . $name,
-		'label' => $label,
-		'entity_type' => 'node',
-		'bundle' => $bundle,
-		'description' => $description);
 }
