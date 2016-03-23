@@ -249,36 +249,48 @@ function _tapascontent_permissions_edit_any($type) {
 function _tapascontent_setup_og_bundles() {
 
 	// Add OG fields.
+	drupal_set_message("Creating TAPAS Project object.");
 	$project = new TapasContent_OgBundle(TAPAS_PROJECT);
 	$project->make_group();
 
+	drupal_set_message("Creating TAPAS Collection object.");
 	$collection = new TapasContent_OgBundle(TAPAS_COLLECTION);
 	$collection->make_group();
 	$collection->give_audience(TAPAS_PROJECT, TAPAS_C_TO_P);
 
+	drupal_set_message("Creating TAPAS Shared object.");
 	$shared = new TapasContent_OgBundle(TAPAS_SHARED);
 	$shared->make_group();
 
+	drupal_set_message("Creating TAPAS Record object.");
 	$tei_record = new TapasContent_OgBundle(TAPAS_RECORD);
 	$tei_record->give_audience(TAPAS_COLLECTION, TAPAS_R_TO_C);
 	$tei_record->give_audience(TAPAS_SHARED, TAPAS_R_TO_S);
 
 	// create OG roles and grant permissions.
-
-	$project_editor =	$project->create_role(TAPAS_PROJECT_ROLE_EDITOR);
-	$project_editor::edit_any(TAPAS_COLLECTION);
-
-	$project_admin = $project->create_role(TAPAS_PROJECT_ROLE_ADMIN);
-	$project_admin::edit_any(TAPAS_COLLECTION);
-	$project_admin::edit_admin();
-
-	$collection_editor = $collection->create_role(TAPAS_COLLECTION_ROLE_EDITOR);
-	$collection_editor::edit_any(TAPAS_RECORD);
-
-	$collection_admin = $collection->create_role(TAPAS_COLLECTION_ROLE_ADMIN);
-	$collection_admin::edit_any(TAPAS_RECORD);
-	$collection_admin::edit_admin();
 	
-	$shared_member = $shared::get_role();
-	$shared_member::edit_own(TAPAS_RECORD);
+	drupal_set_message("Creating Project Editor role.");
+	$project_editor =	$project->create_role(TAPAS_PROJECT_ROLE_EDITOR);
+	drupal_set_message("Giving project editor role permission to edit all TAPAS_COLLECTION");
+	$project_editor->edit_any(TAPAS_COLLECTION);
+
+	drupal_set_message("Creating Project Admin role.");
+	$project_admin = $project->create_role(TAPAS_PROJECT_ROLE_ADMIN);
+	$project_admin->edit_any(TAPAS_COLLECTION);
+	$project_admin->edit_admin();
+
+	drupal_set_message("Creating Collection Editor role.");
+	$collection_editor = $collection->create_role(TAPAS_COLLECTION_ROLE_EDITOR);
+	$collection_editor->edit_any(TAPAS_RECORD);
+
+	drupal_set_message("Creating Collecion Admin role.");
+	$collection_admin = $collection->create_role(TAPAS_COLLECTION_ROLE_ADMIN);
+	$collection_admin->edit_any(TAPAS_RECORD);
+	$collection_admin->edit_admin();
+	
+	drupal_set_message("Setting permissions on TAPAS Shared 'member' role.");
+	$shared_member = $shared->get_role();
+	$shared_member->edit_own(TAPAS_RECORD);
+
+	drupal_set_message("Setup of OG roles and permissions complete.");
 }
