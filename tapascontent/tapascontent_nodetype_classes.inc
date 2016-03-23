@@ -112,9 +112,7 @@ class TapasContent_OgBundle {
 	}
 
 	public function get_role($role_name = NULL) {
-		
-		$rname = $role_name?$role_name:TapasContent_OgRole($this->bundle);
-		return $this->roles[$role_name];
+		return $this->roles[$role_name?$role_name:TapasContent_OgRole::MEMBER_ROLE];
 	}
 
 	public function make_group() {
