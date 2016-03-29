@@ -49,7 +49,7 @@ class TapasContent_OgRole {
 	}
 
 	public function edit_own($bundle) {
-		og_role_grant_permissions($this->rid, $this::_edit_own_array());
+		og_role_grant_permissions($this->rid, $this::_edit_own_array($bundle));
 		og_role_save(og_role_load($this->rid));
 	}
 
