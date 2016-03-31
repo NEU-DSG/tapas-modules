@@ -51,7 +51,7 @@ function tapascontent_install() {
 	drupal_set_message("Setting up OG fields and permissions...");
 	_tapascontent_setup_og_bundles();
 	drupal_set_message("Updating sitewide permissions...");
-	_tapascontent_add_sitewide_permissions();
+	_tapascontent_grant_sitewide_permissions();
 }
 
 /**
@@ -225,7 +225,7 @@ function _tapascontent_permissions_edit_own($bundle) {
 	return array(
 		'create ' . $bundle . ' content',
 		'edit own ' . $bundle . ' content',
-		'delete own ' . $bundle . 'content');
+		'delete own ' . $bundle . ' content');
 
 }
 /** 
