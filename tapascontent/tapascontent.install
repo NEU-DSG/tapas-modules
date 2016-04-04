@@ -54,10 +54,10 @@ function tapascontent_install() {
 	echo ("Setting up OG fields and permissions...");
 	_tapascontent_setup_og_bundles();
 
-	drupal_set_message("Updating sitewide permissions...");
-	echo("Updating sitewide permissions...");
-	node_access_rebuild();
-	_tapascontent_grant_sitewide_permissions();
+	//drupal_set_message("Updating sitewide permissions...");
+	//echo("Updating sitewide permissions...");
+	//node_access_rebuild();
+	//_tapascontent_grant_sitewide_permissions();
 }
 
 /**
