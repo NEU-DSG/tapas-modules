@@ -49,9 +49,11 @@ function tapascontent_install() {
 	drupal_set_message("Attatching fields to custom types...");
 	echo("Attatching fields to custom types...");
 	_tapascontent_add_fields();
+
 	drupal_set_message("Updating sitewide permissions...");
 	echo("Updating sitewide permissions...");
 	_tapascontent_grant_sitewide_permissions();
+	
 	drupal_set_message("Setting up OG fields and permissions...");
 	echo ("Setting up OG fields and permissions...");
 	_tapascontent_setup_og_bundles();
@@ -178,11 +180,13 @@ function _tapascontent_grant_sitewide_permissions() {
 
 	echo("Granting paidmembers the ability to create and TAPAS_PROJECT and TAPAS_COLLECTION");
 	$paidmember_rid = array_search(TAPAS_PAIDMEMBER_ROLE_PROFILE, user_roles());
+	echo("Searched for paidmember rid. Found: $paidmember_rid.");
 	user_role_grant_permissions(
 		$paidmember_rid, _tapascontent_paidmember_perms());
 
 	echo("Granting sitewide admin privleges on custom content types.");
 	$admin_rid = array_search(TAPAS_ADMIN_ROLE_PROFILE, user_roles());
+	echo("Searched admin rid. Found $admin_rid.");
 	user_role_grant_permissions(
 		$admin_rid, _tapascontent_admin_perms());
 }
