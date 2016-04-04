@@ -120,20 +120,24 @@ class TapasContent_OgBundle {
 	}
 
 	public function make_group() {
+		echo("Making $this->bundle a Group.");
 		og_create_field(OG_GROUP_FIELD, 'node', $this->bundle);
 		og_create_field(OG_DEFAULT_ACCESS_FIELD, 'node', $this->bundle);
 
 		$member_role = TapasContent_OgRole::MEMBER_ROLE;
 		$this->roles[$member_role] = new TapasContent_OgRole($this->bundle);
+		echo("Finished making $this->bundle a Group.");
 
 	}
 
 	public function give_audience($group, $audience_fieldname) {
+		echo("Making $this->bundle Group Content to group $group via field name $audience_fieldname");
 		$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
 		$audience_field['field']['settings']['target_type'] = 'node';
 		$audience_field['field']['settings']['handler_settings']['target_bundle'] = array($group);
 		og_create_field($audience_fieldname, 'node', $group, $audience_field);
 		$this->audience[$group] = $audience_field;
+		echo("Finished making group content.");
 	}
 
 }
