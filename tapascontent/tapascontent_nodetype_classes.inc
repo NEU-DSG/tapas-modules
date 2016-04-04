@@ -135,7 +135,7 @@ class TapasContent_OgBundle {
 		$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
 		$audience_field['field']['settings']['target_type'] = 'node';
 		$audience_field['field']['settings']['handler_settings']['target_bundle'] = array($group);
-		og_create_field($audience_fieldname, 'node', $group, $audience_field);
+		og_create_field($audience_fieldname, 'node', $this->bundle, $audience_field);
 		$this->audience[$group] = $audience_field;
 		echo("Finished making group content.");
 	}
