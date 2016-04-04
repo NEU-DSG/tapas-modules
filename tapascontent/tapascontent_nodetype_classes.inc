@@ -62,6 +62,7 @@ class TapasContent_OgRole {
 		drupal_set_message("Saving updated role.");
 		og_role_save(og_role_load($this->rid));
 		drupal_set_message("Role save complete.");
+		echo("Role $this->rid saved.");
 	}
 
 	public function edit_admin() {

@@ -47,11 +47,14 @@ function tapascontent_install() {
 	node_types_rebuild();
 
 	drupal_set_message("Attatching fields to custom types...");
+	echo("Attatching fields to custom types...");
 	_tapascontent_add_fields();
-	drupal_set_message("Setting up OG fields and permissions...");
-	_tapascontent_setup_og_bundles();
 	drupal_set_message("Updating sitewide permissions...");
+	echo("Updating sitewide permissions...");
 	_tapascontent_grant_sitewide_permissions();
+	drupal_set_message("Setting up OG fields and permissions...");
+	echo ("Setting up OG fields and permissions...");
+	_tapascontent_setup_og_bundles();
 }
 
 /**
@@ -169,13 +172,16 @@ function _tapascontent_delete_og_instances() {
 
 function _tapascontent_grant_sitewide_permissions() {
 
+	echo("Granting permission for authenticated users to edit and elete own TAPAS_RECORDs");
 	user_role_grant_permissions(
 		DRUPAL_AUTHENTICATED_RID, _tapascontent_permissions_edit_own(TAPAS_RECORD));
 
+	echo("Granting paidmembers the ability to create and TAPAS_PROJECT and TAPAS_COLLECTION");
 	$paidmember_rid = array_search(TAPAS_PAIDMEMBER_ROLE_PROFILE, user_roles());
 	user_role_grant_permissions(
 		$paidmember_rid, _tapascontent_paidmember_perms());
 
+	echo("Granting sitewide admin privleges on custom content types.");
 	$admin_rid = array_search(TAPAS_ADMIN_ROLE_PROFILE, user_roles());
 	user_role_grant_permissions(
 		$admin_rid, _tapascontent_admin_perms());
