@@ -49,14 +49,14 @@ function tapascontent_install() {
 	drupal_set_message("Attatching fields to custom types...");
 	echo("Attatching fields to custom types...");
 	_tapascontent_add_fields();
-
-	drupal_set_message("Updating sitewide permissions...");
-	echo("Updating sitewide permissions...");
-	_tapascontent_grant_sitewide_permissions();
 	
 	drupal_set_message("Setting up OG fields and permissions...");
 	echo ("Setting up OG fields and permissions...");
 	_tapascontent_setup_og_bundles();
+
+	drupal_set_message("Updating sitewide permissions...");
+	echo("Updating sitewide permissions...");
+	_tapascontent_grant_sitewide_permissions();
 }
 
 /**
