@@ -38,7 +38,7 @@ function tapascontent_form_node_form_alter(&$form, &$form_state, $form_id) {
  * PROJECT form
  */
 function tapascontent_form_tapas_project_node_form_alter(&$form, &$form_state, $form_id) {
-	drupal_set_message("Project form called.");
+	//drupal_set_message("Project form called.");
   $form['#validate'][] = '_tapascontent_validate_project_form';
 }
 
@@ -76,7 +76,7 @@ function _tapascontent_collection_form_check(&$form) {
 			foreach($user_groups as $gid) {
 				$roles = og_get_user_roles('node', $gid);
 				foreach($roles as $role) {
-					drupal_set_message("For gid $gid, User has a role of $role");
+					//drupal_set_message("For gid $gid, User has a role of $role");
 				}
 			}
 		} catch (Exception $e) {
@@ -84,7 +84,7 @@ function _tapascontent_collection_form_check(&$form) {
 				og_ungroup('node', $gid);
 			}
 			catch (Exception $e) {
-				drupal_set_message("We seem to be experiencing a problem. Please open a support ticket, and copy this message in. (Unable to remove invalid group $gid.)");
+				//drupal_set_message("We seem to be experiencing a problem. Please open a support ticket, and copy this message in. (Unable to remove invalid group $gid.)");
 			}
 			_tapascontent_collection_form_check($form);
 		} 

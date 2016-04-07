@@ -34,16 +34,16 @@ class TapasContent_OgRole {
 		$this->role_group = $group;
 
 		if ($name) {
-			drupal_set_message("Creating new role called $name for $group");
+			//drupal_set_message("Creating new role called $name for $group");
 			echo("Creating new role called $name for $group");
 			$role = og_role_create($name, 'node', NULL, $group);
 			og_role_save($role);
 			$this->role_name = $name;
 			$this->rid =  $role->rid;
-			drupal_set_message("Role $this->rid Created.");
+			//drupal_set_message("Role $this->rid Created.");
 			echo("Role $this->rid Created.");
 		} else {
-			drupal_set_message("Editing built-in " . self::MEMBER_ROLE . " role for group $group");
+			//drupal_set_message("Editing built-in " . self::MEMBER_ROLE . " role for group $group");
 			echo("Editing build-in " . self::MEMBER_ROLE . " role for group $group");
 			$all_roles = og_roles('node', $group);
 			$this->rid = array_search(self::MEMBER_ROLE, $all_roles);
@@ -57,11 +57,11 @@ class TapasContent_OgRole {
 	}
 
 	public function edit_any($bundle) {
-		drupal_set_message("Granting role $this->rid permission to edit any $bundle");
+		//drupal_set_message("Granting role $this->rid permission to edit any $bundle");
 		og_role_grant_permissions($this->rid, $this::_edit_any_array($bundle));
-		drupal_set_message("Saving updated role.");
+		//drupal_set_message("Saving updated role.");
 		og_role_save(og_role_load($this->rid));
-		drupal_set_message("Role save complete.");
+		//drupal_set_message("Role save complete.");
 		echo("Role $this->rid saved.");
 	}
 
@@ -110,7 +110,7 @@ class TapasContent_OgBundle {
 	}
 
 	public function create_role($name) {
-		drupal_set_message("Object for $this->bundle object recieved request to create $name role.");
+		//drupal_set_message("Object for $this->bundle object recieved request to create $name role.");
 		$this->roles[$name] = new TapasContent_OgRole($this->bundle, $name);		
 		return $this->roles[$name];
 	}
