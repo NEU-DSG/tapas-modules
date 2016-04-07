@@ -73,7 +73,7 @@ function tapascontent_node_info() {
  *   otherwise the content type won't appear in the admin/structure/types list.
  */
 
-function tapascontent_form($node, $form_state) {
+function tapascontent_form(&$node, $form_state) {
 	return node_content_form($node, $form_state);
 }
 
