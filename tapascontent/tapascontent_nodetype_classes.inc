@@ -34,31 +34,40 @@ class TapasContent_OgRole {
 		$this->role_group = $group;
 
 		if ($name) {
+			drupal_set_message("Creating new role called $name for $group");
+			echo("Creating new role called $name for $group");
 			$role = og_role_create($name, 'node', NULL, $group);
-			$og_role_save($role);
+			og_role_save($role);
 			$this->role_name = $name;
 			$this->rid =  $role->rid;
+			drupal_set_message("Role $this->rid Created.");
+			echo("Role $this->rid Created.");
 		} else {
+			drupal_set_message("Editing built-in " . self::MEMBER_ROLE . " role for group $group");
+			echo("Editing build-in " . self::MEMBER_ROLE . " role for group $group");
 			$all_roles = og_roles('node', $group);
-			$rid = array_search(MEMBER_ROLE, $all_roles);
-			$this->rid = $rid;
-			$this->role_name = MEMBER_ROLE;
+			$this->rid = array_search(self::MEMBER_ROLE, $all_roles);
+			$this->role_name = self::MEMBER_ROLE;
 		}
 	}
 
 	public function edit_own($bundle) {
-		og_role_grant_permissions($this->rid, $this::_edit_own_array());
-		og_role_save($this->rid);
+		og_role_grant_permissions($this->rid, $this::_edit_own_array($bundle));
+		og_role_save(og_role_load($this->rid));
 	}
 
 	public function edit_any($bundle) {
+		drupal_set_message("Granting role $this->rid permission to edit any $bundle");
 		og_role_grant_permissions($this->rid, $this::_edit_any_array($bundle));
-		og_role_save($this->rid);
+		drupal_set_message("Saving updated role.");
+		og_role_save(og_role_load($this->rid));
+		drupal_set_message("Role save complete.");
+		echo("Role $this->rid saved.");
 	}
 
 	public function edit_admin() {
 		og_role_grant_permissions($this->rid, $this::_edit_admin_array());
-		og_role_save($this->rid);
+		og_role_save(og_role_load($this->rid));
 	}
 	
 	public function _edit_any_array($bundle) {
@@ -92,7 +101,7 @@ class TapasContent_OgRole {
 
 class TapasContent_OgBundle {
 
-	private static $roles = array();
+	private $roles = array();
 	private $bundle;
 	private $audience = array();
 	
@@ -101,31 +110,34 @@ class TapasContent_OgBundle {
 	}
 
 	public function create_role($name) {
-		$this->roles[$name] = new TapasContent_OgRole($this->$bundle, $name);		
+		drupal_set_message("Object for $this->bundle object recieved request to create $name role.");
+		$this->roles[$name] = new TapasContent_OgRole($this->bundle, $name);		
 		return $this->roles[$name];
 	}
 
 	public function get_role($role_name = NULL) {
-		
-		$rname = $role_name?$role_name:TapasContent_OgRole($this->bundle);
-		return $this->roles[$role_name];
+		return $this->roles[$role_name?$role_name:TapasContent_OgRole::MEMBER_ROLE];
 	}
 
 	public function make_group() {
+		echo("Making $this->bundle a Group.");
 		og_create_field(OG_GROUP_FIELD, 'node', $this->bundle);
 		og_create_field(OG_DEFAULT_ACCESS_FIELD, 'node', $this->bundle);
 
 		$member_role = TapasContent_OgRole::MEMBER_ROLE;
-		$this->roles[$member_role] = new TapasContent_OgRole($bundle);
+		$this->roles[$member_role] = new TapasContent_OgRole($this->bundle);
+		echo("Finished making $this->bundle a Group.");
 
 	}
 
 	public function give_audience($group, $audience_fieldname) {
+		echo("Making $this->bundle Group Content to group $group via field name $audience_fieldname");
 		$audience_field = og_fields_info(OG_AUDIENCE_FIELD);
 		$audience_field['field']['settings']['target_type'] = 'node';
-		$audience_field['field']['settings']['handler_settings']['target_bundle'] = array($group_bundle);
-		og_create_field($audience_field_name, 'node', $group, $audience_field);
+		$audience_field['field']['settings']['handler_settings']['target_bundle'] = array($group);
+		og_create_field($audience_fieldname, 'node', $this->bundle, $audience_field);
 		$this->audience[$group] = $audience_field;
+		echo("Finished making group content.");
 	}
 
 }

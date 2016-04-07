@@ -108,6 +108,8 @@ function _tapascontent_disable_collection_form(&$form) {
 		$form['group_access']['#access'] = FALSE;
 		$form['og_tapas_c_to_p']['#access'] = FALSE;
 		$form['title']['#disabled'] = TRUE;
+		$form['og_roles_permissions']['#access'] = FALSE;
+		$form['og_tapas_r_to_c']['#access'] = FALSE;
 
 		unset($form['actions']['submit']);
 		unset ($form['preview']);

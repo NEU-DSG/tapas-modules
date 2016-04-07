@@ -47,11 +47,17 @@ function tapascontent_install() {
 	node_types_rebuild();
 
 	drupal_set_message("Attatching fields to custom types...");
+	echo("Attatching fields to custom types...");
 	_tapascontent_add_fields();
+	
 	drupal_set_message("Setting up OG fields and permissions...");
+	echo ("Setting up OG fields and permissions...");
 	_tapascontent_setup_og_bundles();
-	drupal_set_message("Updating sitewide permissions...");
-	_tapascontent_add_sitewide_permissions();
+
+	//drupal_set_message("Updating sitewide permissions...");
+	//echo("Updating sitewide permissions...");
+	//node_access_rebuild();
+	//_tapascontent_grant_sitewide_permissions();
 }
 
 /**
@@ -169,14 +175,19 @@ function _tapascontent_delete_og_instances() {
 
 function _tapascontent_grant_sitewide_permissions() {
 
+	echo("Granting permission for authenticated users to edit and elete own TAPAS_RECORDs");
 	user_role_grant_permissions(
 		DRUPAL_AUTHENTICATED_RID, _tapascontent_permissions_edit_own(TAPAS_RECORD));
 
+	echo("Granting paidmembers the ability to create and TAPAS_PROJECT and TAPAS_COLLECTION");
 	$paidmember_rid = array_search(TAPAS_PAIDMEMBER_ROLE_PROFILE, user_roles());
+	echo("Searched for paidmember rid. Found: $paidmember_rid.");
 	user_role_grant_permissions(
 		$paidmember_rid, _tapascontent_paidmember_perms());
 
+	echo("Granting sitewide admin privleges on custom content types.");
 	$admin_rid = array_search(TAPAS_ADMIN_ROLE_PROFILE, user_roles());
+	echo("Searched admin rid. Found $admin_rid.");
 	user_role_grant_permissions(
 		$admin_rid, _tapascontent_admin_perms());
 }
@@ -225,7 +236,7 @@ function _tapascontent_permissions_edit_own($bundle) {
 	return array(
 		'create ' . $bundle . ' content',
 		'edit own ' . $bundle . ' content',
-		'delete own ' . $bundle . 'content');
+		'delete own ' . $bundle . ' content');
 
 }
 /** 
@@ -248,37 +259,52 @@ function _tapascontent_permissions_edit_any($type) {
 
 function _tapascontent_setup_og_bundles() {
 
-	// Add OG fields.
+	// Add OG group fields.
+	drupal_set_message("Creating TAPAS Project object.");
 	$project = new TapasContent_OgBundle(TAPAS_PROJECT);
 	$project->make_group();
 
+	drupal_set_message("Creating TAPAS Collection object.");
 	$collection = new TapasContent_OgBundle(TAPAS_COLLECTION);
 	$collection->make_group();
-	$collection->give_audience(TAPAS_PROJECT, TAPAS_C_TO_P);
 
+	drupal_set_message("Creating TAPAS Shared object.");
 	$shared = new TapasContent_OgBundle(TAPAS_SHARED);
 	$shared->make_group();
 
+	drupal_set_message("Creating TAPAS Record object.");
 	$tei_record = new TapasContent_OgBundle(TAPAS_RECORD);
+
+
+	// Add OG audience fields.
 	$tei_record->give_audience(TAPAS_COLLECTION, TAPAS_R_TO_C);
 	$tei_record->give_audience(TAPAS_SHARED, TAPAS_R_TO_S);
+	$collection->give_audience(TAPAS_PROJECT, TAPAS_C_TO_P);
 
 	// create OG roles and grant permissions.
-
-	$project_editor =	$project->create_role(TAPAS_PROJECT_ROLE_EDITOR);
-	$project_editor::edit_any(TAPAS_COLLECTION);
-
-	$project_admin = $project->create_role(TAPAS_PROJECT_ROLE_ADMIN);
-	$project_admin::edit_any(TAPAS_COLLECTION);
-	$project_admin::edit_admin();
-
-	$collection_editor = $collection->create_role(TAPAS_COLLECTION_ROLE_EDITOR);
-	$collection_editor::edit_any(TAPAS_RECORD);
-
-	$collection_admin = $collection->create_role(TAPAS_COLLECTION_ROLE_ADMIN);
-	$collection_admin::edit_any(TAPAS_RECORD);
-	$collection_admin::edit_admin();
 	
-	$shared_member = $shared::get_role();
-	$shared_member::edit_own(TAPAS_RECORD);
+	drupal_set_message("Creating Project Editor role.");
+	$project_editor =	$project->create_role(TAPAS_PROJECT_ROLE_EDITOR);
+	drupal_set_message("Giving project editor role permission to edit all TAPAS_COLLECTION");
+	$project_editor->edit_any(TAPAS_COLLECTION);
+
+	drupal_set_message("Creating Project Admin role.");
+	$project_admin = $project->create_role(TAPAS_PROJECT_ROLE_ADMIN);
+	$project_admin->edit_any(TAPAS_COLLECTION);
+	$project_admin->edit_admin();
+
+	drupal_set_message("Creating Collection Editor role.");
+	$collection_editor = $collection->create_role(TAPAS_COLLECTION_ROLE_EDITOR);
+	$collection_editor->edit_any(TAPAS_RECORD);
+
+	drupal_set_message("Creating Collecion Admin role.");
+	$collection_admin = $collection->create_role(TAPAS_COLLECTION_ROLE_ADMIN);
+	$collection_admin->edit_any(TAPAS_RECORD);
+	$collection_admin->edit_admin();
+	
+	drupal_set_message("Setting permissions on TAPAS Shared 'member' role.");
+	$shared_member = $shared->get_role();
+	$shared_member->edit_own(TAPAS_RECORD);
+
+	drupal_set_message("Setup of OG roles and permissions complete.");
 }
