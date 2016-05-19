@@ -57,29 +57,6 @@ define ('TAPAS_CONTENT_REC_HELP', '');
 //  Hydra API.
 // ====================================================================================
 
-// include_once('/var/www/hydratoken.php');
-// define ('TAPAS_AUTH_TOKEN', HYDRA_API_KEY);
-define ('TAPASHYDRA_AUTH_TOKEN', (variable_get('tapas_rails_api_key', 'tapas12345')));
-
-/** Base URL to build the API calls off of. */
-define('TAPAS_BASE_API_URL', (variable_get('tapas_rails_api_url', 'http://rails_api.localhost:8080')));
-
-/** Send Project POST calls to this url. */
-define('TAPAS_POST_PROJECT_URL', TAPAS_BASE_API_URL . "/communities");
-/** Send Collection POST calls to this url. */
-define('TAPAS_POST_COLLECTION_URL', TAPAS_BASE_API_URL . "/collections");
-/** Send TEI Record POST calls to this url. */
-define('TAPAS_POST_TEI_URL', TAPAS_BASE_API_URL . "/files");
-
-/* The following three constants tell which view of a tei record is being
- * Fetched by a GET command.
- */
-define('TAPAS_GET_RAW', 'tei');
-define('TAPAS_GET_BP', 'teibp');
-define('TAPAS_GET_GENERIC', 'tapas_generic');
-
-/** Whether to include debug output. Not intended for production! */
-define("TAPAS_INCLUDE_CURL_DEBUG", FALSE);
 
 // ====================================================================================
 // Helper Functions
@@ -99,6 +76,7 @@ define("TAPAS_INCLUDE_CURL_DEBUG", FALSE);
  * @return string or number: The value of the field.
  */
 
+// Can't delete yet; still used in SOLR indexing file.
 function tapas_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
 
 	$array = field_get_items('node', $node, $field_name);
@@ -112,17 +90,12 @@ function tapas_simple_fieldval($node, $field_name, $val_if_unset='', $delta=0) {
 
 }
 
-function tapas_array_fieldval($node, $field_name) {
-  $from_node = field_get_items('node', $node, $field_name);
-  $result = [];
+// ====================================================================================
+// Other helper functions, used internally and externally.
+// ====================================================================================
 
-  if ($from_node == false) {
-    return $result;
-  }
 
-  foreach($from_node as $key => $value){
-    $result[] = $value['value'];
-  }
-
-  return $result;
+function _tapashydra_watchdog_debug($message) { //TODO: move to constants/common file.
+  watchdog('tapascontent', $message, [], WATCHDOG_DEBUG);
 }
+

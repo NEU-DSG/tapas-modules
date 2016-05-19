@@ -19,7 +19,10 @@
  */
 
 
-include_once('tapascontent_constants.inc');
+// TODO: create 'field instance' object. Make all of the specialized functions
+// at the end of this document into constructor methods.
+
+//include_once('tapascontent_constants.inc');
 
 
 define ('STATUS_INPROGRESS', 0);

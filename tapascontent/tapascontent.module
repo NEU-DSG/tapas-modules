@@ -12,10 +12,10 @@
  */
 
 //include_once('tapascontent_constants.inc');
-include_once('tapascontent_hydra.inc');
-include_once('tapascontent_recordview.inc');
-include_once('tapascontent_solr_indexing.inc');
-include_once('tapascontent_forms.inc');
+//include_once('tapascontent_hydra.inc');
+//include_once('tapascontent_recordview.inc');
+//include_once('tapascontent_solr_indexing.inc');
+//include_once('tapascontent_forms.inc');
 
 // ====================================================================================
 // Functions implementing hooks
@@ -80,17 +80,25 @@ function tapascontent_form(&$node, $form_state) {
 /**
  * Implements hook_node_postinsert().
  */
-
 function tapascontent_node_postinsert($node) {
-  _tapascontent_insert_update($node);
+	$wrapper = Tapascontent_NodeWrapper::wrap_node($node);
+	if ($wrapper) {
+		_tapascontent_handle_upsert_result($wrapper->upsert());
+	}
 }
 
 /**
- * Implements hook_node_insert().
+ * Implements hook_node_postupdate().
  */
-
 function tapascontent_node_postupdate($node) {
-	_tapascontent_insert_update($node);
+	$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
+	if ($wrapper) {
+		_tapascontent_handle_upsert_result($wrapper->upsert());
+	}
+}
+
+function _tapascontent_handle_upsert_result($result) {
+	drupal_set_message($result);
 }
 
 /**
@@ -99,23 +107,43 @@ function tapascontent_node_postupdate($node) {
  * Calls the Hydra API to delete the record.
  */
 function tapascontent_node_delete($node) {
-
-	//drupal_set_message("node delete called against type: " . $node->type);
-
-	switch($node->type) {
-	case TAPAS_PROJECT:
-		tapashydra_delete(TAPAS_POST_PROJECT_URL, $node);
-		break;
-	case TAPAS_COLLECTION:
-		tapashydra_delete(TAPAS_POST_COLLECTION_URL, $node);
-		break;
-	case TAPAS_RECORD:
-		tapashydra_delete(TAPAS_POST_TEI_URL, $node);
-		break;
- }
-
+	$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
+	if ($wrapper) {
+		$wrapper->delete();
+	}
 }
 
+function _tapascontent_handle_delete_result($result) {
+	drupal_set_message($result);
+}
+
+/**
+ * Implements hook_node_presave()
+ */
+function tapascontent_node_presave() {
+	$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
+	if ($wrapper) {
+		$wrapper->presave();
+	}
+}
+
+function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) {
+  watchdog('tapascontent', $msg, array(), $err_level);
+}
+
+function tapascpntent_do_bulk_upload($file_array) {
+	foreach ($filearray as $file) {
+		$node = Tapascontent_DrupalConnector::create_record();
+		$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
+		$wrapper.set_fieldval('field_tapas_tei_file', $file);
+		$wrapper.presave();
+		$wrapper.upsert();
+	}
+}
+
+//=======================================================================
+// Viewing the TEI record.
+//=======================================================================
 
 /**
  * Implements hook_node_view
@@ -146,285 +174,9 @@ function tapascontent_preprocess_node(&$variables){
   }
 }
 
-// ====================================================================================
-// Helper functions
-// ====================================================================================
-
-/**
- * Internal. Returns a list of user-ids that are a member of the given project or collection.
- *
- * @param $node: The project or collection node
- * @return array: A list of user-ids of users who are members of the group represented by $node
- */
-
-function _tapascontent_get_group_members($node) {
-	return og_get_group_members_properties($node, [], OG_STATE_ACTIVE, 'node');
-}
-
-/**
- * @internal Get Slug from NodeId
- *
- * @param int $nodid the Drupal nid for the project/collection/record node.
- * @return string The contents of the slug field.
- */
-
-function _tapascontent_slug_from_nid($nodeid) {
-
-	//drupal_set_message("getting slug for $nodeid");
-
-	$item = field_get_items(
-		'node',
-		node_load($nodeid),
-		TAPAS_FIELD_PREFIX . 'slug'
-	);
-
-	return $item[0]['value'];
-}
-
-/**
- * @internal Get array of parent-slugs for a node.
- *
- * @param node An OG Content node.
- * @param array An array of strings, containing slugs. (or FALSE)
- */
-
-function _tapascontent_get_parent_uuids($node) {
-
-	$parent_ids = og_get_entity_groups('node', $node);
-
-	if (!$parent_ids) {
-		//drupal_set_message("No parents found.");
-		return FALSE;
-	}
-
-	foreach ($parent_ids['node'] as $parent) {
-		$node = node_load($parent);
-		$ids[] = $node->uuid;
-	}
-
-	return $ids;
-}
-
-// This function currently handles populating the field_tapas_parent_slug field, 
-// which I hacked into existence so that we could get working path rewrites
-// for collections and records.
-function tapascontent_node_presave($node) { 
-  switch($node->type) { 
-  case TAPAS_PROJECT : 
-    break;
-  case TAPAS_COLLECTION : 
-    _tapascontent_watchdog("Running node presave hook", WATCHDOG_NOTICE);
-    $parent_id = $node->og_tapas_c_to_p['und'][0]['target_id'];
-    $project = node_load($parent_id);
-
-    _tapascontent_watchdog("Attempted to load project", WATCHDOG_NOTICE);
-
-    if ($project) { 
-      $parent_slug = $project->field_tapas_slug['und'][0]['safe_value'];
-      $node->field_tapas_parent_slug['und'][0]['value'] = $parent_slug;
-      $node->field_tapas_parent_slug['und'][0]['safe_value'] = $parent_slug;
-    } else { 
-      $title = $node->title;
-      _tapascontent_watchdog("Collection '$title' failed to find its parent".
-        " record.", WATCHDOG_ERROR);
-    }
-    break;
-  case TAPAS_RECORD : 
-    $parent_id = $node->og_tapas_r_to_c['und'][0]['target_id'];
-    $collection = node_load($parent_id); 
-
-    if ($collection) { 
-      $project_id = $collection->og_tapas_c_to_p['und'][0]['target_id'];
-      $project = node_load($project_id);
-
-      if ($project) { 
-        $project_slug = $project->field_tapas_slug['und'][0]['safe_value'];
-        $node->field_tapas_parent_slug['und'][0]['value'] = $project_slug;
-        $node->field_tapas_parent_slug['und'][0]['safe_value'] = $project_slug;
-
-        $node->field_tapas_project['und'][0]['target_id'] = $project->nid;
-      } else {
-        $title = $node->title;
-        _tapascontent_watchdog("Record '$title' failed to find its project",
-          WATCHDOG_ERROR);
-      }
-    } else { 
-      $title = $node->title;
-      _tapascontent_watchdog("Record '$title' failed to finds its collection");
-    }
-    break;
-  }
-}
-
-/**
- * @internal Performs the POST for inserts and for updates.
- *
- * @param node $node The node object being created or updated.
- */
-function _tapascontent_insert_update($node) {
-  switch($node->type) {
-    case TAPAS_PROJECT:
-      $members = _tapascontent_get_group_members($node);
-      $data = _tapascontent_projcol_hydradata($node);
-      foreach($members as $key => $value) {
-        $data["members"."[$key]"] = $value;
-      }
-      watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
-      tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-      _tapascontent_insert_update_common_tasks($node);
-      break;
-    case TAPAS_COLLECTION:
-      watchdog('debug_tapascontent_insert_update', "Insert/Update called for TAPAS_COLLECTION");
-      $data = _tapascontent_projcol_hydradata($node);
-      $proj_as_array = _tapascontent_get_parent_uuids($node);
-      $data['project_did'] = $proj_as_array[0];
-      watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
-      tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-      _tapascontent_insert_update_common_tasks($node);
-      break;
-    case TAPAS_RECORD:
-      $data = _tapascontent_record_hydradata($node);
-      tapashydra_post($data, TAPAS_POST_TEI_URL);
-      _tapascontent_insert_update_common_tasks($node);
-      watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
-      break;
-  }
-}
-
-function _tapascontent_insert_update_common_tasks($node) { 
-  // Index the content
-  $node = node_load($node->nid);
-  _tapascontent_index_content($node);
-}
-
-// ====================================================================================
-// CURL call data arrays
-// ====================================================================================
-
-/**
- * @internal Post-data common to Projects and Collections.
- *
- * @param node $node: the node we will be posting.
- * @return array: An array with the common values set.
- */
-
-function _tapascontent_projcol_hydradata($node) {
-
-	$result =  array(
-		'uniqueid' => $node->uuid,
-		'depositor' => $node->uid,
-		'title' => $node->title,
-		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
-		'access' => $node->group_access['und'][0]['value']?'private':'public',
-	);
-
-	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
-	if (isset($thumb_file)) {
-		$result['thumbnail']=$thumb_file;
-	}
-
-	return $result;
-}
-
-/**
- * @internal Post-data for Records
- *
- * @param node $node: The containing the post info.
- * @param string $uniqueid: The (non-drupal node-id) persistant unique id.
- *
- * @return array: an array with the $data elements.
- */
-
-function _tapascontent_record_hydradata($node) {
-
-  // Populate all items that certainly should exist
-	$data = array(
-		'uniqueid' => $node->uuid,
-		'depositor' => $node->uid,
-    'display_title' => $node->title,
-    'collection_dids' => _tapascontent_get_parent_uuids($node),
-	);
-
-  $file_types = [];
-  _tapascontent_assign_if_present($data, 'file_types', $file_types);
-
-  $tf = TAPAS_FIELD_PREFIX;
-
-  $display_date = tapas_simple_fieldval($node, $tf . 'display_date');
-  _tapascontent_assign_if_present($data, 'display_date', $display_date);
-
-  $tei = tapashydra_filestring_from_field($node, $tf . 'tei_file');
-  _tapascontent_assign_if_present($data, 'tei', $tei);
-
-  $authors = tapas_array_fieldval($node, $tf . 'display_auth');
-  _tapascontent_assign_if_present($data, 'display_authors', $authors);
-
-  $contribs = tapas_array_fieldval($node, $tf . 'display_contrib');
-  _tapascontent_assign_if_present($data, 'display_contributors', $contribs);
-
-  $sfs = _tapascontent_zip_from_support_files($node);
-  _tapascontent_assign_if_present($data, 'support_files', $sfs);
-
-  $ography_types = tapas_array_fieldval($node, $tf . 'record_ography_type');
-
-  // Passing an empty array ensures that a record that was once marked as an
-  // ography has these associations cleared in the repository.
-  if (!$ography_types) {
-    $ography_types = [null];
-  }
-
-  _tapascontent_assign_if_present($data, 'file_types', $ography_types);
-
-	return $data;
-}
-
-function _tapascontent_zip_from_support_files($node) {
-  $files = tapashydra_filearray_from_field($node, 'field_tapas_attachments');
-
-  if(empty($files)) {
-    return '';
-  }
-
-  $zip = new ZipArchive();
-  $name = $node->nid . "_zip.zip";
-  $filename = drupal_realpath("public://$name");
-
-  $status = $zip->open($filename, ZipArchive::OVERWRITE);
-
-  if($status !== true) {
-    $err = "Drupal zip creation failed for node with nid $node->nid." .
-      "Error message was: " . $zip->getStatusString();
-    _tapascontent_watchdog($err, WATCHDOG_CRITICAL);
-    return '';
-  }
-
-  foreach($files as $file) {
-    $basename = basename($file);
-    $zip->addFile($file, "$name/page_images/$basename");
-  }
-
-  $zip->close();
-  return '@'.$filename;
-}
-
-function _tapascontent_assign_if_present(&$data, $key, $val) {
-
-  if (is_string($val)) {
-    $has_content = !(ctype_space($val)) && !(empty($val));
-  } elseif (is_array($val)) {
-    $has_content = !(empty($val));
-  } else {
-    return;
-  }
-
-  if ($has_content) {
-    $data[$key] = $val;
-  }
-}
-
-function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) {
-  watchdog('tapascontent', $msg, array(), $err_level);
-}
+//=======================================================================
+// Wild Apricot
+//=======================================================================
 
 // Implements hook_user_login to perform wild apricot checking
 function tapascontent_user_login(&$edit, $user) {

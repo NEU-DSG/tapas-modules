@@ -34,8 +34,8 @@ define ('TAPAS_COLLECTION_ROLE_EDITOR', 'Collection Editor');
 define ('TAPAS_COLLECTION_ROLE_ADMIN', 'Collection Administrator');
 
 
-include_once('tapascontent_fields.inc');
-include_once('tapascontent_nodetype_classes.inc');
+//include_once('tapascontent_fields.inc');
+//include_once('tapascontent_nodetype_classes.inc');
 
 /**
  * Implements hook_install()
@@ -261,19 +261,19 @@ function _tapascontent_setup_og_bundles() {
 
 	// Add OG group fields.
 	drupal_set_message("Creating TAPAS Project object.");
-	$project = new TapasContent_OgBundle(TAPAS_PROJECT);
+	$project = new Tapascontent_OgBundle(TAPAS_PROJECT);
 	$project->make_group();
 
 	drupal_set_message("Creating TAPAS Collection object.");
-	$collection = new TapasContent_OgBundle(TAPAS_COLLECTION);
+	$collection = new Tapascontent_OgBundle(TAPAS_COLLECTION);
 	$collection->make_group();
 
 	drupal_set_message("Creating TAPAS Shared object.");
-	$shared = new TapasContent_OgBundle(TAPAS_SHARED);
+	$shared = new Tapascontent_OgBundle(TAPAS_SHARED);
 	$shared->make_group();
 
 	drupal_set_message("Creating TAPAS Record object.");
-	$tei_record = new TapasContent_OgBundle(TAPAS_RECORD);
+	$tei_record = new Tapascontent_OgBundle(TAPAS_RECORD);
 
 
 	// Add OG audience fields.
@@ -308,3 +308,4 @@ function _tapascontent_setup_og_bundles() {
 
 	drupal_set_message("Setup of OG roles and permissions complete.");
 }
+

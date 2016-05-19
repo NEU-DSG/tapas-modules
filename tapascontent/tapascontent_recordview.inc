@@ -11,7 +11,7 @@
  * @version 2.1
  */
 
-include_once('tapascontent_constants.inc'); // for TAPAS_FILED_PREFIX
+//include_once('tapascontent_constants.inc'); // for TAPAS_FILED_PREFIX
 define ('TAPAS_VFIELD_PREFIX', 'tapas_vf_');
 define ('TAPAS_READERTAB_DROPDOWN_DESC', t('Choose a stylesheet with which you would like to render the TEI.'));
 define ('TAPAS_SELECTBUTTON_CALLBACK', '_tapas_selectbutton_callback');
@@ -52,11 +52,12 @@ function tapascontent_view_tei_record($node) {
  * @internal. Provides render array for reader tab of records.
  */
 function _tapascontent_readertab($uuid, $ography) {
+	$hh = new Tapascontent_HydraHandler(); //TODO: this instantizes an abstract class. FIXME
 
 	$styledrop = _tapas_readertab_dropdown($ography);
-	$tei = tapashydra_get_tei($uuid, 'tei');
-	$tapas_generic = tapashydra_get_tei($uuid, 'tapas_generic');
-	$teibp = tapashydra_get_tei($uuid, 'teibp');
+	$tei = $hh->retrieve_tei($uuid, 'tei');
+	$tapas_generic = $hh->retrieve_tei($uuid, 'tapas_generic');
+	$teibp = $hh->retrieve_tei($uuid, 'teibp');
 	$markup = '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei"><pre>'.htmlentities($tei).'</pre></div>';
 	if (!$ography){
 		$markup .= '<div class="reader_tapas_generic">'.$tapas_generic.'</div>';

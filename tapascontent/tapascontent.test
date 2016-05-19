@@ -1,0 +1,187 @@
+<?php
+/**
+ * @file
+ * tapascontent.test
+ */
+
+abstract class TapascontentUnitTestCase extends DrupalUnitTestCase {
+
+	public function setUp() {
+		parent::setUp();
+	}
+
+  /**
+   * Fake enables a module for the purpose of a unit test
+   *
+   * @param $name
+   *  The module's machine name (i.e. ctools not Chaos Tools)
+	 *  (the DrupalUnitTestCase, does not have access to a database, 
+	 *  so enabling a module the normal way is not available)
+   */
+  protected function enableModule($name) {
+    $modules = module_list();
+    $modules[$name] = $name;
+    module_list(TRUE, FALSE, FALSE, $modules);
+  }
+
+	 /**
+   * One can also add helper assert functions that might get used in tests
+   *
+   * This one test if the correct Exceptions is thrown (5.3 only)
+   */
+  protected function assertThrows(Closure $closure, $type, $error_message = NULL, $message) {
+    try {
+      $closure();
+    }
+    catch (Exception $e) {
+      if (!($e instanceof $type)) {
+        throw $e;
+      }
+      if (isset($error_message)) {
+        if ($e->getMessage() != $error_message) {
+          $this->fail($message, "SPS");
+          return;
+        }
+      }
+      $this->pass($message, "SPS");
+      return;
+    }
+    $this->fail($message, "SPS");
+  }
+ 
+  /**
+   * One can also add helper assert functions that might get used in tests
+   *
+   * Test that an object is an instance of a class
+   *
+   * @param $class
+   * @param $object
+   * @param $message
+   */
+  protected function assertIsInstance($class, $object, $message) {
+    if ($object instanceof $class) {
+      $this->pass($message, "SPS");
+    }
+    else {
+      $this->fail($message, "SPS");
+    }
+  }
+
+}
+
+class Tapascontent_HydraWrapperTestCase 
+extends TapascontentUnitTestCase {
+
+	public function setUp() {
+		parent::setUp();
+	}
+
+}
+
+class Tapascontent_NodeWrapperTestCase 
+extends Tapascontent_UnitTestCase {
+	public function setUp() {
+		parent::setUp();
+	}
+
+	public function test_upsert() {
+
+	}
+
+	public function test_delete() {
+
+	}
+
+	public function test_get_fieldval() {
+
+	}
+
+	public function test_set_fieldval() {
+
+	}
+
+	public function test_check_node_privacy() {
+
+	}
+
+	public function test_presave() {
+
+	}
+
+	public function test_get_hydradata() {
+
+	}
+
+	public function test_get_upsert_url() {
+
+	}
+
+	public function test_get_deletion_url() {
+
+	}
+}
+
+class Tapascontent_TestProjectNodeWrapper
+extends Tapascontent_TestNodeWrapper {
+
+	private $project_minimal;
+	private $project_full;
+	private $project_invalid;
+	
+	public function setUp() {
+
+	}
+
+}
+
+class Tapascontent_TestCollectionNodeWrapper 
+extends Tapascontent_TestNodeWrapper {
+
+	private $collection_minimal;
+	private $collection_full;
+	private $collection_invalid;
+	private $collection_no_project;
+	private $collection_invalid_project;
+
+
+	public function setUp() {
+
+	}
+}
+
+class Tapascontent_TestSharedNodeWrapper
+extends Tapascontent_testNodeWrapper {
+
+	private $shared_minimal;
+	private $shared_full;
+	private $shared_invalid;
+
+	public function setUp() {
+
+	}
+}
+
+class Tapascontent_TestRecordNodeWrapper
+extends Tapascontent_testNodeWrapper {
+
+	private $record_minimal;
+	private $record_full;
+	private $record_invalid;
+	private $record_no_collection;
+	private $record_collection_no_project;
+	private $record_collections_multiple_projects;
+	private $record_collection_invalid_project;
+	
+	private $record_malformed_tei;
+	private $record_non_tei_tei;
+	private $record_rejected_tei;
+	private $record_very_large_tei;
+	private $record_very_small_tei;
+
+
+	public function setUp() {
+
+	}
+
+}
+
