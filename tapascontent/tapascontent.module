@@ -11,11 +11,28 @@
  * @TODO: Enfore Record group must 1. be Collection (not project) 2. Collections from same group.
  */
 
-//include_once('tapascontent_constants.inc');
-//include_once('tapascontent_hydra.inc');
-//include_once('tapascontent_recordview.inc');
-//include_once('tapascontent_solr_indexing.inc');
-//include_once('tapascontent_forms.inc');
+include_once('tapascontent_nodewrapper.inc');
+include_once('tapascontent_solr_indexing.inc');
+include_once('tapascontent_common.inc');
+
+// ====================================================================================
+// Content Type Descriptions
+// ====================================================================================
+
+/* User-facing descriptions for content types. */
+define ('TAPAS_CONTENT_PROJ_DESC', '');
+define ('TAPAS_CONTENT_COLL_DESC', '');
+define ('TAPAS_CONTENT_SHARED_DESC', '');
+define ('TAPAS_CONTENT_REC_DESC', '');
+
+/* User-facing help text for content types. */
+define ('TAPAS_CONTENT_PROJ_HELP', '');
+define ('TAPAS_CONTENT_COLL_HELP', '');
+define ('TAPAS_CONTENT_SHARED_HELP', '');
+define ('TAPAS_CONTENT_REC_HELP', '');
+
+
+$prod_factory = new Tapascontent_WrapperFactory();
 
 // ====================================================================================
 // Functions implementing hooks
@@ -81,24 +98,18 @@ function tapascontent_form(&$node, $form_state) {
  * Implements hook_node_postinsert().
  */
 function tapascontent_node_postinsert($node) {
-	$wrapper = Tapascontent_NodeWrapper::wrap_node($node);
-	if ($wrapper) {
-		_tapascontent_handle_upsert_result($wrapper->upsert());
-	}
+	global $prod_factory;
+	$result = $prod_factory->wrap_node($node)->upsert();
+	//TODO: Handle result.
 }
 
 /**
  * Implements hook_node_postupdate().
  */
 function tapascontent_node_postupdate($node) {
-	$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
-	if ($wrapper) {
-		_tapascontent_handle_upsert_result($wrapper->upsert());
-	}
-}
-
-function _tapascontent_handle_upsert_result($result) {
-	drupal_set_message($result);
+	global $prod_factory;
+	$result = $prod_factory->wrap_node($node)->upsert();
+	// TODO: Handle result.
 }
 
 /**
@@ -107,37 +118,32 @@ function _tapascontent_handle_upsert_result($result) {
  * Calls the Hydra API to delete the record.
  */
 function tapascontent_node_delete($node) {
-	$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
-	if ($wrapper) {
-		$wrapper->delete();
-	}
-}
-
-function _tapascontent_handle_delete_result($result) {
-	drupal_set_message($result);
+	global $prod_factory;
+	$result = $prod_factory->wrap_node($node)->delete();
+	//TODO: Handle result
 }
 
 /**
  * Implements hook_node_presave()
  */
 function tapascontent_node_presave() {
-	$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
-	if ($wrapper) {
-		$wrapper->presave();
-	}
+	global $prod_factory;
+	$result = $prod_factory->wrap_node($node)->presave();
+	//TODO: handle result.
 }
 
 function _tapascontent_watchdog($msg, $err_level = WATCHDOG_DEBUG) {
   watchdog('tapascontent', $msg, array(), $err_level);
 }
 
-function tapascpntent_do_bulk_upload($file_array) {
+function tapascpntent_do_bulk_upload($file_array) { //TODO
 	foreach ($filearray as $file) {
-		$node = Tapascontent_DrupalConnector::create_record();
-		$wrapper = Tapascontent_ProjectNodeWrapper::wrap_node($node);
-		$wrapper.set_fieldval('field_tapas_tei_file', $file);
-		$wrapper.presave();
-		$wrapper.upsert();
+		global $prod_factory;
+		$node = $prod_factory->drupal->create_record();
+		$wrapped = $prod_factory->wrap_node($node);
+		$wrapped->set_field('field_tapas_tei_file', $file);
+		$wrapped->presave();
+		$wrapped->upsert();
 	}
 }
 

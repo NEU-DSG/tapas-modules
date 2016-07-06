@@ -24,6 +24,7 @@
 
 //include_once('tapascontent_constants.inc');
 
+include_once('tapascontent_common.inc');
 
 define ('STATUS_INPROGRESS', 0);
 define ('STATUS_FAILED', 1);
@@ -126,86 +127,86 @@ function tapas_field_bases() {
   );
 
 	return array(
-		TAPAS_FIELD_PREFIX . 'description' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'description',
+		'tapas_field_description' => array(
+			'field_name' => 'tapas_field_description',
 			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text_long',
 		),
-		TAPAS_FIELD_PREFIX . 'thumbnail' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+		'tapas_field_thumbnail' => array(
+			'field_name' => 'tapas_field_thumbnail',
 			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'image',
 			'type' => 'image',
 		),
-		TAPAS_FIELD_PREFIX . 'slug' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'slug',
+		'tapas_field_slug' => array(
+			'field_name' => 'tapas_field_slug',
 			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'text',
 			'type' => 'text',
 		),
-		TAPAS_FIELD_PREFIX . 'project' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'project',
+		'tapas_field_project' => array(
+			'field_name' => 'tapas_field_project',
 			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'entityreference',
 			'type' => 'entityreference',
 		),
-		TAPAS_FIELD_PREFIX . 'links' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'links',
+		'tapas_field_links' => array(
+			'field_name' => 'tapas_field_links',
 			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'link',
 			'type' => 'link_field',
 		),
-		TAPAS_FIELD_PREFIX . 'tei_file' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'tei_file',
+		'tapas_field_tei_file' => array(
+			'field_name' => 'tapas_field_tei_file',
 			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'file',
 			'type' => 'file',
 		),
-		TAPAS_FIELD_PREFIX . 'attachments' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'attachments',
+		'tapas_field_attachments' => array(
+			'field_name' => 'tapas_field_attachments',
 			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'file',
 			'type' => 'file',
 		),
-		TAPAS_FIELD_PREFIX . 'display_auth' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'display_auth',
+		'tapas_field_display_auth' => array(
+			'field_name' => 'tapas_field_display_auth',
 			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'text',
 			'type' => 'text',
 		),
-		TAPAS_FIELD_PREFIX . 'display_contrib' => array(
-			'field_name' => TAPAS_FIELD_PREFIX .'display_contrib',
+		'tapas_field_display_contrib' => array(
+			'field_name' => 'tapas_field_display_contrib',
 			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'text',
 			'type' => 'text',
 		),
-		TAPAS_FIELD_PREFIX . 'display_date' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'display_date',
+		'tapas_field_display_date' => array(
+			'field_name' => 'tapas_field_display_date',
 			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'date',
 			'type' => 'date',
 		),
-		TAPAS_FIELD_PREFIX . 'record_ography_type' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'record_ography_types',
+		'tapas_field_record_ography_type' => array(
+			'field_name' => 'tapas_field_record_ography_types',
 			'entity_types' => array('node'),
 			'cardinality' => -1,
 			'module' => 'text',
 			'type' => 'list_text',
 			'settings' => $allowed_status,
 		),
-		TAPAS_FIELD_PREFIX . 'upload_status' => array(
-			'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+		'tapas_field_upload_status' => array(
+			'field_name' => 'tapas_field_upload_status',
 			'entity_types' => array('node'),
 			'cardinality' => 1,
 			'module' => 'text',
@@ -227,7 +228,7 @@ function _tapascontent_all_fields() {
 	return  array(
 		TAPAS_P_INSTANCE_PRE . 'description' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'description',
+				'field_name' => 'tapas_field_description',
 				'label' => t('Project Description'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
@@ -238,7 +239,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_P_INSTANCE_PRE . 'thumbnail' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+				'field_name' => 'tapas_field_thumbnail',
 				'label' => t('Project Thumbnail'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
@@ -249,7 +250,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_P_INSTANCE_PRE . 'slug' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'slug',
+				'field_name' => 'tapas_field_slug',
 				'label' => t('Projet Slug'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
@@ -260,7 +261,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_P_INSTANCE_PRE . 'links' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'links',
+				'field_name' => 'tapas_field_links',
 				'label' => t('External Links'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
@@ -271,7 +272,7 @@ function _tapascontent_all_fields() {
 
     TAPAS_P_INSTANCE_PRE . 'upload_status' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+				'field_name' => 'tapas_field_upload_status',
 				'label' => t('Upload Status'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
@@ -281,7 +282,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_C_INSTANCE_PRE . 'description' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'description',
+				'field_name' => 'tapas_field_description',
 				'label' => t('Collection Description'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
@@ -292,7 +293,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_C_INSTANCE_PRE . 'thumbnail' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+				'field_name' => 'tapas_field_thumbnail',
 				'label' => t('Collection Thumbnail'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_COLLECTION,
@@ -303,7 +304,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_C_INSTANCE_PRE . 'slug' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'slug',
+				'field_name' => 'tapas_field_slug',
 				'label' => t('Collection Slug'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_COLLECTION,
@@ -314,7 +315,7 @@ function _tapascontent_all_fields() {
 
     TAPAS_C_INSTANCE_PRE . 'upload_status' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+				'field_name' => 'tapas_field_upload_status',
 				'label' => t('Upload Status'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_COLLECTION,
@@ -324,7 +325,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_S_INSTANCE_PRE . 'description' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'description',
+				'field_name' => 'tapas_field_description',
 				'label' => t('Shared Repository Description'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_SHARED,
@@ -335,7 +336,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_P_INSTANCE_PRE . 'thumbnail' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
+				'field_name' => 'tapas_field_thumbnail',
 				'label' => t('Shared Repository Thumbnail'), 
 				'entity_type' => 'node',
 				'bundle' => TAPAS_SHARED,
@@ -345,7 +346,7 @@ function _tapascontent_all_fields() {
 		),
 		TAPAS_R_INSTANCE_PRE . 'tei_file' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'tei_file',
+				'field_name' => 'tapas_field_tei_file',
 				'label' => t('TEI File'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
@@ -356,7 +357,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_R_INSTANCE_PRE . 'attachments' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'attachments',
+				'field_name' => 'tapas_field_attachments',
 				'label' => t('Auxillary Files'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
@@ -367,7 +368,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_R_INSTANCE_PRE . 'display_auth' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'display_auth',
+				'field_name' => 'tapas_field_display_auth',
 				'label' => t('Author Names'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
@@ -378,7 +379,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_R_INSTANCE_PRE . 'display_contrib' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'display_contrib',
+				'field_name' => 'tapas_field_display_contrib',
 				'label' => t('Contributor Names'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
@@ -389,7 +390,7 @@ function _tapascontent_all_fields() {
 
 		TAPAS_R_INSTANCE_PRE . 'display_date' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'display_date',
+				'field_name' => 'tapas_field_display_date',
 				'label' => t('Timeline Date'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
@@ -400,7 +401,7 @@ function _tapascontent_all_fields() {
 
     TAPAS_R_INSTANCE_PRE . 'record_ography_type' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'record_ography_types',
+				'field_name' => 'tapas_field_record_ography_types',
 				'label' => t('Ography Types'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
@@ -411,7 +412,7 @@ function _tapascontent_all_fields() {
 
     TAPAS_R_INSTANCE_PRE . 'project' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'project',
+				'field_name' => 'tapas_field_project',
 				'label' => t('Record Project'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
@@ -421,7 +422,7 @@ function _tapascontent_all_fields() {
 
     TAPAS_R_INSTANCE_PRE . 'upload_status' => (
 			array(
-				'field_name' => TAPAS_FIELD_PREFIX . 'upload_status',
+				'field_name' => 'tapas_field_upload_status',
 				'label' => t('Upload Status'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,

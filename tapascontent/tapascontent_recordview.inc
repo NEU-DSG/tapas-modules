@@ -11,7 +11,6 @@
  * @version 2.1
  */
 
-//include_once('tapascontent_constants.inc'); // for TAPAS_FILED_PREFIX
 define ('TAPAS_VFIELD_PREFIX', 'tapas_vf_');
 define ('TAPAS_READERTAB_DROPDOWN_DESC', t('Choose a stylesheet with which you would like to render the TEI.'));
 define ('TAPAS_SELECTBUTTON_CALLBACK', '_tapas_selectbutton_callback');
@@ -82,9 +81,7 @@ function _tapascontent_readertab($uuid, $ography) {
 
 function _tapas_readertab_dropdown($ography) {
 	$options = array();
-	if (!$ography){
-		$options['tapas_generic'] = TAPAS_GENERIC_LABEL;
-	}
+	if (!$ography){ $options['tapas_generic'] = TAPAS_GENERIC_LABEL;}
 	$options['teibp'] = TAPAS_TEIBP_LABEL;
 	$options['tei'] = TAPAS_TEI_LABEL;
 

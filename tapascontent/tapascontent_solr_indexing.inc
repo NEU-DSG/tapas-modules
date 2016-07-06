@@ -22,6 +22,14 @@ function tapascontent_apachesolr_index_collection(&$document, $collection) {
   _set_teaser_and_description($document, $collection);
 }
 
+function _set_teaser_and_description(&$document, $node) {
+  $fname = 'tapas_field_description';
+  $desc = field_get_items('node', $node, $fname);
+  $desc = $desc?:'';
+  $document->content = $desc;
+  $document->teaser = _truncate_str($desc, 400);
+}
+
 function tapascontent_apachesolr_index_record(&$document, $record){
   _add_tei_to_document($document, $record);
 }
@@ -56,12 +64,6 @@ function _add_tei_to_document(&$document, $record) {
   }
 }
 
-function _set_teaser_and_description(&$document, $node) {
-  $fname = TAPAS_FIELD_PREFIX . 'description';
-  $desc = tapas_simple_fieldval($node, $fname, '');
-  $document->content = $desc;
-  $document->teaser = _truncate_str($desc, 400);
-}
 
 // Truncates the string to the word nearest the specified character count:w
 function _truncate_str($str, $char_count) { 

@@ -4,8 +4,16 @@
  * tapascontent_forms_inc
  */
 
-define('TAPASCONTENT_CREATE_PROJ_FIRST_HEADER', t("Please create a project first, or use the Commons."));
-define('TAPASCONTENT_CREATE_PROJ_FIRST_TEXT', t("Creating a Collection requires having a Project to attach it to (either a project that you created, or one to which the owner has given you editing privledges). You don't currently seem to be an editing member of any Projects; please create a project first! Alternately, you can upload TEI directly to the Common Repository without creating any projects or collections."));
+
+include_once('tapascontent_drupalcalls.inc');
+
+//define('TAPASCONTENT_CREATE_PROJ_FIRST_HEADER', t("Please create a project first, or use the Commons."));
+//define('TAPASCONTENT_CREATE_PROJ_FIRST_TEXT', t("Creating a Collection requires having a Project to attach it to (either a project that you created, or one to which the owner has given you editing privledges). You don't currently seem to be an editing member of any Projects; please create a project first! Alternately, you can upload TEI directly to the Common Repository without creating any projects or collections."));
+
+//TODO: put these whre t() won't break the unit tests.
+
+define('TAPASCONTENT_CREATE_PROJ_FIRST_HEADER', "Please create a project first, or use the Commons.");
+define('TAPASCONTENT_CREATE_PROJ_FIRST_TEXT', "Creating a Collection requires having a Project to attach it to (either a project that you created, or one to which the owner has given you editing privledges). You don't currently seem to be an editing member of any Projects; please create a project first! Alternately, you can upload TEI directly to the Common Repository without creating any projects or collections.");
 
 //=============================================================
 // Form Overrides
@@ -18,7 +26,9 @@ define('TAPASCONTENT_CREATE_PROJ_FIRST_TEXT', t("Creating a Collection requires 
  */
 
 function tapascollection_form_alter(&$form, &$form_state, $form_id) {
-  honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
+	$front_handler = new Tapascontent_DrupalConnector();
+	$front_handler->activate_honeypot($form, $form_state, array('honeypot', 'time_restriction')); 
+  //honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
 }
 
 /**
@@ -27,9 +37,8 @@ function tapascollection_form_alter(&$form, &$form_state, $form_id) {
  */
 function tapascontent_form_node_form_alter(&$form, &$form_state, $form_id) {
 
-	if(isset($form['field_tapas_upload_status'])) {
-		$form['field_tapas_upload_status']['#access'] = FALSE;
-	}
+	if(isset($form['field_tapas_upload_status'])) 
+	{ $form['field_tapas_upload_status']['#access'] = FALSE; }
 
 }
 
@@ -67,21 +76,26 @@ function tapascontent_form_tapas_collection_node_form_alter(&$form, &$form_state
 
 function _tapascontent_collection_form_check(&$form) {
 
-	$user_groups = og_get_groups_by_user(NULL, "node");
+	$front_connector = new Tapascontent_DrupalConnector();
+
+	//$user_groups = og_get_groups_by_user(NULL, "node");
+	$user_groups = $front_connector->user_og_groups();
 
 	if(empty($user_groups)) {
 		_tapascontent_disable_collection_form($form); 
 	} else {
 		try {
 			foreach($user_groups as $gid) {
-				$roles = og_get_user_roles('node', $gid);
+				//$roles = og_get_user_roles('node', $gid);
+				$roles = $front_connector->user_og_roles();
 				foreach($roles as $role) {
 					//drupal_set_message("For gid $gid, User has a role of $role");
 				}
 			}
 		} catch (Exception $e) {
 			try {
-				og_ungroup('node', $gid);
+				//og_ungroup('node', $gid);
+				$front_connector->ungroup_og_fix($gid);
 			}
 			catch (Exception $e) {
 				//drupal_set_message("We seem to be experiencing a problem. Please open a support ticket, and copy this message in. (Unable to remove invalid group $gid.)");
@@ -137,22 +151,14 @@ function _tapascontent_disable_collection_form(&$form) {
 function _tapascontent_validate_project_form($form, &$form_state) {
   $slug = _get_slug($form, $form_state);
 
-  $query_base = 'SELECT COUNT(*) from field_data_field_tapas_slug WHERE' . 
-    ' field_tapas_slug_value = :value AND bundle = :bundle';
-
-  if (isset($form['#node']->nid)) { 
-    $query_base .= ' AND entity_id != :nid';
-    $count = db_query($query_base, [':value' => $slug, ':bundle' => 'tapas_project', 
-      ':nid' => $form['#node']->nid])->fetchField();
-  } else {
-    $count = db_query($query_base, [':value' => $slug, ':bundle' => 'tapas_project'])
-      ->fetchField();
- }
+	$front= new Tapascontent_DrupalConnector();
+	$count = $front->db_query_get_count(isset($form['#node']->nid)?:NULL);
 
   // Attach an error if other projects are using this slug
   if ($count > 0) { 
     $error = 'You must select a project slug that is not already in use.';
-    form_set_error('field_tapas_slug', $error);
+    //form_set_error('field_tapas_slug', $error);
+		$front->form_set_error('field_tapas_slug', $error);
   }
 }
 
@@ -174,7 +180,6 @@ function _tapascontent_validate_collection_form($form, &$form_state) {
 /**
  * syntactic sugar to get the slug value.
  */
-function _get_slug($form, &$form_state) { 
-  return $form_state['values']['field_tapas_slug'][LANGUAGE_NONE][0]['value'];
-}
+function _get_slug($form, &$form_state) 
+{ return $form_state['values']['field_tapas_slug'][LANGUAGE_NONE][0]['value']; }
 
