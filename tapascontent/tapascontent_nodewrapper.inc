@@ -119,13 +119,14 @@ implements Tapascontent_iGroupNodeWrapper
 
 	public function get_repo_data()
 	{
-		$data = parent::get_repo_data()?:array();
+		$data = parent::get_repo_data(); 
 		$data = $data + array(
 			'title' => $this->node()->title,
 			'description' => "description", // TODO: fix field iterator stuff. $this->drupal()->get_field_values('field_tapas_descrption')->current(),
 			'access' => $this->get_node_privacy(),
 			'thumb_file' => $this->get_thumbnail()
 		);
+		return $data;
 	}
 
 	protected function send_upsert($type) 
@@ -161,7 +162,7 @@ extends Tapascontent_GroupNodeWrapper
 
 	public function get_repo_data() 
 	{
-		$data = parent::get_repo_data()?:array();
+		$data = parent::get_repo_data();
 		$data += array(
 			'members' => $this->members()
 		);
@@ -198,7 +199,7 @@ extends Tapascontent_GroupNodeWrapper
 	public function get_repo_data()
 	{
 		// broken into separate lines for troubleshooting
-		$data = parent::get_repo_data()?:array();
+		$data = parent::get_repo_data();
 		$drupal_connector = $this->drupal();
 		$node_list = $drupal_connector->parent_nodes_by_type($this->node(), TAPAS_PROJECT);
 		$first_node = $node_list->current();

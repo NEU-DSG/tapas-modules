@@ -49,14 +49,14 @@ abstract class Tapascontent_aDrupalConnector
 implements Tapascontent_iDrupalConnector
 {
 
+	private $factory;
+
 	public function create_record() {} // TODO
 
-	private $factory;
-	public function __construct($factory)
-	{
-		$this->factory = $factory;
-	}
-	protected function factory() { return $this->factory;}
+
+	public function __construct($factory) { $this->factory = $factory; }
+
+	protected function factory() { return $this->factory; }
 	protected function query_base($nid)
 	{
 		$query_base = 'SELECT COUNT(*) from field_data_field_tapas_slug WHERE' . 
@@ -65,6 +65,7 @@ implements Tapascontent_iDrupalConnector
 		$query_base .= $nid?' AND entity_id != :nid':'';
 		return $query_base;
 	}
+
 	protected function build_query($slug, $nid)
 	{
 		if ($nid)
@@ -110,7 +111,7 @@ extends Tapascontent_aDrupalConnector
 
 	public function node_load($nid) 
 	{
-		return new Tapascontent_NodeWrapper(node_load($id));
+		return $this->factory()->wrap_node(node_load($id));
 	}
 	
 	public function groups_this_user_is_in($uid)
@@ -133,7 +134,7 @@ extends Tapascontent_aDrupalConnector
 	function verify_slug_unique($slug, $nid=NULL)
   {
 		$query_base = $this->query_base($nid);
-		$query_array = $this->build_query($slug, $nid);
+		$count_array = $this->build_query($slug, $nid);
 		return db_query($query_base, $count_array)->fetchField();
 	}
 
@@ -154,7 +155,12 @@ extends Tapascontent_aDrupalConnector
 		//   (or an empty array, if nothing is found.)
 
 		$parents = og_get_entity_groups('node', $nid)[$type];
-		return new Tapascontent_NodeIterator($parents?$parents['node']:array(), $this);
+		$node_array = [];
+		foreach($parents as $nid) 
+		{
+			$node_array[] = $nid;
+		}
+		return new Tapascontent_NodeIterator($node_array);
 	}
 
 	public function form_set_error($field, $msg) {
@@ -165,17 +171,46 @@ extends Tapascontent_aDrupalConnector
 class Tapascontent_MockDrupalConnector
 extends Tapascontent_aDrupalConnector
 {
-	public function path_from_fid($fid) { return("./$fid"); }
+	public function path_from_fid($fid) { return $fid; }
 	public function public_path($name) { return $name; }
 
 	public function verify_slug_unique($slug, $nid=NULL)
 	{
-		$query_base = $this->query_base($nid);
-		$query_array = $this->build_query($slug, $nid);
+		assert(FALSE);
+		// The other alternative is to always return 'TRUE', but I only
+		// want to do that if I need to.
 	}
 
-	public function activate_honeypot(&$form, &$form_state, $params) {}
-	public function node_load($nid){ return array(); }
+	public function activate_honeypot(&$form, &$form_state, $params) {
+		assert(FALSE);
+		// Or else return NULL, but only want to do that if I need to.
+	}
+	public function node_load($nid)
+	{
+		switch($nid)
+		{
+			case 443:
+			case '9756885e-1131-4494-adee-cf914dddf701':
+				global $project_node;
+				return $this->factory()->wrap_node($project_node);
+				break;
+			case 544:
+			case 'xeb53f1c-bcac-41fb-84d4-f5cb97a1a46c':
+				global $shared_node;
+				return $this->factory()->wrap_node($project_node);
+				break;
+			case 444:
+			case 'aeb53f1c-bcac-41fb-84d4-f5cb97a1a46c':
+				global $collection_node;
+				return $this->factory()->wrap_node($collection_node);
+				break;
+			case 602:
+			case '66db1ec1-e708-4f17-b55d-3706c39ab13e':
+				global $record_node;
+				return $this->factory()->wrap_node($collection_node);
+				break;
+		}
+	}
 
 	// TODO: shoudl return node iterator?
 	public function groups_this_user_is_in($uid) { return $uid;}
@@ -193,11 +228,27 @@ extends Tapascontent_aDrupalConnector
 	{ assert(FALSE); } // TODO: write set_fieldval function 
 
 	public function get_field_values($node, $fieldname, $column='value') {
-		return new Tapascontent_FieldValueIterator($node[$fieldname]['und'][0][$column]);
+		return new Tapascontent_FieldValueIterator($node[$fieldname]);
 	}
 	public function parent_nodes_by_type($nid, $type)
 	{
-		return new Tapascontent_NodeIterator([1,2,3], $this);
+		switch($type) {
+			case 'tapas_project':
+				global $tapas_project;
+				$node = $tapas_project;
+			case 'tapas_collection':
+				global $tapas_collection;
+				$node = $tapas_collection;
+			case 'tapas_shared':
+				global $tapas_shared;
+				$node = $tapas_shared;
+			case 'tapas_record':
+				global $tapas_record;
+				$node = $tapas_record;
+			default:
+				return NULL;
+		}
+		return new Tapascontent_NodeIterator([$node]);
 	}
 
 	public function form_set_error($field, $msg) {}

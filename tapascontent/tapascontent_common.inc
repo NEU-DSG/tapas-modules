@@ -35,9 +35,13 @@ implements Iterator
 {
 	private $index = 0;
 
-	public function key() {return $this->index;}
-	public function next() {return $this->index++;}
-	public function rewind() {$index=0;}
+	public function key() { return $this->index; }
+	public function next() { $this->index++; }
+	public function rewind() { $this->index = 0; }
+
+	public abstract function as_array();
+
+	protected function increment_index() { $this->index++; }
 }
 
 /**
@@ -52,8 +56,14 @@ extends Tapascontent_aIterator
 {
 	private $field;
 
-	public function __construct($field) { $this->field = $field; }
-	public function valid() { return isset($this->field[$this->key()]); }
+	public function __construct($field) { 
+			$this->field = $field; 
+	}
+
+	public function valid() { 
+		$return_value = array_key_exists($this->key(), $this->field['und']);
+		return array_key_exists($this->key(), $this->field['und']); 
+	}
 
 	public function current($column='value') {
 		return $this->field['und'][$this->key()][$column];
@@ -61,9 +71,17 @@ extends Tapascontent_aIterator
 
 	public function as_array($column='value')
 	{
+		//TODO: add test asserting that this successfully restores the prior state.
+		$original_key = $this->key();
+		$this->rewind();
 		$values=[];
-		while($this->valid()) { $values[] = $this->current($column); }
-		return $values?:array();
+		while($this->valid()) { 
+			$values[] = $this->current($column); 
+			$this->next();
+		}
+		$this->rewind();
+		while($this->key() < $original_key) { $this->next(); }
+		return $values;
 	}
 }
 
@@ -73,13 +91,29 @@ extends Tapascontent_aIterator
 {
 	private $nodes = [];
 
-	public function __construct($array_of_ids, $front)
-	{ foreach($array_of_ids as $nid) {$this->nodes[] = $front->node_load($nid);} }
+	/**
+	 * I want to use two constructors, one using array_of_nodes, the other using
+	 * array_of_ids. Alas, because PHP is weakly typed, that kind of polymorphism
+	 * is unavailable. #reasonswhyphpannoysme
+	 */
 
+	/** 
+	 * I'll use the $array_of_nodes input here, so that I don't need to deal with
+	 * the connector in this class, and create a factory function to wrap a group
+	 * of ids.
+	 *
+	 * Which means this may as well be Tapascontent_ObjectIterator, but not gonna
+	 * worry about that right now.
+	 */
+	public function __construct($array_of_nodes){$this->nodes = $array_of_nodes;}
 	public function current() {return $this->nodes[$this->key()];}
 	public function valid() {return (sizeof($this->nodes > $this->key())); }
 
-	public function nids_as_array()
+	/**
+	 * @function
+	 * Returns an array of the nids.
+	 */
+	public function as_array()
 	{
 		$nid_array = array();
 		foreach($this->nodes as $node)
@@ -127,6 +161,7 @@ interface Tapascontent_iWrapperFactory
 	function wrap_user($uid);
 	function wrap_form(&$form, &$form_state, $nid);
 	function wrap_node($node);
+	function wrap_node_ids($nids = []);
 }
 
 abstract class Tapascontent_aWrapperFactory
@@ -142,6 +177,9 @@ abstract class Tapascontent_aWrapperFactory
 		$this->drupal = $this->instantize_drupal_connector();
 		$this->repo = $this->instantize_repo_connector();
 	}
+
+	public function drupal() { return $this->drupal; }
+	public function repo() { return $this->repo; }
 
 	public function wrap_user($uid)
 	{
@@ -176,6 +214,16 @@ abstract class Tapascontent_aWrapperFactory
 		} else {
 			return FALSE;
 		}
+	}
+
+	public function wrap_node_ids($nids = [])
+	{
+		$node_array = [];
+		foreach($nids as $nid) {
+			$node_array[] = $this->drupal->node_load($nid);
+		}
+
+		return new Tapascontent_NodeIderator($node_array);
 	}
 }
 

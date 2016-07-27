@@ -183,3 +183,105 @@ function _tapascontent_validate_collection_form($form, &$form_state) {
 function _get_slug($form, &$form_state) 
 { return $form_state['values']['field_tapas_slug'][LANGUAGE_NONE][0]['value']; }
 
+
+// ==============================================================
+// Form Wrapper
+// ==============================================================
+
+interface Tapascontent_iFormWrapper 
+extends Tapascontent_iWrapper
+{
+
+}
+
+abstract class Tapascontent_aFormWrapper
+extends Tapascontent_awrapper
+implements Tapascontent_iFormWrapper
+{
+}
+
+class Tapascontent_FormWrapper
+extends Tapascontent_aFormWrapper
+{
+
+}
+
+class Tapascontent_MockFormWrapper
+extends Tapascontent_aFormWrapper
+{
+
+
+}
+
+// ==============================================================
+// FormField Wrapper
+// ==============================================================
+
+interface Tapascontent_iFormFieldWrapper
+{
+	function set_visible($bool=TRUE);
+	function set_value($value, $column='value');
+	function set_active($bool=TRUE);
+}
+
+abstract class Tapascontent_aFormFieldWrapper
+extends Tapascontent_aWrapper
+implements Tapascontent_iFormFieldWrapper
+{
+
+	public function __construct($form, $fieldname)
+	{
+
+	}
+
+	public function set_visible($bool=TRUE)
+	{
+		assert($bool===TRUE || $bool===FALSE);
+		return $this->set_fieldarray_value('visible', $bool);
+	}
+
+	public function set_value($value, $column='value')
+	{
+		return $this->set_fieldarray_value($column, $value);
+	}
+
+	public function set_active($bool=TRUE)
+	{
+		assert($bool===TRUE || $bool===FALSE);
+		return $this->set_fieldarray_value('active', $bool);
+	}
+
+	protected abstract function set_fieldarray_value($column, $value);
+	protected abstract function get_fieldarray_values($column);
+}
+
+class Tapascontent_FormFieldWrapper
+extends Tapascontent_aFormFIeldWrapper
+{
+	protected function set_fieldarray_value($column, $value)
+	{
+
+	}
+
+	protected function get_fieldarray_values($column='value')
+	{
+
+
+	}
+}
+
+class Tapascontent_MockFormFIeldWrapper
+extends Tapascontent_FormFieldWrapper
+{
+
+	protected function set_fieldarray_value($column, $value)
+	{
+
+	}
+
+	protected function get_fieldarray_values($column='value')
+	{
+
+
+	}
+}
