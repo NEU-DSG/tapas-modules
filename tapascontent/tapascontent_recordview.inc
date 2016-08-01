@@ -33,6 +33,7 @@ define ('TAPAS_GENERIC_LABEL', t('TAPAS Generic'));
 function tapascontent_view_tei_record($node) {
 	$theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
 	drupal_add_js($theme_path.'/assets/js/record.js', array('type'=>'file', 'requires_jquery'=>true));
+	drupal_add_js($theme_path.'/assets/js/ace.js', array('type'=>'file', 'requires_jquery'=>true));
 	drupal_add_library('system','ui.dialog');
 	drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/teibp/js/teibp.js', array('type'=>'file'));
 	if (isset($node->field_tapas_record_ography_type['und'][0]['value'])){
@@ -55,9 +56,10 @@ function _tapascontent_readertab($uuid, $ography) {
 
 	$styledrop = _tapas_readertab_dropdown($ography);
 	$tei = tapashydra_get_tei($uuid, 'tei');
+	$xml_helper_fields = "<div class='row'><div class='checkbox'><label for='toggle_word_wrap'><input type='checkbox' id='toggle_word_wrap' name='toggle_word_wrap'/>Toggle Soft Wrap</label></div><div class='checkbox'><label for='toggle_invisibles'><input type='checkbox' id='toggle_invisibles' name='toggle_invisibles'/>Toggle Invisibles</label></div></div>";
 	$tapas_generic = tapashydra_get_tei($uuid, 'tapas_generic');
 	$teibp = tapashydra_get_tei($uuid, 'teibp');
-	$markup = '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei"><pre>'.htmlentities($tei).'</pre></div>';
+	$markup = '<div class="reader_teibp">'.$teibp.'</div><div class="reader_tei">'.$xml_helper_fields.'<pre>'.htmlentities($tei).'</pre></div>';
 	if (!$ography){
 		$markup .= '<div class="reader_tapas_generic">'.$tapas_generic.'</div>';
 	}
