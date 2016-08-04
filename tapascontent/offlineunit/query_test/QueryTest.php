@@ -21,9 +21,6 @@ extends Tapascontent_UnitTestCase
 
 	public function setUp()
 	{
-		echo '
-begin Query_TestCase
-';
 		$f = new Tapascontent_MockWrapperFactory();
 		$this->factory = $f;
 
@@ -75,9 +72,6 @@ extends Tapascontent_Query_TestCase
 {
 	private $query;
 	public function setUp() {
-		echo '
-UpsertProjectQuery_TestCase
-';
 		parent::setUp();
 		$this->query = new Tapascontent_UpsertQuery(
 			$this->project->get_repo_data(),

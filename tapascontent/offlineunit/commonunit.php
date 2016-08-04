@@ -69,7 +69,7 @@ extends PHPUnit_Framework_TestCase
 //=====================================================================
 
 
-$project_node = [
+$project_node = (object) [
 	'vid' => 443,
   'uid' => 162,
   'title' => 'Digital Dinah Craik',
@@ -146,7 +146,11 @@ $project_node = [
           '0' => [
 						'value' => 'digitaldinahcraik',
 						'safe_value' => 'digitaldinahcraik'
-					 ] // '0'
+					 ], // '0'
+					'1' => [
+						'value' => 'dummy_second_slug_for_testing',
+						'safe_value' => 'dummy_second_slug_for_testing'
+					] // '1'
 				] // 'und'
 			], // 'field_tapas_slug'
     'field_tapas_links' => [
@@ -158,7 +162,7 @@ $project_node = [
 				], // '0'
 				'1' => [
 					'url' => "http://www.example.com",
-					'title' => "Dummy second url for testing",
+					'title' => "Dummy second url title for testing",
 					'attributes' => []
 				]
 			] // 'und'
@@ -211,7 +215,7 @@ $project_node = [
 		] // 'rdf_mapping'
 ];
 
-$shared_node = [
+$shared_node = (object) [
 
     'vid' => 544,
     'uid' => 162,
@@ -274,8 +278,8 @@ $shared_node = [
         '0' => [
 					'fid' => 154,
 					'uid' => 162,
-					'filename' => 'Digital Dinah Craik-logo (1)_0.png',
-					'uri' => 'public://Digital Dinah Craik-logo (1)_0_0.png',
+					'filename' => 'Digital Dinah Craik-logo.png',
+					'uri' => 'public://Digital Dinah Craik-logo.png',
 					'filemime' => 'image/png',
 					'filesize' => 8175,
 					'status' => 1,
@@ -284,7 +288,12 @@ $shared_node = [
 					'rdf_mapping' => [],
 					'width' => 220,
 					'height' => 180
-				] // '0'
+				], // '0'
+				'1' => [
+					'fid' => 999,
+					'uid' => 261,
+					'filename' => "dummy filename for testing."
+				] // '1'
 			] // 'und'
 		], // 'field_tapas_thumbnail
     'field_tapas_slug' => [
@@ -292,8 +301,12 @@ $shared_node = [
         '0' => [
 					'value' => 'parrishcollection',
 					'safe_value' => 'parrishcollection'
-				]
-			]
+				], // 0
+				'1' => [
+					'value' => 'dummy_second_slug_for_testing',
+					'safe_value' => 'dummy_second_slug_for_testing'
+				] // 1
+			] // und
 		],
     'group_group' => ['und' => ['0' => ['value' => 1]]],
     'group_access' => ['und' => ['0' => ['value' => 0]]],
@@ -342,7 +355,7 @@ $shared_node = [
     'data' => 'a:1:{s:7:"contact";i:1;}',
 ];
 
-$collection_node = [
+$collection_node = (object) [
 
     'vid' => 444,
     'uid' => 162,
@@ -405,8 +418,8 @@ $collection_node = [
         '0' => [
 					'fid' => 154,
 					'uid' => 162,
-					'filename' => 'Digital Dinah Craik-logo (1)_0.png',
-					'uri' => 'public://Digital Dinah Craik-logo (1)_0_0.png',
+					'filename' => 'Digital Dinah Craik-logo.png',
+					'uri' => 'public://Digital Dinah Craik-logo.png',
 					'filemime' => 'image/png',
 					'filesize' => 8175,
 					'status' => 1,
@@ -415,7 +428,12 @@ $collection_node = [
 					'rdf_mapping' => [],
 					'width' => 220,
 					'height' => 180
-				] // '0'
+				], // '0'
+				'1' => [
+					'fid' => 999,
+					'uid' => 261,
+					'filename' => "dummy filename for testing."
+				] // '1'
 			] // 'und'
 		], // 'field_tapas_thumbnail
     'field_tapas_slug' => [
@@ -475,7 +493,7 @@ $collection_node = [
     'data' => 'a:1:{s:7:"contact";i:1;}',
 ];
 
-$record_node = [
+$record_node = (object) [
 
     'vid' => 602,
     'uid' => 162,
@@ -541,6 +559,9 @@ $record_node = [
 					'timezone' => 'America/New_York',
 					'timezone_db' => 'America/New_York',
 					'date_type' => 'date'
+				],
+				'1' => [
+					'timezone' => 'needed another fake for test.',
 				]
 			]
 		],

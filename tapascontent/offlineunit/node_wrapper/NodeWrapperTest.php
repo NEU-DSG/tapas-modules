@@ -8,6 +8,10 @@
 
 include_once('offlineunit/commonunit.php');
 
+/**
+ * @class
+ */
+
 abstract class Tapascontent_NodeWrapper_TestCase
 extends Tapascontent_UnitTestCase
 {
@@ -24,7 +28,6 @@ extends Tapascontent_UnitTestCase
 	{
 		$this->unwrapped = $node;
 		$this->wrapped = $this->factory()->wrap_node($node);
-
 	}
 
 	protected function get_unwrapped() { return $this->unwrapped; }
@@ -55,45 +58,181 @@ extends Tapascontent_UnitTestCase
 		$this->assertInstanceOf('Tapascontent_aDrupalConnector', $drupal_connector);
 	}
 
-	public function test_presave()
+	public function test_presave() //TODO
 	{
 		$this->markTestIncomplete();
 	}
 
-	public function test_upsert()
-	{
-
-		$this->markTestIncomplete();
-
-	}
-
-	public function test_delete()
+	public function test_upsert() //TODO
 	{
 		$this->markTestIncomplete();
 	}
 
-	protected abstract function test_get_field_values();
-	protected abstract function test_set_field();
-
-	protected abstract function thumbnail_expected_value();
-	public function test_get_thumbnail()
+	public function test_delete() //TODO
 	{
-
 		$this->markTestIncomplete();
+	}
+
+	protected function do_test_get_fields($params)
+	{
+		$values = $params->node->get_field_values(
+			$params->fieldname,
+			$params->column_default
+		);
+
+		$this->assertEquals(
+			$params->expected_first,
+			$values ->current($params->column_current)
+		);
+
+		$values->next();
+
+		$this->assertEquals(
+			$params->expected_second,
+			$values->current($params->column_current)
+		);
+	}
+
+	protected function do_test_set_field($params)
+	{
+		$params->node->set_field(
+			$params->fieldname,
+			$params->new_value, 
+			$params->column_default, 
+			$params->delta
+		);
+
+		$after_values = $params->node->get_field_values(
+			$params->fieldname,
+			$params->column_default
+		);
+
+		if ($params->delta) {
+			$after_values->next();
+			$this->assertEquals($params->new_value, $after_values->current());
+			$after_values->rewind();
+		} else {
+			$this->assertEquals($params->new_value, $after_values->current());
+		}
+
+		//var_dump($after_values);
+
+		#TODO_TODAY: assert old first value in set [...]
+		#TODO_TODAY: assert old second value in set [...]
+		#TODO_TODAY: assert new value in [..]
+
+		$this->assertEquals(
+			$params->new_value, 
+			$after_values->by_index($params->delta, $params->column_current)
+		);
+	}
+
+	private function base_params()
+	{
+		$params = new StdClass();
+
+		$params->node = $this->get_wrapped();
+		$params->column_default = NULL;
+		$params->column_current = NULL;
+		$params->expected_first = NULL;
+		$params->expected_second = NULL;
+		$params->new_value = NULL;
+		$params->delta = NULL;
+
+		return $params;
+	}
+
+	protected function default_column_params() {
+		return $this->base_params();
+	}
+
+	protected function custom_column_params() {
+		return $this->base_params();
+	}
+
+	public function test_get_field_values_default() 
+	{
+		$params = $this->default_column_params();
+		$this->do_test_get_fields($params);
+	}
+
+	public function test_get_field_values_custom_current() 
+	{
+		$params = $this->custom_column_params();
+		$params->column_default = NULL;
+		$this->do_test_get_fields($params);
+	}
+
+	public function test_get_field_values_custom_default() 
+	{
+		$params = $this->custom_column_params();
+		$params->column_current = NULL;
+		$this->do_test_get_fields($params);
+	}
+
+	public function test_set_field_values_default() 
+	{
+		$params = $this->default_column_params();
+		$this->do_test_set_field($params);
+	}
+
+	public function test_set_field_values_custom_current() 
+	{
+		$params = $this->custom_column_params();
+		$params->column_default = NULL;
+		$this->do_test_set_field($params);
+	}
+
+	public function test_set_field_values_custom_default() 
+	{
+		$params = $this->custom_column_params();
+		$params->column_current = NULL;
+		$this->do_test_set_field($params);
+	}
+
+	public function test_set_field_delta()
+	{
+		$params = $this->default_column_params();
+		$params->delta = 1;
+		$this->do_test_set_field($params);
 
 	}
 
-	protected abstract function repo_data_expected_value();
-	public function test_get_repo_data()
+	public function test_set_field_delta_custom_column()
+	{
+		$params = $this->default_column_params();
+		$params->delta = 1;
+		$this->do_test_set_field($params);
+	}
+
+	public function test_append_field_item_proper_cardinality()
 	{
 
-		$this->markTestIncomplete();
 
 	}
 
+	public function test_append_field_item_singular_cardinality_error()
+	{
+		// verify the failure behavior if a value is appended to a field
+		// that only allows singular values.
+	
+		$mark_test_incomplete;
+	}
+
+	public function test_append_field_item_filled_cardinality_error()
+	{
+		// verify the failure behavior if a value is appended to a field
+		// that, while it allows more than one value, only allows a finite
+		// number of values and that limit had already been reached.
+
+		$this->markTestIncomplete();
+	}
 }
 
 
+/**
+ * @class
+ */
 class Tapascontent_ProjectNodeWrapper_TestCase
 extends Tapascontent_NodeWrapper_TestCase
 {
@@ -104,29 +243,49 @@ extends Tapascontent_NodeWrapper_TestCase
 		$this->set_node($project_node);
 	}
 
-	public function test_get_field_values()
-	{
-		$this->markTestIncomplete();
-	}
-	public function test_set_field()
-	{
-		$this->markTestIncomplete();
-	}
-
 	public function test_parent_get_node_privacy() {
-		$this->assertEquals('public', $this->get_wrapped()->get_node_privacy());
+		$actual = $this->get_wrapped()->get_node_privacy();
+		$this->assertEquals('public', $actual);
 	}
 
-	protected function thumbnail_expected_value()
+	protected function default_column_params()
 	{
+		$params = parent::default_column_params();
+		$params->fieldname = 'field_tapas_slug';
+		$params->expected_first = 'digitaldinahcraik';
+		$params->expected_second = 'dummy_second_slug_for_testing';
+		$params->new_value = 'new-slug-for-test-set';
 
+		return $params;
 	}
-	protected function repo_data_expected_value()
-	{
 
+	protected function custom_column_params()
+	{
+		$params = parent::custom_column_params();
+		$params->fieldname = 'field_tapas_links';
+		$params->column_default = 'title';
+		$params->column_current = 'title';
+		$params->expected_first = "Sally Mitchell's Dinah Mulock Craik on the Victorian Web";
+		$params->expected_second = "Dummy second url title for testing";
+		$params->new_value = "Changed title value to test set";
+
+		return $params;
+	}
+
+	public function test_thumbnail()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_repo_data()
+	{
+		$this->markTestIncomplete();
 	}
 }
 
+/**
+ * @class
+ */
 class Tapascontent_CollectionNodeWrapper_TestCase
 extends Tapascontent_NodeWrapper_TestCase
 {
@@ -138,37 +297,34 @@ extends Tapascontent_NodeWrapper_TestCase
 		$this->set_node($collection_node);
 	}
 
-	public function test_get_field_values()
+	protected function default_column_params()
 	{
-		$expected_first = 	"http://www.victorianweb.org/authors/craik/mitchell/1.html";
-		$expected_second = "http://www.example.com";
-		$values = $this->get_wrapped()->get_field_values('field_tapas_links', 'url');
-		var_dump($values);
+		$params = parent::default_column_params();
+		$params->fieldname = 'field_tapas_slug';
+		$params->expected_first = 'parrishcollection';
+		$params->expected_second = 'dummy_second_slug_for_testing';
+		$params->new_value = 'new-slug-for-test-set';
 
-		$actual_first = $values->current();
-		$values->next();
-		$actual_second = $values->current();
-
-		$this->assertEquals($expected_first, $actual_first);
-		$this->assertEquals($expected_second, $actual_second);
+		return $params;
 	}
 
-	public function test_set_field()
+	protected function custom_column_params()
 	{
-		$this->markTestIncomplete();
+		$params = parent::custom_column_params();
+		$params->fieldname = 'field_tapas_thumnnail';
+		$params->column_default = 'filename';
+		$params->column_current = 'filename';
+		$params->expected_first = 'Digital Dinah Craik-logo.png';
+		$params->expected_second = 'dummy filename for testing.';
+		$params->new_value = "Changed title value to test set";
 
-		$new_value = "Changed Filename to Test Set_Field()";
-
-	}
-
-	protected function thumbnail_expected_value()
-	{
-	}
-	protected function repo_data_expected_value()
-	{
+		return $params;
 	}
 }
 
+/**
+ * @class
+ */
 class Tapascontent_SharedNodeWrapper_TestCase
 extends Tapascontent_NodeWrapper_TestCase
 {
@@ -179,23 +335,35 @@ extends Tapascontent_NodeWrapper_TestCase
 		global $shared_node;
 		$this->set_node($shared_node);
 	}
-	public function test_get_field_values()
+
+	protected function default_column_params()
 	{
-		$this->markTestIncomplete();
-	}
-	public function test_set_field()
-	{
-		$this->markTestIncomplete();
+		$params = parent::default_column_params();
+		$params->fieldname = 'field_tapas_slug';
+		$params->expected_first = 'parrishcollection';
+		$params->expected_second = 'dummy_second_slug_for_testing';
+		$params->new_value = 'new-slug-for-test-set';
+
+		return $params;
 	}
 
-	protected function thumbnail_expected_value()
+	protected function custom_column_params()
 	{
-	}
-	protected function repo_data_expected_value()
-	{
+		$params = parent::custom_column_params();
+		$params->fieldname = 'field_tapas_thumnnail';
+		$params->column_default = 'filename';
+		$params->column_current = 'filename';
+		$params->expected_first = 'Digital Dinah Craik-logo.png';
+		$params->expected_second = 'dummy filename for testing.';
+		$params->new_value = "Changed title value to test set";
+
+		return $params;
 	}
 }
 
+/**
+ * @class
+ */
 class Tapascontent_RecordNodeWrapper_TestCase
 extends Tapascontent_NodeWrapper_TestCase
 {
@@ -206,19 +374,28 @@ extends Tapascontent_NodeWrapper_TestCase
 		global $record_node;
 		$this->set_node($record_node);
 	}
-	public function test_get_field_values()
+
+	protected function default_column_params()
 	{
-		$this->markTestIncomplete();
-	}
-	public function test_set_field()
-	{
-		$this->markTestIncomplete();
+		$params = parent::default_column_params();
+		$params->fieldname = 'field_tapas_display_auth';
+		$params->expected_first = 'Craik, Dinah Mulock';
+		$params->expected_second = 'dummy_second_author_for_testing';
+		$params->new_value = 'Changed author name for testing.';
+
+		return $params;
 	}
 
-	protected function thumbnail_expected_value()
+	protected function custom_column_params()
 	{
-	}
-	protected function repo_data_expected_value()
-	{
+		$params = parent::custom_column_params();
+		$params->fieldname = 'field_tapas_display_date';
+		$params->column_default = 'timezone';
+		$params->column_current = 'timezone';
+		$params->expected_first = 'America/New_York';
+		$params->expected_second = 'needed another fake for test';
+		$params->new_value = 'changed timezone for testing';
+
+		return $params;
 	}
 }

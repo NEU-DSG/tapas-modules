@@ -34,7 +34,7 @@ interface Tapascontent_iDrupalConnector
 	
 
 	function get_field_values($node, $fieldname, $column='value'); 
-	function set_field($node, $fieldname, $value, $column='value'); 
+	function set_field(&$node, $fieldname, $value, $column='value', $delta=0); 
 	function parent_nodes_by_type($nid, $type);
 	function create_record();
 
@@ -51,7 +51,33 @@ implements Tapascontent_iDrupalConnector
 
 	private $factory;
 
-	public function create_record() {} // TODO
+	public function create_record() {assert(FALSE);} // TODO
+
+	public function get_field_values(
+			$node, 
+			$fieldname, 
+			$column='value') 
+	{
+		return new Tapascontent_FieldValueIterator($node->$fieldname, $column);
+	}
+	public function set_field(
+			&$node, 
+			$new_value, 
+			$fieldname, 
+			$column='value', 
+			$delta=0)
+	{
+		// Needed because when NULL is passed, it overides the defauts.
+		// TODO: Since NULL overrides the default, make it so we don't send NULL when we want a default, and take away the next two hacky lines. 
+		$column = $column?:'value'; 
+		$delta = $delta?:0;
+
+		$field = $node->$fieldname;
+		$field['und'][$delta][$column] = $new_value;
+		$node->$fieldname = $field;
+
+		return $node;
+	}
 
 
 	public function __construct($factory) { $this->factory = $factory; }
@@ -117,7 +143,7 @@ extends Tapascontent_aDrupalConnector
 	public function groups_this_user_is_in($uid)
 	{ 
 		// TODO: why is this NULL? How to add $uid?
-		// TODO: should return node iterator?
+		// TODO: should return node iterator
 		return og_get_groups_by_user(NULL, "node");
 	}
 
@@ -136,16 +162,6 @@ extends Tapascontent_aDrupalConnector
 		$query_base = $this->query_base($nid);
 		$count_array = $this->build_query($slug, $nid);
 		return db_query($query_base, $count_array)->fetchField();
-	}
-
-	public function set_field($node, $fieldname, $value, $column='value') 
-	{ 
-		$node->field_fieldname[LANG_NONE][0][$column] = $value;
-	} 
-
-	public function get_field_values($node, $fieldname, $column='value') {
-		$field = field_get_items($node->nid, 'node', $fieldname);
-		return new Tapascontent_FieldValueIterator($field);
 	}
 
 	public function parent_nodes_by_type($nid, $type)
@@ -212,24 +228,28 @@ extends Tapascontent_aDrupalConnector
 		}
 	}
 
-	// TODO: shoudl return node iterator?
-	public function groups_this_user_is_in($uid) { return $uid;}
 
-	public function roles_this_user_has($uid, $gid, $include=TRUE) { return  $uid;}
-
-	// TODO: should return user iterator?
-	public function user_members_of_this_group($gid) { return $gid; }
-
-	public function ungroup_node($gid) { return TRUE; }
-
-
-
-	public function set_field($node, $fieldname, $value, $column='value') 
-	{ assert(FALSE); } // TODO: write set_fieldval function 
-
-	public function get_field_values($node, $fieldname, $column='value') {
-		return new Tapascontent_FieldValueIterator($node[$fieldname]);
+	// return node iterator
+	public function groups_this_user_is_in($uid) 
+	{ 
+		assert(FALSE); // TODO
 	}
+
+	public function roles_this_user_has($uid, $gid, $include=TRUE)
+	{
+		assert(FALSE); // will return test data if test needs it later.
+	}
+
+	// return user iterator
+	public function user_members_of_this_group($gid) 
+	{ 
+		assert(FALSE); // will return test data if test needs it later.
+	}
+
+	public function ungroup_node($gid) {
+		assert(FALSE); // Will change to 'Return TRUE' if needed.
+	}
+
 	public function parent_nodes_by_type($nid, $type)
 	{
 		switch($type) {

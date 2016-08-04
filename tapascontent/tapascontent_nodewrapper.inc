@@ -8,6 +8,9 @@ include_once('tapascontent_solr_indexing.inc');
 
 //TODO: ensure all the dirived classes actually call the 'implements' function for their interface(s).
 
+//TODO: node_object_prepare() when creating node.
+
+
 //=====================================================================
 // Interfaces implemented in this file
 //=====================================================================
@@ -61,7 +64,7 @@ implements Tapascontent_iNodeWrapper
 
 	protected function repo() { return $this->repo; }
 	protected function factory() { return $this->factory; }
-	protected function node() { return $this->node; }
+	public function node() { return $this->node; }
 
 	public function __construct($drupal, $repo, $node, $factory) {
 		Tapascontent_aWrapper::__construct($drupal);
@@ -72,12 +75,16 @@ implements Tapascontent_iNodeWrapper
 
 	public function get_field_values($fieldname, $column='value') {
 		$drupal_connector = $this->drupal();
-		return $drupal_connector->get_field_values($this->node()->nid, $fieldname, $column);
+		return $drupal_connector->get_field_values($this->node(), $fieldname, $column);
 	}
 
-	public function set_field($fieldname, $value, $column='value') {
+	public function set_field($fieldname, $value, $column='value', $delta=0) {
 		$drupal_connector = $this->drupal();
-		$drupal_connector->set_field($this->node()->nid, $fieldname, $value, $column);
+		$node = $this->node();// If I try to inline this inside of set_field, it complains that "only variables should be passed by reference".
+
+		$new_node = $drupal_connector->set_field($node, $value, $fieldname, $column);
+		$this->node = $new_node;
+	
 	}
 
 	public function get_thumbnail() {

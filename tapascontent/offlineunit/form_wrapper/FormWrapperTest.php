@@ -16,9 +16,6 @@ extends Tapascontent_UnitTestCase
 
 	public function setUp()
 	{
-		echo '
-Beginning FormWrapper_TestCase
-';
 		$this->factory = new Tapascontent_MockWrapperFactory();
 	}
 
@@ -38,9 +35,6 @@ extends Tapascontent_FormWrapper_TestCase
 {
 	public function setUp()
 	{
-		echo '
-beginning CreateNodeFormWrapper_TestCase
-';
 		parent::setUp();
 	}
 
@@ -53,9 +47,6 @@ extends Tapascontent_CreateNodeFormWrapper_TestCase
 
 	public function setUp()
 	{
-		echo '
-beginning CreateRecordFormWrapper_TestCase
-';
 		parent::setUp();
 	}
 
@@ -66,9 +57,6 @@ extends Tapascontent_CreateNodeFormWrapper_TestCase
 {
 	public function setUp()
 	{
-		echo '
-beginning CreateCollectionFormWrapper_TestCase
-';
 		parent::setUp();
 	}
 }
@@ -79,9 +67,6 @@ extends Tapascontent_CreateNodeFormWrapper_TestCase
 	
 	public function setUp()
 	{
-		echo '
-beginning CreateSharedFormWrapper_TestCase
-';
 		parent::setUp();
 	}
 }
@@ -92,9 +77,6 @@ extends Tapascontent_CreateNodeFormWrapper_TestCase
 {
 	public function setUp()
 	{
-		echo '
-beginning CreateNodeFormWrapper_TestCase
-';
 		parent::setUp();
 	}
 }

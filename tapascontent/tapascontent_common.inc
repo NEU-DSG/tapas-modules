@@ -55,9 +55,11 @@ class Tapascontent_FieldValueIterator
 extends Tapascontent_aIterator
 {
 	private $field;
+	private $column;
 
-	public function __construct($field) { 
+	public function __construct($field, $column='value') { 
 			$this->field = $field; 
+			$this->column = $column?:'value';
 	}
 
 	public function valid() { 
@@ -65,23 +67,31 @@ extends Tapascontent_aIterator
 		return array_key_exists($this->key(), $this->field['und']); 
 	}
 
-	public function current($column='value') {
-		return $this->field['und'][$this->key()][$column];
+	public function current($column=NULL)
+	{
+		return $this->valid() ?
+			$this->field['und'][$this->key()][$column?:$this->column] :
+			NULL;
 	}
 
-	public function as_array($column='value')
+	public function as_array($column=NULL)
 	{
 		//TODO: add test asserting that this successfully restores the prior state.
 		$original_key = $this->key();
 		$this->rewind();
 		$values=[];
 		while($this->valid()) { 
-			$values[] = $this->current($column); 
+			$values[] = $this->current($column?:$this->column);
 			$this->next();
 		}
 		$this->rewind();
 		while($this->key() < $original_key) { $this->next(); }
 		return $values;
+	}
+
+	public function by_index($index, $column=NULL) {
+		$values = $this->as_array($column);
+		return array_key_exists($index, $values)?$values[$index]:NULL;
 	}
 }
 
@@ -91,35 +101,28 @@ extends Tapascontent_aIterator
 {
 	private $nodes = [];
 
-	/**
-	 * I want to use two constructors, one using array_of_nodes, the other using
-	 * array_of_ids. Alas, because PHP is weakly typed, that kind of polymorphism
-	 * is unavailable. #reasonswhyphpannoysme
-	 */
+	public function __construct($array_of_nodes)
+	{
+		$this->nodes = $array_of_nodes;
+	}
 
-	/** 
-	 * I'll use the $array_of_nodes input here, so that I don't need to deal with
-	 * the connector in this class, and create a factory function to wrap a group
-	 * of ids.
-	 *
-	 * Which means this may as well be Tapascontent_ObjectIterator, but not gonna
-	 * worry about that right now.
-	 */
-	public function __construct($array_of_nodes){$this->nodes = $array_of_nodes;}
-	public function current() {return $this->nodes[$this->key()];}
-	public function valid() {return (sizeof($this->nodes > $this->key())); }
+	public function current() 
+	{
+		return $this->nodes[$this->key()];
+	}
 
-	/**
-	 * @function
-	 * Returns an array of the nids.
-	 */
+	public function valid() 
+	{
+		return (sizeof($this->nodes) > $this->key()); 
+	}
+
 	public function as_array()
 	{
 		$nid_array = array();
 		foreach($this->nodes as $node)
 		{
 			if ($node) {
-				$nid_array[] = $node->nid;
+				$nid_array[] = $node['nid'];
 			}
 		}
 		return $nid_array;
