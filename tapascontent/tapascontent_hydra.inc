@@ -88,7 +88,7 @@ function tapashydra_delete($url_base, $node) {
  */
 
 function _tapashydra_curlcall($url, $options) {
-	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN, 'Content-Type: application/binary');
+	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 
 	$common_opts = array(
 		CURLOPT_URL => $url,
