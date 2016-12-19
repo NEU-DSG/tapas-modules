@@ -217,31 +217,3 @@ extends Tapascontent_aQuery
 	}
 }
 
-class Tapascontent_GetTeiRawQuery
-extends Tapascontent_GetTeiQuery
-{
-	public function __construct($uuid, $debug=FALSE)
-	{
-		parent::__construct(parent::TEI_RAW, $uuid, $debug);
-	}
-}
-
-class Tapascontent_GetTeiBpQuery
-extends Tapascontent_GetTeiQuery
-{
-	public function __construct($uuid, $debug=FALSE)
-	{
-		parent::__construct(parent::TEI_BP, $uuid, $debug);
-	}
-}
-
-class Tapascontent_GetTeiGeneric
-extends Tapascontent_GetTeiQuery
-{
-	public function __construct($uuid, $debug=FALSE)
-	{
-		parent::__construct(parent::TEI_GENERIC, $uuid, $debug);
-	}
-}
-
-

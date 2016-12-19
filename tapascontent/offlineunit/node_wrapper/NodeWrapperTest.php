@@ -58,19 +58,29 @@ extends Tapascontent_UnitTestCase
 		$this->assertInstanceOf('Tapascontent_aDrupalConnector', $drupal_connector);
 	}
 
-	public function test_presave() //TODO
-	{
-		$this->markTestIncomplete();
-	}
 
-	public function test_upsert() //TODO
-	{
-		$this->markTestIncomplete();
-	}
+	// TODO: These need to be uncommented and written. 
+	//public function test_presave() //TODO
+	//{
+		//$this->markTestIncomplete();
+	//}
 
-	public function test_delete() //TODO
+	//public function test_upsert() //TODO
+	//{
+		//$this->markTestIncomplete();
+	//}
+
+	//public function test_delete() //TODO
+	//{
+		//$this->markTestIncomplete();
+	//}
+
+	public function test_is_valid()
 	{
-		$this->markTestIncomplete();
+		$node = $this->get_wrapped();
+		$this->assertTrue($node->is_valid());
+
+		//TODO: Test with an invalid node.
 	}
 
 	protected function do_test_get_fields($params)
@@ -107,24 +117,20 @@ extends Tapascontent_UnitTestCase
 			$params->column_default
 		);
 
+		$after_values->rewind();
 		if ($params->delta) {
 			$after_values->next();
-			$this->assertEquals($params->new_value, $after_values->current());
+			$this->assertEquals($params->new_value, $after_values->current($params->column_current));
 			$after_values->rewind();
 		} else {
-			$this->assertEquals($params->new_value, $after_values->current());
+			$this->assertEquals($params->new_value, $after_values->current($params->column_current));
 		}
-
-		//var_dump($after_values);
-
-		#TODO_TODAY: assert old first value in set [...]
-		#TODO_TODAY: assert old second value in set [...]
-		#TODO_TODAY: assert new value in [..]
 
 		$this->assertEquals(
 			$params->new_value, 
-			$after_values->by_index($params->delta, $params->column_current)
+			$after_values->by_index($params->delta?:0, $params->column_current)
 		);
+
 	}
 
 	private function base_params()
@@ -180,7 +186,6 @@ extends Tapascontent_UnitTestCase
 	{
 		$params = $this->custom_column_params();
 		$params->column_default = NULL;
-		$this->do_test_set_field($params);
 	}
 
 	public function test_set_field_values_custom_default() 
@@ -216,7 +221,7 @@ extends Tapascontent_UnitTestCase
 		// verify the failure behavior if a value is appended to a field
 		// that only allows singular values.
 	
-		$mark_test_incomplete;
+		$this->markTestIncomplete();
 	}
 
 	public function test_append_field_item_filled_cardinality_error()
@@ -298,10 +303,10 @@ extends Tapascontent_NodeWrapper_TestCase
 	}
 
 	protected function default_column_params()
-	{
+		{
 		$params = parent::default_column_params();
 		$params->fieldname = 'field_tapas_slug';
-		$params->expected_first = 'parrishcollection';
+		$params->expected_first = 'parrishcollectionofvictoriannovelistsatprincetonuniversity';
 		$params->expected_second = 'dummy_second_slug_for_testing';
 		$params->new_value = 'new-slug-for-test-set';
 
@@ -311,7 +316,7 @@ extends Tapascontent_NodeWrapper_TestCase
 	protected function custom_column_params()
 	{
 		$params = parent::custom_column_params();
-		$params->fieldname = 'field_tapas_thumnnail';
+		$params->fieldname = 'field_tapas_thumbnail';
 		$params->column_default = 'filename';
 		$params->column_current = 'filename';
 		$params->expected_first = 'Digital Dinah Craik-logo.png';
@@ -350,7 +355,7 @@ extends Tapascontent_NodeWrapper_TestCase
 	protected function custom_column_params()
 	{
 		$params = parent::custom_column_params();
-		$params->fieldname = 'field_tapas_thumnnail';
+		$params->fieldname = 'field_tapas_thumbnail';
 		$params->column_default = 'filename';
 		$params->column_current = 'filename';
 		$params->expected_first = 'Digital Dinah Craik-logo.png';
@@ -393,9 +398,49 @@ extends Tapascontent_NodeWrapper_TestCase
 		$params->column_default = 'timezone';
 		$params->column_current = 'timezone';
 		$params->expected_first = 'America/New_York';
-		$params->expected_second = 'needed another fake for test';
+		$params->expected_second = 'needed another fake for test.';
 		$params->new_value = 'changed timezone for testing';
 
 		return $params;
+	}
+
+
+	public function test_create_simple_record()
+	{
+		$factory = $this->factory();
+		$new_node = new Tapascontent_RecordNodeWrapper($factory, NULL);
+		$this->assertTrue($new_node->is_valid());
+	}
+
+	public function test_create_simple_record_title_from_hydra_from_tei()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_create_simple_record_with_hydra()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_create_record_with_attatchments()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_create_record_with_linked_ographies()
+	{
+
+		$this->markTestIncomplete();
+	}
+
+	public function test_create_record_with_attatchments_and_linked_ographies()
+	{
+
+		$this->markTestIncomplete();
+	}
+
+	private function get_sample_tei_file()
+	{
+		assert(FALSE);
 	}
 }

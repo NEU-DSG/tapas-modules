@@ -111,6 +111,49 @@ extends Tapascontent_aWrapperFactory_TestCase
 		);
 	}
 
+
+
+	public function test_create_basic_record_node_no_tei()
+	{
+		$record_node = $this->factory->create_record_node(
+			'Sample record title no tei'
+		);	
+		$this->assertTrue($record_node->validate());
+	}
+
+	public function test_create_basic_record_node_with_tei()
+	{
+		$this->markTestIncomplete();
+		//TODO: Need get_sample_tei() type function
+		$tei = '$this->get_sample_tei()';
+		$record_node = $this->factory->create_record_node(
+			'Sample record with tei',
+			$tei
+		);
+		$this->assertTrue($record_node->validate());
+	}
+
+	//public function test_create_record_with_attatchments() //TODO
+	//public function test_create_record_with_ography_links() //TODO
+	//public function test_create_record_with_attatchments_and_ography() //TODO
+	public function test_create_shared_node()
+	{
+
+		$this->markTestIncomplete();
+	}
+
+	public function test_create_project_node()
+	{
+
+		$this->markTestIncomplete();
+	}
+
+	public function test_create_collection_node()
+	{
+
+		$this->markTestIncomplete();
+	}
+
 }
 
 

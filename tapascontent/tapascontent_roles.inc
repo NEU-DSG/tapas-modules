@@ -2,8 +2,9 @@
 
 
 //=====================================================================
-// Role Wrapper
+// Interfaces 
 //=====================================================================
+
 
 interface Tapascontent_iRoleWrapper
 {
@@ -13,6 +14,7 @@ interface Tapascontent_iRoleWrapper
 	function revoke_edit_own($bundle_list=[]);
 	function revoke_edit_any($bundle_list=[]);
 	function rid();
+	function find_rid($role_name);
 }
 
 interface Tapascontent_iOgRoleWrapper
@@ -21,6 +23,234 @@ extends Tapascontent_iRoleWrapper
 	function grant_admin();
 	function revoke_admin();
 }
+
+
+// ==============================================================
+// NEW Abstract parent class
+// ==============================================================
+
+abstract class Tapascontent_aRoleWrapper
+implements Tapascontent_iRoleWrapper
+{
+	private $rid;
+
+	public function rid() { return $this->rid; }
+
+	// Why, oh why, doesn't PHP offer proper polymorphism, neccessitating
+	// hacks like $is_rid=TRUE below? A proper strongly-typed language would
+	// allow me to define two constructors -- one accepting a string, the other
+	// accepting an int -- and it would know which to run based on the data
+	// type passed in.
+	protected function __construct($rid_or_name, $is_rid=TRUE)
+	{
+
+	}
+
+	protected abstract function grant($permission_list);
+	protected abstract function revoke($permission_list);
+	protected abstract function get_all_roles();
+
+	public function grant_edit_own($bundle_list=[])
+	{
+		$this->grant($this->edit_own($bundle_list));
+	}
+
+	public function grant_edit_any($bundle_list=[])
+	{
+		$this->grant(
+			$this->edit_own($bundle_list) +
+			$this->edit_any($bundle_list)
+		);
+	}
+
+	public function revoke_edit_own($bundle_list=[])
+	{
+		$this->revoke(
+			$this->edit_any($bundle_list) +
+			$this->edit_own($bundle_list)
+		);
+	}
+
+	public function revoke_edit_any($bundle_list=[])
+	{
+		$this->revoke($this->edit_any($bundle_list));
+	}
+
+	protected function edit_own($bundle_list=[])
+	{
+		$array = [];
+		foreach($bundle_list as $bundle)
+		{
+			$array += [
+				"create $bundle content",
+				"edit own $bundle content",
+				"delete own $bundle content"];
+		}
+		return $array;
+	}
+
+	protected function edit_any($bundle_list=[])
+	{
+		{
+			$array += [
+				"edit any $bundle content",
+				"delete any $bundle content"];
+		}
+		return $array;
+	}
+
+	public function find_rid($role_name)
+	{
+		$all_roles = $this->get_all_roles();
+		$rid = array_search($role_name, $all_roles);
+		return $rid;
+	}
+
+}
+
+// ==============================================================
+// NEW Sitewide Roles
+// ==============================================================
+
+class Tapascontent_SitewideRoleWrapper
+extends Tapascontent_aRoleWrapper
+{
+	protected function grant($permission_list)
+	{
+		user_role_grant_permissions($this->rid(), $permission_list);
+	}
+
+	protected function revoke($permission_list)
+	{
+		user_role_revoke_permissions($this->rid(), $permission_list);
+	}
+
+	protected function get_all_roles()
+	{
+		return user_roles();
+	}
+
+}
+
+class Tapascontent_MockSitewideRoleWrapper
+extends Tapascontent_aRoleWrapper
+{
+	protected function grant($permission_list)
+	{
+		//TODO
+	}
+
+	protected function revoke($permission_list)
+	{
+		//TODO
+	}
+
+	public function get_all_roles()
+	{
+		//TODO
+	}
+
+}
+
+// ==============================================================
+// NEW Organic Group Roles
+// ==============================================================
+
+
+abstract class Tapascontent_aOgRoleWrapper
+extends Tapascontent_aRoleWrapper
+implements Tapascontent_iOgRoleWrapper
+{
+	private $bundle;
+
+
+	public function __construct($rid, $bundle)
+	{
+		parent::__construct($rid);
+		$this->bundle = $bundle;
+	}
+
+	protected function admin_perms()
+	{
+		return array(
+			'add user',
+			'administer group',
+			'approve and deny subscription',
+			'manage memners',
+			'update_group',
+		);
+	}
+
+	public function grant_admin()
+	{
+		$this->grant($this->admin_perms());
+	}
+
+	public function revoke_admin()
+	{
+		$this->revoke($this->admin_perms());
+	}
+}
+
+class Tapascontent_OgRoleWrapper
+extends Tapascontent_aOgRoleWrapper
+{
+	protected function create($rid=NULL)
+	{
+		if (!$rid) { 
+			$rid = og_role_save(og_create_role);
+		}
+		parent::__construct($rid);
+
+	}
+
+	protected function grant($permission_list)
+	{
+		og_role_grant_permissions($this->rid(), $permission_list);
+	}
+
+	protected function revoke($permission_list)
+	{
+		og_role_revoke_permissions($this->rid(), $permission_list);
+	}
+
+	protected function get_all_roles()
+	{
+		return og_roles('node', $this->bundle);
+	}
+}
+
+
+
+class Tapascontent_MockOgRoleWrapper
+extends Tapascontent_aOgRoleWrapper
+{
+	protected function grant($permission_list)
+	{
+
+	}
+
+	protected function revoke($permission_list)
+	{
+
+	}
+
+	public function find_rid($role_name)
+	{
+
+	}
+}
+
+
+
+
+
+
+
+//=====================================================================
+// Abstract parent class
+//=====================================================================
+
 
 abstract class Tapascontent_aRoleWrapper
 implements Tapascontent_iRoleWrapper
@@ -62,7 +292,7 @@ implements Tapascontent_iRoleWrapper
 		foreach($bundle_list as $bundle)
 		{
 			$array += [
-				"create $bunle content",
+				"create $bundle content",
 				"edit own $bundle content",
 				"delete own $bundle content"];
 		}
@@ -81,28 +311,9 @@ implements Tapascontent_iRoleWrapper
 		return $array;
 	}
 }
-
-class Tapascontent_MockRoleWrapper
-extends Tapascontent_aRoleWrapper
-{
-	public function find_rid($role_name) { assert(FALSE); } // TODO
-	protected function grant($perms=[]) { assert(FALSE); } // TODO
-	protected function revoke($perms=[]) { assert(FALSE); } // TODO
-}
-
-class Tapascontent_SitewideRoleWrapper
-extends Tapascontent_aRoleWrapper
-{
-	protected function grant($perms=[])
-	{ user_role_grant_permissions($this->rid(), $perms); }
-
-	protected function revoke($perms=[])
-	{ user_role_revoke_permissions($this->rid(), $perms); }
-
-	public function find_rid($role_name)
-	{ return array_search($name, user_roles());}
-}
-
+// ==============================================================
+// Organic Groups Role Concrete Clases
+// ==============================================================
 class Tapascontent_OgRoleWrapper
 extends Tapascontent_aRoleWrapper
 implements Tapascontent_iOgRoleWrapper
@@ -153,223 +364,6 @@ implements Tapascontent_iOgRoleWrapper
 
 }
 
-class Tapascontent_MockOgRoleWrapper
-extends Tapascontent_MockRoleWrapper
-implements Tapascontent_iOgRoleWrapper
-{
-	public function grant_admin() {assert(FALSE);} // TODO
-	public function revoke_admin() {assert(FALSE);} // TODO
-}
-
-
-//=====================================================================
-// Repository Wrapper
-//=====================================================================
-
-//define ('TAPASHYDRA_AUTH_TOKEN', (variable_get('tapas_rails_api_key', 'tapas12345')));
-interface Tapascontent_iRepoWrapper
-{
-	function send_query($query_struct);
-	function get_base_url();
-}
-
-abstract class Tapascontent_aHydraConnector
-implements Tapascontent_iRepoWrapper
-{
-	protected abstract function get_token();
-	protected abstract function get_base_url();
-	protected abstract function make_call($url, $curl_query);
-
-	protected function get_header()
-	{
-		return ['Authorization: Token token=' . $this->get_token()];
-	}
-
-	public function send_query($query_struct)
-	{
-		$header = $this->get_header();
-		$curl_query = $header + $query_struct->options;
-
-		$curl_query[CURLOPT_URL] = $query_struct->get_url($this->get_base_url());
-
-		if ($query_struct->postfields)
-		{
-			$postfields = $this->httpize_subarrays($query_struct->postfields);
-			$curl_query[CURLOPT_POST_FIELDS] = $query_struct->postfields;
-		} else {
-			unset($curl_query[CURLOPT_POST_FIELDS]);
-		}
-
-		
-		$result = $this->curl_call($curl_query[CURLOPT_URL], $curl_query);
-		return $this->translate_result($result);
-	}
-
-	private function translate_result($result)
-	{
-		assert(FALSE); //TODO
-	}
-
-	private function httpize_subarrays($array)
-	{
-		foreach($data as $key => $value) {
-			if (is_array($value)) {
-				$data += $self::transform_array($key, $value);
-				unset($data[$key]);
-			}
-		}
-	}
-
-	private function httpize_array($name, $array) {
-
-		$data = array();
-		foreach($array as $key => $value) {
-			$data[$name.'['.$key.']'] = $value;
-		}
-		return $data;
-	}
-}
-
-class Tapascontent_HydraConnector
-extends Tapascontent_aHydraConnector
-{
-	public function get_base_url()
-	{ return variable_get('tapas_rails_api_url', 'http://rails_api.localhost:8080'); }
-
-	public function get_token()
-	{ return variable_get('tapas_rails_api_key', 'tapas12345'); }
-
-	public function curl_call($url, $curl_query)
-	{
-		$curl = curl_init($url);
-
-		if (!curl_setopt_array($curl, $curl_query))
-		{ throw new Exception("Problem setting CURL options."); }
-
-		$result = curl_exec($curl);
-		$curl_close($curl);
-
-		return $result;
-	}
-}
-
-class Tapascontent_MockHydraConnector
-extends Tapascontent_aHydraConnector
-{
-	public function get_base_url() 
-	{ return "http://rails_api.localhost:8080";}
-
-	public function get_token() 
-	{ return "tapas12345";}
-
-	public function make_call($url, $curl_query) { assert(FALSE); } // TODO
-}
-
-//=====================================================================
-//
-//=====================================================================
-
-abstract class Tapascontent_aQuery
-{
-	const TYPE_COMMUNITY = '/communities';
-	const TYPE_COLLECTION = '/collection';
-	const TYPE_TEI = '/files';
-
-	public $options=[];
-	public $postfields=[];
-	public $record_type;
-
-	public abstract function build_url($url_base);
-
-	protected function debug_options()
-	{
-		return array(
-			CURLOPT_RETURNTRANSFER => TRUE,
-			CURLOPT_VERBOSE => TRUE,
-			CURLINFO_HEADER_OUT => TRUE,
-			CURLOPT_HEADER => TRUE,
-		);
-	}
-}
-
-class Tapascontent_UpsertQuery
-extends Tapascontent_aQuery
-{
-
-	public function __construct($postfields, $record_type, $debug=FALSE)
-	{
-		$this->postfields = $postfields;
-		$this->record_type = $record_type;
-		$this->options = $debug?$this->debug_options():[];
-	}
-
-	public function build_url($url_base) 
-	{ return $url_base . $this->upsert_type;}
-}
-
-class Tapascontent_DeleteQuery
-extends Tapascontent_aQuery
-{
-	private $uuid;
-
-	public function __construct($record_type, $uuid, $debug=FALSE)
-	{
-		$this->uuid = $uuid;
-		$this->record_type = $record_type;
-
-		$this->options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
-		if ($debug) {$this->options += $this->debug_options();}
-	}
-
-	public function build_url($url_base)
-	{ return $url_base . $this->record_type . "/$this->uuid"; }
-}
-
-class Tapascotent_GetTeiQuery
-extends Tapascontent_aQuery
-{
-	const TEI_RAW = 'tei';
-	const TEI_BP = 'teibp';
-	const TEI_GENERIC = 'tapas_generic';
-
-	private $uuid;
-	private $tei_type;
-
-	public function __construct($tei_type, $uuid, $debug=FALSE)
-	{
-		$this->tei_type = $tei_type;
-		$this->uuid = $uuid;
-
-		$this->options[CURLOPT_CUSTOMREQUEST] = 'GET';
-		$this->options[CURLOPT_RETURNTRANSFER] = TRUE;
-
-		if ($debug) {$this->options += $this->debug_options();}
-	}
-
-	public function build_url($url_base)
-	{ return $base_url . parent::TYPE_TEI . "/$uuid/$this->tei_type"; }
-}
-
-class Tapascontent_GetTeiRawQuery
-extends Tapascontent_GetTeiQuery
-{
-	public function __construct($uuid, $debug=FALSE)
-	{ parent::__construct(parent::TEI_RAW, $uuid, $debug); }
-}
-
-class Tapascontent_GetTeiBpQuery
-extends Tapascontent_GetTeiQuery
-{
-	public function __construct($uuid, $debug=FALSE)
-	{ parent::__construct(parent::TEI_BP, $uuid, $debug);}
-}
-
-class Tapascontent_GetTeiGeneric
-extends Tapascontent_GetTeiQuery
-{
-	public function __construct($uuid, $debug=FALSE)
-	{ parent::__construct(parent::TEI_GENERIC, $uuid, $debug); }
-}
 //=====================================================================
 // TODO: Orphaned Connector Commands
 //=====================================================================
@@ -390,6 +384,68 @@ implements Tapascontent_iOgRoleConnector
 			return og_role_save($role);
 	}
 }
+// ==============================================================
+// RoleFactory
+// ==============================================================
 
+interface Tapascontent_iRoleFactory
+{
+	function create_sitewide_role();
+	function create_og_role($role_name, $bundle);
+	function wrap_sitewide_role($rid_or_name, $is_rid=TRUE);
+	function wrap_og_role($rid);
+}
+
+abstract class Tapascontent_aRoleFactory
+implements Tapascontent_iRoleFactory
+{
+	public function create_og_role($role_name, $bundle)
+	{
+		$rid = $this->_og_create($role_name, $bundle);
+		$this->wrap_og_role($rid);
+	}
+
+	public function create_sitewide_role()
+	{
+
+	}
+
+}
+
+class Tapascontent_RoleFactory
+extends Tapascontent_aRoleFactory
+{
+	public function _og_create($role_name, $bundle)
+	{
+		$role = og_create_role($role_name, 'node', 0, $bundle);
+		$rid = og_role_save($role);
+		return $rid;
+	}
+
+	public function wrap_og_role($rid)
+	{
+		return new Tapasconent_OgRoleWrapper($rid);
+	}
+
+}
+
+
+class Tapascontent_MockRoleFactory
+extends Tapascontent_aRoleFactory
+{
+
+	public function create_og_role($role_name, $bundle)
+	{
+		// (TODO): creating the role
+		$this->wrap_og_role($rid);
+	}
+
+	public function wrap_og_role($rid)
+	{
+		return new Tapasconent_OgRoleWrapper($rid);
+	}
+
+
+}
 
 

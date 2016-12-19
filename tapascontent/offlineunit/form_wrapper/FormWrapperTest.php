@@ -22,11 +22,14 @@ extends Tapascontent_UnitTestCase
 	public function test_form_validation_good()
 	{
 		$this->markTestIncomplete();
+
+
 	}
 
 	public function test_form_validation_bad()
 	{
 
+		$this->markTestIncomplete();
 	}
 }
 
@@ -78,6 +81,19 @@ extends Tapascontent_CreateNodeFormWrapper_TestCase
 	public function setUp()
 	{
 		parent::setUp();
+	}
+
+	public function test_sample_form()
+	{
+		global $project_record;
+		$project = (object) $project_record;
+
+		$form_state = [];
+
+		$form = node_form(array(), $form_state, $project);
+
+		var_dump($form_state);
+		var_dump($form);
 	}
 }
 

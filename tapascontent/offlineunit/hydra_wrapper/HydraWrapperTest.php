@@ -15,9 +15,6 @@ extends Tapascontent_UnitTestCase
 {
 	public function setUp()
 	{
-		echo '
-beginning HydraWrapper_TestCase
-';
 
 	}
 

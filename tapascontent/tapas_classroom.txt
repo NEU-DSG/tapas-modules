@@ -1,0 +1,64 @@
+one repo with subdirectories
+if a view package needs it's own repo, create a repo and make it a submodule of the view package repo
+will eXist be able to look at a github repo, and get the different config files from the subdirectories?
+   -- possible, but challenging
+	 --
+
+Config File
+ * Machine Name
+ * Human Readable Name
+ * Brief description
+ * {parameters}
+ * Basic Information
+    -- Syd: as much as possible for future develope
+		-- static or dynamic
+		-- single file, or multiple files/collection
+		-- asset paths 
+		    o CSS
+				o Javascript
+				o etc
+ * Process steps for creating the output
+    -- not sure what this means yet
+		-- very Syd-centric, want to go greater depth when he 
+ * Parameters
+    -- Which parameters does this view package define?
+		-- What are the legal values?
+		-- what are the default values?
+
+View packages will be at the file level, but have collection level defaults
+if multiple collections with different defaults, ask user
+(this is static, not dynamic)
+
+Collection Level: 'Default' (what the preferred view package will be set to for a record loaded to that collection, if none other is specified. If a record is being loaded to multiple collections, will ask the user which of the defaults (or something else) to use for that record's Preferred view package.
+Recrod Level: 'Preferred'
+
+
+Parameters: What information does eXist need, beyond what's in the repo?
+	-- mods (additional fields)
+	-- booleans (flags for features we're using/not using) 
+	-- enum values
+
+
+Explicitly reference test files that check if this view package is appropriate for a tei file.
+
+default permissions
+(i.e. profiling view packages meant to be used by administrators rather than ordinary visitors)o
+
+thus we need to figure out what the new role landscape is (when it involves permissions for view packages)
+
+Whether something is an
+-- Ography
+-- Odd
+
+======================================================
+
+
+
+
+XPROC
+  * separate xproc file in view package
+	* config will refer to the xproc file
+  * 
+	*
+  * 
+	*

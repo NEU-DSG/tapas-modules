@@ -122,7 +122,7 @@ extends Tapascontent_aIterator
 		foreach($this->nodes as $node)
 		{
 			if ($node) {
-				$nid_array[] = $node['nid'];
+				$nid_array[] = $node->nid;
 			}
 		}
 		return $nid_array;
@@ -213,7 +213,8 @@ abstract class Tapascontent_aWrapperFactory
 		}
 
 		if (isset($class)) {
-			return new $class($this->drupal, $this->repo, $node, $this);
+			//return new $class($this->drupal, $this->repo, $node, $this);
+			return new $class($this, $node);
 		} else {
 			return FALSE;
 		}

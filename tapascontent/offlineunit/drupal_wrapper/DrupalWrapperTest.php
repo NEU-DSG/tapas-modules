@@ -2,7 +2,7 @@
 
 /**
  * @file
- * DrupalConnectorTest.php
+ * DrupalWrapperTest.php
  *
  * Offline user tests for the non-mocked portions of the Drupal wrapper.
  */
@@ -159,6 +159,31 @@ extends Tapascontent_UnitTestCase
 
 
 	public function  test_create_record()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_groups_this_user_is_in()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_roles_this_user_has()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_user_memebers_of_this_group()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_ungroup_node()
+	{
+		$this->markTestIncomplete();
+	}
+
+	public function test_parent_nodes_by_tye()
 	{
 		$this->markTestIncomplete();
 	}

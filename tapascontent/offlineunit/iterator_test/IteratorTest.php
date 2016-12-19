@@ -104,14 +104,6 @@ extends Tapascontent_UnitTestCase
 		$this->assertEquals($zero_based, $iterator->key());
 	}
 
-	public function test_by_index()
-	{
-		$iterator = $this->get_valid_iterator();
-		$second_value = $this->get_valid_second_value();
-
-		$this->assertEquals($second_value, $iterator->by_index(1));
-	}
-
 }
 
 

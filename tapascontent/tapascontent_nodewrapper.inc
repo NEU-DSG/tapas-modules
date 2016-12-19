@@ -6,7 +6,6 @@ include_once('tapascontent_repo.inc');
 include_once('tapascontent_forms.inc');
 include_once('tapascontent_solr_indexing.inc');
 
-//TODO: ensure all the dirived classes actually call the 'implements' function for their interface(s).
 
 //TODO: node_object_prepare() when creating node.
 
@@ -25,11 +24,15 @@ interface Tapascontent_iNodeWrapper
 	function delete();
 	// TODO: 'Retrieve' is still in the _recordview file, and we probably
 	//   want to add it to one of the subclasses, rather than here.
+	function is_valid();
 
 	function get_field_values($fieldname, $column='value');
 	function set_field($fieldname, $value, $column='value');
 	function get_thumbnail();
 	function get_repo_data();
+	function get_type();
+
+	function generate_node();
 }
 
 
@@ -39,7 +42,6 @@ interface Tapascontent_iGroupNodeWrapper
 	//function roles();
 
 	function get_node_privacy();
-	//function set_if_present(&$array, $key, $value, $unset_if_empty=FALSE);
 }
 
 
@@ -48,6 +50,11 @@ interface Tapascontent_iGroupNodeWrapper
 //=======================================================================
 // NodeWrapper Base Classes
 //=======================================================================
+
+/**
+ * @class
+ * Tapascontent_aNodeWrapper
+ */
 
 abstract class Tapascontent_aNodeWrapper  
 extends Tapascontent_aWrapper
@@ -58,39 +65,49 @@ implements Tapascontent_iNodeWrapper
 	private $factory;
 	private $node;
 
+	//-----------------------------------------------------------
+	// Unimplemented functions from iNodeWrapper
+	//-----------------------------------------------------------
 	public abstract function presave();
 	public abstract function upsert();
 	public abstract function delete();
+	public abstract function get_type();
 
-	protected function repo() { return $this->repo; }
-	protected function factory() { return $this->factory; }
-	public function node() { return $this->node; }
+	//-----------------------------------------------------------
+	// Implemented functions from iNodeWrapper
+	//-----------------------------------------------------------
 
-	public function __construct($drupal, $repo, $node, $factory) {
-		Tapascontent_aWrapper::__construct($drupal);
-		$this->repo = $repo;
-		$this->factory = $factory;
-		$this->node = $node;
-	}
 
+	/**
+	 * @function get_field_values()
+	 */
 	public function get_field_values($fieldname, $column='value') {
 		$drupal_connector = $this->drupal();
 		return $drupal_connector->get_field_values($this->node(), $fieldname, $column);
 	}
 
+	/**
+	 * @function set_field()
+	 */
 	public function set_field($fieldname, $value, $column='value', $delta=0) {
 		$drupal_connector = $this->drupal();
 		$node = $this->node();// If I try to inline this inside of set_field, it complains that "only variables should be passed by reference".
-
-		$new_node = $drupal_connector->set_field($node, $value, $fieldname, $column);
+		$new_node = $drupal_connector->set_field($node, $value, $fieldname, $column, $delta);
 		$this->node = $new_node;
 	
 	}
 
+	/**
+	 * @function get_thumbnail()
+	 */
 	public function get_thumbnail() {
 		$fid = $this->get_field_values('field_tapas_thumbnail')->current('fid');
 		return $this->drupal()->path_from_fid($fid);
 	}
+
+	/**
+	 * @function get_repo_data()
+	 */
 
 	public function get_repo_data() {
 		$data = array(
@@ -99,6 +116,64 @@ implements Tapascontent_iNodeWrapper
 		);
 		return $data;
 	}
+
+	/**
+	 * @function is_valid()
+	 * Based on Drupal's node_validate() function
+	 */
+
+	public function is_valid()
+	{
+		$node = $this->node;
+
+		if (!isset($this->node->nid)) { return FALSE; }
+
+		//TODO: add user_load_by_name to drupal calls, so that we can do this check in the non-mock connector.
+		//// Validate the "authored by" field.
+		//if (!empty($this->node->name) && !($account = user_load_by_name($node->name))) {
+			//// The use of empty() is mandatory in the context of usernames
+			//// as the empty string denotes the anonymous user. In case we
+			//// are dealing with an anonymous user we set the user ID to 0.
+			
+			////TODO: should we put the reason for failure into a member field that can be checked?
+			//return FALSE; //The author is a user that doesn't exist.
+		//}
+
+		// Validate the "authored on" field.
+		if (!empty($this->node->date) && strtotime($this->node->date) === FALSE) {
+			return FALSE; //node needs a valid date
+		}
+
+		//TAPAS nodes should have titles
+		if (!isset($node->title)) { return FALSE; }
+
+		return TRUE;
+	}
+
+	/**
+	 * @function generate_node()
+	 */
+
+	public function generate_node()
+	{
+		return $this->drupal()->create_node($this->get_type());
+	}
+
+	//-----------------------------------------------------------
+	// Functions not defined in an interface
+	//-----------------------------------------------------------
+
+	public function __construct($factory, $node=NULL)
+	{
+		Tapascontent_aWrapper::__construct($factory->drupal());
+		$this->factory = $factory;
+		$this->repo = $factory->repo();
+		$this->node = $node?:$this->generate_node();
+	}
+
+	protected function repo() { return $this->repo; }
+	protected function factory() { return $this->factory; }
+	public function node() { return $this->node; }
 
 	protected function handle_upsert_return_code($code) // TODO
 	{
@@ -111,10 +186,45 @@ implements Tapascontent_iNodeWrapper
 	}
 }
 
+/**
+ * @class
+ * Tapascontent_GroupNodeWrapper
+ */
+
 abstract class Tapascontent_GroupNodeWrapper
 extends Tapascontent_aNodeWrapper 
 implements Tapascontent_iGroupNodeWrapper
 {
+	//-----------------------------------------------------------
+	// Functions defined in iNodeWraper
+	//-----------------------------------------------------------
+
+	public function get_repo_data()
+	{
+		$data = parent::get_repo_data(); 
+		$data = $data + array(
+			'title' => $this->node()->title,
+			'description' => $this->drupal()->get_field_values('field_tapas_description')->current(),
+
+			'access' => $this->get_node_privacy(),
+			'thumb_file' => $this->get_thumbnail()
+		);
+		return $data;
+	}
+
+	public function is_valid()
+	{
+		if (!parent::is_valid()) { return FALSE; }
+
+		//TODO: check for group fields
+
+		return TRUE;
+	}
+
+	//-----------------------------------------------------------
+	// Functions defined in iGroupNodeWrapper
+	//-----------------------------------------------------------
+
 	public function members() {
 		return $this->drupal()->user_members_of_this_group($this->node()->nid);
 	}
@@ -124,17 +234,10 @@ implements Tapascontent_iGroupNodeWrapper
 		return $private?'private':'public';
 	}
 
-	public function get_repo_data()
-	{
-		$data = parent::get_repo_data(); 
-		$data = $data + array(
-			'title' => $this->node()->title,
-			'description' => "description", // TODO: fix field iterator stuff. $this->drupal()->get_field_values('field_tapas_descrption')->current(),
-			'access' => $this->get_node_privacy(),
-			'thumb_file' => $this->get_thumbnail()
-		);
-		return $data;
-	}
+	//-----------------------------------------------------------
+	// Functions not defined in an interface
+	//-----------------------------------------------------------
+
 
 	protected function send_upsert($type) 
 	{
@@ -152,7 +255,6 @@ implements Tapascontent_iGroupNodeWrapper
 
 }
 
-
 //=======================================================================
 // NodeWrapper type-specific classes
 //=======================================================================
@@ -162,6 +264,10 @@ extends Tapascontent_GroupNodeWrapper
 {
 
 	private $my_type = Tapascontent_aHydraConnector::TYPE_COMMUNITY;
+
+	//-----------------------------------------------------------
+	// Functions defined in iNodeWraper
+	//-----------------------------------------------------------
 
 	public function presave() {}
 	public function upsert() { $this->send_upsert($this->my_type); }
@@ -175,9 +281,9 @@ extends Tapascontent_GroupNodeWrapper
 		);
 
 		return $data;
-
 	}
 
+	public function get_type() { return 'tapas_project'; }
 }
 
 class Tapascontent_CollectionNodeWrapper
@@ -188,6 +294,9 @@ extends Tapascontent_GroupNodeWrapper
 	public function upsert() { return $this->send_upsert($this->my_type); }
 	public function delete() { return $this->send_delete($this->my_type); }
 
+	//-----------------------------------------------------------
+	// Functions defined in iNodeWraper
+	//-----------------------------------------------------------
 	public function presave()
 	{
 
@@ -219,11 +328,27 @@ extends Tapascontent_GroupNodeWrapper
 		return $data;
 	}
 
+	public function is_valid()
+	{
+		if (!parent::is_valid()) { return FALSE; }
+
+		//TODO: verify project
+		//TODO: verify audience field
+
+		return TRUE;
+	}
+
+	//TODO: This is partially redundant with the $my_type, above.
+	public function get_type() { return 'tapas_collection';}
 }
 
 class Tapascontent_SharedNodeWrapper
 extends Tapascontent_GroupNodeWrapper
 {
+	//-----------------------------------------------------------
+	// Functions defined in iNodeWraper
+	//-----------------------------------------------------------
+
 	// TODO: bring upsert repo commands up-to-date. (Then finish adding calls to handle_upsert_return_code and handle_delete_return_code)
 	public function upsert()
 	{
@@ -257,6 +382,7 @@ extends Tapascontent_GroupNodeWrapper
 
 	}
 
+	public function get_type() { return 'tapas_shared';}
 }
 
 class Tapascontent_RecordNodeWrapper
@@ -267,9 +393,9 @@ extends Tapascontent_aNodeWrapper
 	public function upsert() { return $this->send_upsert($this->my_type);}
 	public function delete() { return $this->send_upsert($this->my_type);}
 
-	private function node_load($nid) { //TODO: why is this here?
-		return $this->drupal()->node_load($nid);
-	}
+	//-----------------------------------------------------------
+	// Functions defined in iNodeWraper
+	//-----------------------------------------------------------
 
 	public function presave() {
 		$first_collection = $this->drupal()->parent_nodes_by_type(TAPAS_COLLECTION)->current();
@@ -277,7 +403,7 @@ extends Tapascontent_aNodeWrapper
 		if ($first_collection) 
 		{
 			$pid = $this->get_field_values('og_tapas_c_to_p', 'target_id')->current();
-			$project = $this->node_load($pid);
+			$project = $this->drupal()->node_load($pid);
 			if ($project) 
 			{
 				$proj = $this->factory->wrap($project);
@@ -334,8 +460,24 @@ extends Tapascontent_aNodeWrapper
 			'display_authors' => $author_array,
 			'display_contributors' => $contrib_array
 		);
-
 	}
+
+	public function is_valid()
+	{
+		if (!parent::is_valid()) { return FALSE; }
+
+		// TODO Check audience fields
+		// TODO Check collections
+		// TODO Check project
+
+		return TRUE;
+	}
+
+	public function get_type() { return 'tapas_record'; }
+
+	//-----------------------------------------------------------
+	// Functions not defined in an interface
+	//-----------------------------------------------------------
 
 	private function zip_support_files() {
 		$files = $this->get_field_values('field_tapas_attatchments', 'fid');
@@ -367,3 +509,5 @@ extends Tapascontent_aNodeWrapper
 
 }
 
+//TODO: create node objects by passing the factory a bundle object.
+//TODO: Connect the node-wrapper to the bundle-wrapper

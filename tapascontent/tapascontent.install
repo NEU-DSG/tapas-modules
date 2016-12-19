@@ -168,20 +168,34 @@ function _tapascontent_delete_og_instances() {
 function _tapascontent_grant_sitewide_permissions() {
 
 
-	$basic_member = new Tapascontent_SitewideRoleWrapper(
-		DRUPAL_AUTHENTICATED_RID);
+	//$basic_member = new Tapascontent_SitewideRoleWrapper(
+		//DRUPAL_AUTHENTICATED_RID);
+	//$basic_member->grant_edit_own([TAPAS_RECORD]);
+
+	//$paid_member = new Tapascontent_SitewideRoleWrapper(
+		//TAPAS_PAIDMEMBER_ROLE_PROFILE, FALSE);
+	//$paid_member->grant_edit_own([TAPAS_PROJECT, TAPAS_COLLECTION]);
+	//$paid_member->grant_edit_any([TAPAS_COLLECTION, TAPAS_RECORD]);
+
+	//$admin = new Tapascontent_SitewideRoleWrapper(
+		//TAPAS_ADMIN_ROLE_PROFILE, FALSE);
+	//$admin->grant_edit_any([TAPAS_RECORD, TAPAS_SHARED, TAPAS_COLLECTION, TAPAS_PROJECT]);
+	//$admin->grant_admin();
+
+	
+	// Refactored version using new classes.
+	$factory = new Tapascontet_OgRoleWrapper();
+
+	$basic_member = $factory->wrap_sitewide_role(DRUPAL_AUTHENTICATED_RID);
 	$basic_member->grant_edit_own([TAPAS_RECORD]);
 
-	$paid_member = new Tapascontent_SitewideRoleWrapper(
-		TAPAS_PAIDMEMBER_ROLE_PROFILE, FALSE);
-	$paid_member->grant_edit_own([TAPAS_PROJECT, TAPAS_COLLECTION]);
+	$paid_member = $factory->create_sitewide_role(TAPAS_PAIDMEMBER_ROLE_PROFILE);
+	$paid_member->grant_edit_own([TAPAS_PROJECT]);
 	$paid_member->grant_edit_any([TAPAS_COLLECTION, TAPAS_RECORD]);
 
-	$admin = new Tapascontent_SitewideRoleWrapper(
-		TAPAS_ADMIN_ROLE_PROFILE, FALSE);
+	$admin = $factory->create_sitewide_role(TAPAS_ADMIN_ROLE_PROFILE);
 	$admin->grant_edit_any([TAPAS_RECORD, TAPAS_SHARED, TAPAS_COLLECTION, TAPAS_PROJECT]);
 	$admin->grant_admin();
-
 }
 
 /**
@@ -189,19 +203,20 @@ function _tapascontent_grant_sitewide_permissions() {
  */
 function _tapascontent_revoke_sitewide_permissions() {
 
-	$basic_member = new Tapascontent_SitewideRoleWrapper(
-		DRUPAL_AUTHENTICATED_RID);
-	$basic_member->revoke_edit_own([TAPAS_PROJECT, TAPAS_COLLECTION]);
+	$factory = new Tapascontent_OgRoleWrapper();
+	$all_types = [TAPAS_PROJECT, TAPAS_COLLECTION, TAPAS_SHARED, TAPAS_RECORD];
 
-	$paid_member = new Tapascontent_SitewideRoleWrapper(
-		TAPAS_PAIDMEMBER_ROLE_PROFILE, FALSE);
-	$paid_member->revoke_edit_any([TAPAS_COLLECTION, TAPAS_RECORD]);
-	$paid_member->revoke_edit_own([TAPAS_PROJECT]);
-
-	$admin = new Tapascontent_SitewideRoleWrapper(
-		TAPAS_ADMIN_ROLE_PROFILE, FALSE);
+	$admin = $factory->wrap_sitewide(TAPAS_ADMIN_ROLE_PROFILE, FALSE);
 	$admin->revoke_admin();
-	$admin->revoke_edit_any([TAPAS_RECORD, TAPAS_SHARED, TAPAS_COLLECTION, TAPAS_PROJECT]);
+	$admin->revoke_edit_own($all_types);
+
+	$paid_member = $factory->wrap_sitewide(TAPAS_PAIDMEMBER_ROLE_PROFILE, FALSE);
+	$paid_member->revoke_edit_own($all_types);
+
+	$basic_member = $factory->wrap_sitewide(DRUPAL_AUTHENTICATED_RID);
+	$basic_member->revoke_edit_own($all_types);
+
+	// revoke_edit_own() also revokes edit_any. 
 
 }
 
@@ -210,29 +225,36 @@ function _tapascontent_revoke_sitewide_permissions() {
 // Organic Groups Group roles & permissions
 //=============================================================
 
-function _tapascontent_setup_og_bundles() {
+function _tapascontent_setup_og_bundles($og) {
 
 
-	$project = new Tapascontent_OgBundleGroupWrapper(TAPAS_PROJECT);
-	$collection = new Tapascontent_OgBundleGroupWrapper(TAPAS_CONTENT);
-	$shared = new Tapascontent_OgBundleGroupWrapper(TAPAS_SHARED);
-	$tei_record = new Tapascontent_OgBundleWrapper(TAPAS_RECORD);
+	//$project = new Tapascontent_OgBundleGroupWrapper(TAPAS_PROJECT);
+	//$collection = new Tapascontent_OgBundleGroupWrapper(TAPAS_CONTENT);
+	//$shared = new Tapascontent_OgBundleGroupWrapper(TAPAS_SHARED);
+	//$tei_record = new Tapascontent_OgBundleWrapper(TAPAS_RECORD);
 
-	// Define OG Audience
-	$tei_record->add_audience_fields(TAPAS_COLLECTION, TAPAS_R_TO_C);
-	$tei_record->add_audience_fields(TAPAS_SHARED, TAPAS_R_TO_S);
-	$collection->add_audience_fields(TAPAS_PROJECT, TAPAS_C_TO_P);
+	//// Define OG Audience
+	//$tei_record->add_audience_fields(TAPAS_COLLECTION, TAPAS_R_TO_C);
+	//$tei_record->add_audience_fields(TAPAS_SHARED, TAPAS_R_TO_S);
+	//$collection->add_audience_fields(TAPAS_PROJECT, TAPAS_C_TO_P);
 
-	// Create Roles and Set permissions
-	$project->create_admin_role(TAPAS_PROJECT_ROLE_ADMIN);
-	$project->create_editor_role(TAPAS_PROJECT_ROLE_EDITOR);
-	$collection->create_admin_role(TAPAS_COLLECTION_ROLE_ADMIN);
-	$collection->create_editor_role(TAPAS_COLLECTION_ROLE_EDITOR);
-	$shared->create_admin_role(TAPAS_SHARED_ROLE_ADMIN);
+	//// Create Roles and Set permissions
+	//$project->create_admin_role(TAPAS_PROJECT_ROLE_ADMIN);
+	//$project->create_editor_role(TAPAS_PROJECT_ROLE_EDITOR);
+	//$collection->create_admin_role(TAPAS_COLLECTION_ROLE_ADMIN);
+	//$collection->create_editor_role(TAPAS_COLLECTION_ROLE_EDITOR);
+	//$shared->create_admin_role(TAPAS_SHARED_ROLE_ADMIN);
 
-	$project->get_role()->grant_edit_own([TAPAS_RECORD, TAPAS_COLLECTION]);
-	$collection->get_role()->grant_edit_own([TAPAS_RECORD]);
-	$shared->get_role()->grant_edit_own([TAPAS_RECORD]);
+	//$project->get_role()->grant_edit_own([TAPAS_RECORD, TAPAS_COLLECTION]);
+	//$collection->get_role()->grant_edit_own([TAPAS_RECORD]);
+	//$shared->get_role()->grant_edit_own([TAPAS_RECORD]);
+
+	$project = new Tapascontent_OgProjectGroupWrapper($og);
+	$collection = new Tapascontent_OgCollectionGroupWrapper($og, $project);
+	$shaerd = new Tapascontent_OgSharedGroupWrapper($og);
+	$record = new Tapascontent_OgRecordBundleWrapper($og, $collection, $shared);
+
+	
 }
 
 //=====================================================================

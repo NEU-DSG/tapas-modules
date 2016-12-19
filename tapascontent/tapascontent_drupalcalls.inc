@@ -36,7 +36,8 @@ interface Tapascontent_iDrupalConnector
 	function get_field_values($node, $fieldname, $column='value'); 
 	function set_field(&$node, $fieldname, $value, $column='value', $delta=0); 
 	function parent_nodes_by_type($nid, $type);
-	function create_record();
+	function create_node($type);
+	function current_user_uid();
 
 	function form_set_error($fieldname, $msg);
 }
@@ -50,8 +51,6 @@ implements Tapascontent_iDrupalConnector
 {
 
 	private $factory;
-
-	public function create_record() {assert(FALSE);} // TODO
 
 	public function get_field_values(
 			$node, 
@@ -109,6 +108,15 @@ implements Tapascontent_iDrupalConnector
 		}
 		return $count_array;
 	
+	}
+
+	public function create_node($type) {
+		$new_node = new stdClass();
+		$new_node->type = $type;
+		$new_node->uid = $this->current_user_uid();
+		$new_node->created = strtotime('now');
+		$new_node->changed = strtotime('now');
+		return $new_node;
 	}
 }
 
@@ -182,6 +190,20 @@ extends Tapascontent_aDrupalConnector
 	public function form_set_error($field, $msg) {
 		set_form_error($field, $msg);
 	}
+
+	public function create_node($type) 
+	{
+		$new_node = parent::create_node($type);
+		node_object_prepare($new_node);
+		return $new_node;
+	}
+
+	public function current_user_uid()
+	{
+		global $user;
+		return $user->uid;
+	}
+
 }
 
 class Tapascontent_MockDrupalConnector
@@ -232,22 +254,18 @@ extends Tapascontent_aDrupalConnector
 	// return node iterator
 	public function groups_this_user_is_in($uid) 
 	{ 
-		assert(FALSE); // TODO
 	}
 
 	public function roles_this_user_has($uid, $gid, $include=TRUE)
 	{
-		assert(FALSE); // will return test data if test needs it later.
 	}
 
 	// return user iterator
 	public function user_members_of_this_group($gid) 
 	{ 
-		assert(FALSE); // will return test data if test needs it later.
 	}
 
 	public function ungroup_node($gid) {
-		assert(FALSE); // Will change to 'Return TRUE' if needed.
 	}
 
 	public function parent_nodes_by_type($nid, $type)
@@ -272,6 +290,15 @@ extends Tapascontent_aDrupalConnector
 	}
 
 	public function form_set_error($field, $msg) {}
+
+	public function create_node($type) {
+		return parent::create_node($type);
+	}
+
+	public function current_user_uid() 
+	{
+		return 162;
+	}
 }
 
 
