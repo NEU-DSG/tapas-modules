@@ -389,7 +389,7 @@ function _tapascontent_zip_from_support_files($node) {
   $name = $node->nid . "_zip.zip";
   $filename = drupal_realpath("public://$name");
 
-  $status = $zip->open($filename, ZipArchive::OVERWRITE);
+	$status = $zip->open($filename, ZipArchive::CREATE|ZipArchive::OVERWRITE);
 
   if($status !== true) {
     $err = "Drupal zip creation failed for node with nid $node->nid." .
