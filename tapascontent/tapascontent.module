@@ -205,39 +205,39 @@ function _tapascontent_get_parent_uuids($node) {
 	return $ids;
 }
 
-// This function currently handles populating the field_tapas_parent_slug field, 
+// This function currently handles populating the field_tapas_parent_slug field,
 // which I hacked into existence so that we could get working path rewrites
 // for collections and records.
-function tapascontent_node_presave($node) { 
-  switch($node->type) { 
-  case TAPAS_PROJECT : 
+function tapascontent_node_presave($node) {
+  switch($node->type) {
+  case TAPAS_PROJECT :
     break;
-  case TAPAS_COLLECTION : 
+  case TAPAS_COLLECTION :
     _tapascontent_watchdog("Running node presave hook", WATCHDOG_NOTICE);
     $parent_id = $node->og_tapas_c_to_p['und'][0]['target_id'];
     $project = node_load($parent_id);
 
     _tapascontent_watchdog("Attempted to load project", WATCHDOG_NOTICE);
 
-    if ($project) { 
+    if ($project) {
       $parent_slug = $project->field_tapas_slug['und'][0]['safe_value'];
       $node->field_tapas_parent_slug['und'][0]['value'] = $parent_slug;
       $node->field_tapas_parent_slug['und'][0]['safe_value'] = $parent_slug;
-    } else { 
+    } else {
       $title = $node->title;
       _tapascontent_watchdog("Collection '$title' failed to find its parent".
         " record.", WATCHDOG_ERROR);
     }
     break;
-  case TAPAS_RECORD : 
+  case TAPAS_RECORD :
     $parent_id = $node->og_tapas_r_to_c['und'][0]['target_id'];
-    $collection = node_load($parent_id); 
+    $collection = node_load($parent_id);
 
-    if ($collection) { 
+    if ($collection) {
       $project_id = $collection->og_tapas_c_to_p['und'][0]['target_id'];
       $project = node_load($project_id);
 
-      if ($project) { 
+      if ($project) {
         $project_slug = $project->field_tapas_slug['und'][0]['safe_value'];
         $node->field_tapas_parent_slug['und'][0]['value'] = $project_slug;
         $node->field_tapas_parent_slug['und'][0]['safe_value'] = $project_slug;
@@ -248,7 +248,7 @@ function tapascontent_node_presave($node) {
         _tapascontent_watchdog("Record '$title' failed to find its project",
           WATCHDOG_ERROR);
       }
-    } else { 
+    } else {
       $title = $node->title;
       _tapascontent_watchdog("Record '$title' failed to finds its collection");
     }
@@ -291,7 +291,7 @@ function _tapascontent_insert_update($node) {
   }
 }
 
-function _tapascontent_insert_update_common_tasks($node) { 
+function _tapascontent_insert_update_common_tasks($node) {
   // Index the content
   $node = node_load($node->nid);
   _tapascontent_index_content($node);
@@ -413,7 +413,9 @@ function _tapascontent_assign_if_present(&$data, $key, $val) {
     $has_content = !(ctype_space($val)) && !(empty($val));
   } elseif (is_array($val)) {
     $has_content = !(empty($val));
-  } else {
+  } elseif (is_object($val)){
+		$has_content = !(empty($val));
+	} else {
     return;
   }
 
