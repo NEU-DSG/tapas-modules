@@ -404,7 +404,12 @@ function _tapascontent_zip_from_support_files($node) {
   }
 
   $zip->close();
-  return '@'.$filename;
+	if (function_exists('curl_file_create')) { // php 5.6+
+		$val = curl_file_create($filename, "application/zip", $name);
+	} else {
+		$val = '@'.$filename;
+	}
+  return $val;
 }
 
 function _tapascontent_assign_if_present(&$data, $key, $val) {
