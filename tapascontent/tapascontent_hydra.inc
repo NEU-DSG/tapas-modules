@@ -47,7 +47,6 @@ function tapashydra_post($data, $url_base) {
 	$url = "$url_base/" . $data['uniqueid'];
 	watchdog('debug_tapashydra_post', $url);
         $data_sanitized = _tapashydra_associative_arrays($data);
-
   $curl_options = array(
 		CURLOPT_POST => TRUE,
 		CURLOPT_POSTFIELDS => $data_sanitized,
@@ -94,6 +93,7 @@ function _tapashydra_curlcall($url, $options) {
 	$common_opts = array(
 		CURLOPT_URL => $url,
 		CURLOPT_HTTPHEADER => $header,
+		CURLOPT_RETURNTRANSFER => TRUE,
 	);
 
 
@@ -200,8 +200,12 @@ function tapashydra_get_tei($did, $type) {
  */
 
 function tapashydra_filestring($file_handle) {
-	return '@' . drupal_realpath($file_handle->uri);
-
+	if (function_exists('curl_file_create')) { // php 5.6+
+		$val = curl_file_create(drupal_realpath($file_handle->uri), $file_handle->filemime, $file_handle->filename);
+	} else {
+		$val = '@' . drupal_realpath($file_handle->uri);
+	}
+	return $val;
 }
 
 /**

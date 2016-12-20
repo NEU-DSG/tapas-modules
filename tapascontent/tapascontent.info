@@ -12,3 +12,5 @@ dependencies[] = entityreference
 dependencies[] = og
 dependencies[] = uuid
 dependencies[] = honeypot
+
+configure = admin/config/content/tapascontent

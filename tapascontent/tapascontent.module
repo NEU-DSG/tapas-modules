@@ -73,7 +73,7 @@ function tapascontent_node_info() {
  *   otherwise the content type won't appear in the admin/structure/types list.
  */
 
-function tapascontent_form(&$node, $form_state) {
+function tapascontent_node_form(&$node, $form_state) {
 	return node_content_form($node, $form_state);
 }
 
@@ -205,39 +205,39 @@ function _tapascontent_get_parent_uuids($node) {
 	return $ids;
 }
 
-// This function currently handles populating the field_tapas_parent_slug field, 
+// This function currently handles populating the field_tapas_parent_slug field,
 // which I hacked into existence so that we could get working path rewrites
 // for collections and records.
-function tapascontent_node_presave($node) { 
-  switch($node->type) { 
-  case TAPAS_PROJECT : 
+function tapascontent_node_presave($node) {
+  switch($node->type) {
+  case TAPAS_PROJECT :
     break;
-  case TAPAS_COLLECTION : 
+  case TAPAS_COLLECTION :
     _tapascontent_watchdog("Running node presave hook", WATCHDOG_NOTICE);
     $parent_id = $node->og_tapas_c_to_p['und'][0]['target_id'];
     $project = node_load($parent_id);
 
     _tapascontent_watchdog("Attempted to load project", WATCHDOG_NOTICE);
 
-    if ($project) { 
+    if ($project) {
       $parent_slug = $project->field_tapas_slug['und'][0]['safe_value'];
       $node->field_tapas_parent_slug['und'][0]['value'] = $parent_slug;
       $node->field_tapas_parent_slug['und'][0]['safe_value'] = $parent_slug;
-    } else { 
+    } else {
       $title = $node->title;
       _tapascontent_watchdog("Collection '$title' failed to find its parent".
         " record.", WATCHDOG_ERROR);
     }
     break;
-  case TAPAS_RECORD : 
+  case TAPAS_RECORD :
     $parent_id = $node->og_tapas_r_to_c['und'][0]['target_id'];
-    $collection = node_load($parent_id); 
+    $collection = node_load($parent_id);
 
-    if ($collection) { 
+    if ($collection) {
       $project_id = $collection->og_tapas_c_to_p['und'][0]['target_id'];
       $project = node_load($project_id);
 
-      if ($project) { 
+      if ($project) {
         $project_slug = $project->field_tapas_slug['und'][0]['safe_value'];
         $node->field_tapas_parent_slug['und'][0]['value'] = $project_slug;
         $node->field_tapas_parent_slug['und'][0]['safe_value'] = $project_slug;
@@ -248,7 +248,7 @@ function tapascontent_node_presave($node) {
         _tapascontent_watchdog("Record '$title' failed to find its project",
           WATCHDOG_ERROR);
       }
-    } else { 
+    } else {
       $title = $node->title;
       _tapascontent_watchdog("Record '$title' failed to finds its collection");
     }
@@ -291,7 +291,7 @@ function _tapascontent_insert_update($node) {
   }
 }
 
-function _tapascontent_insert_update_common_tasks($node) { 
+function _tapascontent_insert_update_common_tasks($node) {
   // Index the content
   $node = node_load($node->nid);
   _tapascontent_index_content($node);
@@ -315,7 +315,7 @@ function _tapascontent_projcol_hydradata($node) {
 		'depositor' => $node->uid,
 		'title' => $node->title,
 		'description' => tapas_simple_fieldval($node, TAPAS_FIELD_PREFIX . 'description'),
-		'access' => $node->group_access['und'][0]['value']?'private':'public',
+		'access' => isset($node->group_access['und'][0]['value'])?'private':'public',
 	);
 
 	$thumb_file = tapashydra_filestring_from_field($node, TAPAS_FIELD_PREFIX . 'thumbnail');
@@ -389,7 +389,7 @@ function _tapascontent_zip_from_support_files($node) {
   $name = $node->nid . "_zip.zip";
   $filename = drupal_realpath("public://$name");
 
-  $status = $zip->open($filename, ZipArchive::OVERWRITE);
+	$status = $zip->open($filename, ZipArchive::CREATE|ZipArchive::OVERWRITE);
 
   if($status !== true) {
     $err = "Drupal zip creation failed for node with nid $node->nid." .
@@ -404,7 +404,12 @@ function _tapascontent_zip_from_support_files($node) {
   }
 
   $zip->close();
-  return '@'.$filename;
+	if (function_exists('curl_file_create')) { // php 5.6+
+		$val = curl_file_create($filename, "application/zip", $name);
+	} else {
+		$val = '@'.$filename;
+	}
+  return $val;
 }
 
 function _tapascontent_assign_if_present(&$data, $key, $val) {
@@ -413,7 +418,9 @@ function _tapascontent_assign_if_present(&$data, $key, $val) {
     $has_content = !(ctype_space($val)) && !(empty($val));
   } elseif (is_array($val)) {
     $has_content = !(empty($val));
-  } else {
+  } elseif (is_object($val)){
+		$has_content = !(empty($val));
+	} else {
     return;
   }
 
@@ -541,4 +548,169 @@ function _tapascontent_curl_get_apricot($url) {
   $result = json_decode(curl_exec($curl));
   curl_close($curl);
   return($result);
+}
+
+function tapascontent_form($form, &$form_state){
+	$form['resave_objects'] = array(
+		'#type' => 'checkbox',
+		'#title' => t('Resave the objects'),
+		'#description' => t('This function will resave objects in Drupal and push them to Hydra.'),
+		'#name' => 'resave_objects',
+		'#return_value' => 1,
+	);
+	return system_settings_form($form);
+}
+
+function tapascontent_form_tapascontent_form_alter(&$form, &$form_state, $form_id){
+	$form['#submit'][] = 'save_tapas_settings';
+}
+
+function save_tapas_settings($form, $form_state){
+	//check for the save checkbox to be checked
+	if ($form_state['values']['resave_objects'] == 1){
+		dpm("you asked to start the batch process");
+		$batch = array(
+			'operations' => array(
+				array('batch_resave_projects', array()),
+				array('batch_resave_collections', array()),
+				array('batch_resave_ographies', array()),
+				array('batch_resave_regular_records', array())
+			),
+			'finished' => 'batch_resave_finished',
+			'title' => t('Processing Resave Ojbects'),
+			'init_message' => t('Resave objects is starting'),
+			'progress_message' => check_plain(t('Processed @current out of @total')),
+			'error_message' => t('Resave objects encountered an error'),
+		);
+		batch_set($batch);
+	}
+}
+
+function batch_resave_projects(&$context){
+	if (!isset($context['sandbox']['progress'])){
+		$context['sandbox']['progress'] = 0;
+		$context['sandbox']['current_node'] = 0;
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node} n WHERE n.type = :type', array(':type'=>'tapas_project'))->fetchField();
+	}
+	$nids = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('type', 'tapas_project', '=')
+    ->execute()
+    ->fetchCol();
+  $nodes = node_load_multiple($nids);
+  foreach($nodes as $node){
+    node_save($node);
+		$context['sandbox']['progress']++;
+		$context['sandbox']['current_node'] = $node->nid;
+		$context['message'] = t('Now processing %node', array('%node'=>$node->title));
+		$context['results'][] = check_plain($node->title);
+  }
+	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
+		$context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+	} else {
+		$message = t('@count projects successfully processed', array('@count'=>count($context['results'])));
+		dpm($message);
+	}
+}
+
+function batch_resave_collections(){
+	if (!isset($context['sandbox']['progress'])){
+		$context['sandbox']['progress'] = 0;
+		$context['sandbox']['current_node'] = 0;
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM {node} n WHERE n.type = :type', array(':type'=>'tapas_collection'))->fetchField();
+	}
+	$nids = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('type', 'tapas_collection', '=')
+    ->execute()
+    ->fetchCol();
+  $nodes = node_load_multiple($nids);
+  foreach($nodes as $node){
+    node_save($node);
+		$context['sandbox']['progress']++;
+		$context['sandbox']['current_node'] = $node->nid;
+		$context['message'] = t('Now processing %node', array('%node'=>$node->title));
+		$context['results'][] = check_plain($node->title);
+  }
+	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
+		$context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+	} else {
+		$message = t('@count collections successfully processed', array('@count'=>count($context['results'])));
+		dpm($message);
+	}
+}
+
+function batch_resave_ographies(){
+	if (!isset($context['sandbox']['progress'])){
+		$context['sandbox']['progress'] = 0;
+		$context['sandbox']['current_node'] = 0;
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
+	}
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	if (!is_array($nids)){
+		$nids = [$nids];
+	}
+  $nodes = node_load_multiple($nids);
+  foreach($nodes as $node){
+    node_save($node);
+		$context['sandbox']['progress']++;
+		$context['sandbox']['current_node'] = $node->nid;
+		$context['message'] = t('Now processing %node', array('%node'=>$node->title));
+		$context['results'][] = check_plain($node->title);
+  }
+	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
+		$context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+	} else {
+		$message = t('@count ographies successfully processed', array('@count'=>count($context['results'])));
+		dpm($message);
+	}
+}
+
+function batch_resave_regular_records(){
+	if (!isset($context['sandbox']['progress'])){
+		$context['sandbox']['progress'] = 0;
+		$context['sandbox']['current_node'] = 0;
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
+	}
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	if (!is_array($nids)){
+		$nids = [$nids];
+	}
+  $nodes = node_load_multiple($nids);
+  foreach($nodes as $node){
+    node_save($node);
+		$context['sandbox']['progress']++;
+		$context['sandbox']['current_node'] = $node->nid;
+		$context['message'] = t('Now processing %node', array('%node'=>$node->title));
+		$context['results'][] = check_plain($node->title);
+  }
+	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
+		$context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+	} else {
+		$message = t('@count records successfully processed', array('@count'=>count($context['results'])));
+		dpm($message);
+	}
+}
+
+function batch_resave_finished($success, $results, $operations){
+	if ($success){
+		dpm("Resaving has been completed");
+	} else {
+		$error_operation = reset($operations);
+		$message = t('An error occurred while progressing %error_operation with arguments: @arguments', array('%error_operation'=>$error_operation[0], '@arguments'=> print_r($error_operation[1], TRUE)));
+		dpm($message, 'error');
+	}
+}
+
+function tapascontent_menu() {
+  $items = array();
+  $items['admin/config/content/tapascontent'] = array(
+    'title' => 'Tapas module settings',
+		'description' => 'Configuration for Tapas modules',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('tapascontent_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+  return $items;
 }
