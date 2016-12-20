@@ -93,6 +93,7 @@ function _tapashydra_curlcall($url, $options) {
 	$common_opts = array(
 		CURLOPT_URL => $url,
 		CURLOPT_HTTPHEADER => $header,
+		CURLOPT_RETURNTRANSFER => TRUE,
 	);
 
 
