@@ -769,15 +769,17 @@ function batch_resave_broken(){
 		curl_exec($ch);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		if ($code == 404 || $code == 500){
-			dpm("nid ".$node->nid." returns 404 or 500 for teibp so lets try to resave it");
+			dpm("nid ".$node->nid." returns ".$code." for teibp so lets try to resave it");
 			node_save($node);
 			$context['sandbox']['progress']++;
 			$context['sandbox']['current_node'] = $node->nid;
 			$context['message'] = t('Now processing %node', array('%node'=>$node->title));
 			$context['results'][] = check_plain($node->title);
 		} else if ($code == 200){
-			//do nothing
+			$context['results'][] = check_plain($node->title);
+			//do nothing - it already returns a success for teibp
 		} else {
+			$context['results'][] = check_plain($node->title);
 			dpm("nid ".$node->nid." returns ".$code);
 		}
   }
@@ -792,6 +794,7 @@ function batch_resave_broken(){
 function batch_resave_finished($success, $results, $operations){
 	if ($success){
 		dpm("Resaving has been completed");
+		dpm('@count records successfully processed', array('@count'=>count($results)));
 	} else {
 		$error_operation = reset($operations);
 		$message = t('An error occurred while progressing %error_operation with arguments: @arguments', array('%error_operation'=>$error_operation[0], '@arguments'=> print_r($error_operation[1], TRUE)));
