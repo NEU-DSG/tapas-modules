@@ -755,7 +755,7 @@ function batch_resave_broken(){
 	$context['results'] = array();
   foreach($nodes as $node){
 		$string = "Could not find";
-		$url = TAPAS_BASE_API_URL . "/files/$node->uuid/teibp";
+		$url = TAPAS_BASE_API_URL . "/files/$node->uuid/mods";
 		$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET');
 		$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 		$common_opts = array(
@@ -784,6 +784,7 @@ function batch_resave_broken(){
 			dpm("nid ".$node->nid." returns ".$code);
 		}
   }
+	dpm(count($context['results']).'records successfully processed');
 	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
 		$context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
 	} else {
@@ -795,7 +796,6 @@ function batch_resave_broken(){
 function batch_resave_finished($success, $results, $operations){
 	if ($success){
 		dpm("Resaving has been completed");
-		dpm(count($results).'records successfully processed');
 	} else {
 		$error_operation = reset($operations);
 		$message = t('An error occurred while progressing %error_operation with arguments: @arguments', array('%error_operation'=>$error_operation[0], '@arguments'=> print_r($error_operation[1], TRUE)));
