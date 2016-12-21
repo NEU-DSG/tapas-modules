@@ -752,17 +752,32 @@ function batch_resave_broken(){
 	$completed_nids = array_diff($nids, $without_projects);
 	$completed_nids = array_diff($completed_nids, $without_collections);
   $nodes = node_load_multiple($completed_nids);
+	$context['results'] = array();
   foreach($nodes as $node){
-		$teibp = tapashydra_get_tei($node->uuid, 'teibp');
 		$string = "Could not find";
-		if (substr($teibp, 0, strlen($string)) === $string){
-			dpm($node);
-			dpm("this object returns 404 for teibp so lets try to resave it");
+		$url = TAPAS_BASE_API_URL . "/files/$node->uuid/teibp";
+		$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET');
+		$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
+		$common_opts = array(
+			CURLOPT_URL => $url,
+			CURLOPT_HTTPHEADER => $header,
+			CURLOPT_RETURNTRANSFER => TRUE,
+		);
+		$curlopt = $options + $common_opts;
+		$ch = curl_init($url);
+		curl_exec($ch);
+		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		if ($code == 404 || $code == 500){
+			dpm("nid ".$node->nid." returns 404 or 500 for teibp so lets try to resave it");
 			node_save($node);
 			$context['sandbox']['progress']++;
 			$context['sandbox']['current_node'] = $node->nid;
 			$context['message'] = t('Now processing %node', array('%node'=>$node->title));
 			$context['results'][] = check_plain($node->title);
+		} else if ($code == 200){
+			//do nothing
+		} else {
+			dpm("nid ".$node->nid." returns ".$code);
 		}
   }
 	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
