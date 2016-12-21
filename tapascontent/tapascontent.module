@@ -768,6 +768,7 @@ function batch_resave_broken(){
 		curl_setopt_array($ch, $curlopt);
 		curl_exec($ch);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
 		if ($code == 404 || $code == 500){
 			dpm("nid ".$node->nid." returns ".$code." for teibp so lets try to resave it");
 			node_save($node);
