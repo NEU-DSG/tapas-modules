@@ -763,7 +763,7 @@ function batch_resave_broken(){
 			CURLOPT_HTTPHEADER => $header,
 			CURLOPT_RETURNTRANSFER => TRUE,
 		);
-		$curlopt = $options + $common_opts;
+		$curlopt = $curl_options + $common_opts;
 		$ch = curl_init($url);
 		curl_exec($ch);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
