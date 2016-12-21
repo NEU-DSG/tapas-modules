@@ -764,8 +764,8 @@ function batch_resave_broken(){
 			CURLOPT_RETURNTRANSFER => TRUE,
 		);
 		$curlopt = $curl_options + $common_opts;
-		curl_setopt_array($ch, $curlopt);
 		$ch = curl_init($url);
+		curl_setopt_array($ch, $curlopt);
 		curl_exec($ch);
 		$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		if ($code == 404 || $code == 500){
