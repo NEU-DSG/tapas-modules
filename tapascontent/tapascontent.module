@@ -552,11 +552,11 @@ function _tapascontent_curl_get_apricot($url) {
 
 function tapascontent_form($form, &$form_state){
 	$form['resave_objects'] = array(
-		'#type' => 'checkbox',
-		'#title' => t('Resave the objects'),
-		'#description' => t('This function will resave objects in Drupal and push them to Hydra.'),
+		'#type' => 'select',
+		'#title' => t('Resave objects'),
+		'#description' => t('This function will resave objects in Drupal and push them to Hydra. For records and ographies only objects which have both project and collection associations will be resaved as objects without those would not be properly handled by hydra anyway'),
 		'#name' => 'resave_objects',
-		'#return_value' => 1,
+		'#options' => array(t('--SELECT--'), t('all objects'), t('Projects'), t('Collections'), t('Ographies'), t('Regular Records'), t('Records which return 404'))
 	);
 	return system_settings_form($form);
 }
@@ -566,7 +566,6 @@ function tapascontent_form_tapascontent_form_alter(&$form, &$form_state, $form_i
 }
 
 function save_tapas_settings($form, $form_state){
-	//check for the save checkbox to be checked
 	if ($form_state['values']['resave_objects'] == 1){
 		dpm("you asked to start the batch process");
 		$batch = array(
@@ -576,14 +575,50 @@ function save_tapas_settings($form, $form_state){
 				array('batch_resave_ographies', array()),
 				array('batch_resave_regular_records', array())
 			),
-			'finished' => 'batch_resave_finished',
-			'title' => t('Processing Resave Ojbects'),
-			'init_message' => t('Resave objects is starting'),
-			'progress_message' => check_plain(t('Processed @current out of @total')),
-			'error_message' => t('Resave objects encountered an error'),
 		);
-		batch_set($batch);
+	} elseif ($form_state['values']['resave_objects'] == 2){
+		dpm("you asked to start the batch process");
+		$batch = array(
+			'operations' => array(
+				array('batch_resave_projects', array()),
+			),
+		);
+	} elseif ($form_state['values']['resave_objects'] == 3){
+		dpm("you asked to start the batch process");
+		$batch = array(
+			'operations' => array(
+				array('batch_resave_collections', array()),
+			),
+		);
+	} elseif ($form_state['values']['resave_objects'] == 4){
+		dpm("you asked to start the batch process");
+		$batch = array(
+			'operations' => array(
+				array('batch_resave_ographies', array()),
+			),
+		);
+	} elseif ($form_state['values']['resave_objects'] == 5){
+		dpm("you asked to start the batch process");
+		$batch = array(
+			'operations' => array(
+				array('batch_resave_regular_records', array()),
+			),
+		);
+	}  elseif ($form_state['values']['resave_objects'] == 6){
+		dpm("you asked to start the batch process");
+		$batch = array(
+			'operations' => array(
+				array('batch_resave_broken', array()),
+			),
+		);
 	}
+
+	$batch['finished'] = 'batch_resave_finished';
+	$batch['title'] = t('Processing Resave Ojbects');
+	$batch['init_message'] = t('Resave objects is starting');
+	$batch['progress_message'] = check_plain(t('Processed @current out of @total'));
+	$batch['error_message'] = t('Resave objects encountered an error');
+	batch_set($batch);
 }
 
 function batch_resave_projects(&$context){
@@ -644,12 +679,16 @@ function batch_resave_ographies(){
 	if (!isset($context['sandbox']['progress'])){
 		$context['sandbox']['progress'] = 0;
 		$context['sandbox']['current_node'] = 0;
-		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchField();
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
 	}
-	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$without_projects = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id AND node.nid NOT IN (SELECT field_data_field_tapas_project.entity_id FROM {field_data_field_tapas_project})', array(':type'=>'tapas_record'))->fetchCol();
+	$without_collections = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id AND node.nid NOT IN (SELECT og_membership.etid FROM og_membership WHERE field_name = :field_name)', array(':type'=>'tapas_record', ':field_name'=>'og_tapas_r_to_c'))->fetchCol();
 	if (!is_array($nids)){
 		$nids = [$nids];
 	}
+	$completed_nids = array_diff($nids, $without_projects);
+	$completed_nids = array_diff($completed_nids, $without_collections);
   $nodes = node_load_multiple($nids);
   foreach($nodes as $node){
     node_save($node);
@@ -670,19 +709,61 @@ function batch_resave_regular_records(){
 	if (!isset($context['sandbox']['progress'])){
 		$context['sandbox']['progress'] = 0;
 		$context['sandbox']['current_node'] = 0;
-		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchField();
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
 	}
-	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$without_projects = db_query('SELECT nid FROM {node} WHERE node.type = :type AND node.nid NOT IN (SELECT field_data_field_tapas_project.entity_id FROM {field_data_field_tapas_project})', array(':type'=>'tapas_record'))->fetchCol();
+	$without_collections = db_query('SELECT nid FROM node WHERE node.type = :type AND node.nid NOT IN (SELECT og_membership.etid FROM og_membership WHERE field_name = :field_name)', array(':type'=>'tapas_record', ':field_name'=>'og_tapas_r_to_c'))->fetchCol();
 	if (!is_array($nids)){
 		$nids = [$nids];
 	}
-  $nodes = node_load_multiple($nids);
+	//we only want to send nodes to hydra that have project and collection associations, without those associations the objects cannot be saved.
+	$completed_nids = array_diff($nids, $without_projects);
+	$completed_nids = array_diff($completed_nids, $without_collections);
+  $nodes = node_load_multiple($completed_nids);
   foreach($nodes as $node){
     node_save($node);
 		$context['sandbox']['progress']++;
 		$context['sandbox']['current_node'] = $node->nid;
 		$context['message'] = t('Now processing %node', array('%node'=>$node->title));
 		$context['results'][] = check_plain($node->title);
+  }
+	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
+		$context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+	} else {
+		$message = t('@count records successfully processed', array('@count'=>count($context['results'])));
+		dpm($message);
+	}
+}
+
+function batch_resave_broken(){
+	if (!isset($context['sandbox']['progress'])){
+		$context['sandbox']['progress'] = 0;
+		$context['sandbox']['current_node'] = 0;
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
+	}
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$without_projects = db_query('SELECT nid FROM {node} WHERE node.type = :type AND node.nid NOT IN (SELECT field_data_field_tapas_project.entity_id FROM {field_data_field_tapas_project})', array(':type'=>'tapas_record'))->fetchCol();
+	$without_collections = db_query('SELECT nid FROM node WHERE node.type = :type AND node.nid NOT IN (SELECT og_membership.etid FROM og_membership WHERE field_name = :field_name)', array(':type'=>'tapas_record', ':field_name'=>'og_tapas_r_to_c'))->fetchCol();
+	if (!is_array($nids)){
+		$nids = [$nids];
+	}
+	//we only want to send nodes to hydra that have project and collection associations, without those associations the objects cannot be saved.
+	$completed_nids = array_diff($nids, $without_projects);
+	$completed_nids = array_diff($completed_nids, $without_collections);
+  $nodes = node_load_multiple($completed_nids);
+  foreach($nodes as $node){
+		$teibp = tapashydra_get_tei($node->uuid, 'teibp');
+		$string = "Could not find";
+		if (substr($teibp, 0, strlen($string)) === $string){
+			dpm($node);
+			dpm("this object returns 404 for teibp so lets try to resave it");
+			node_save($node);
+			$context['sandbox']['progress']++;
+			$context['sandbox']['current_node'] = $node->nid;
+			$context['message'] = t('Now processing %node', array('%node'=>$node->title));
+			$context['results'][] = check_plain($node->title);
+		}
   }
 	if ($context['sandbox']['progress'] != $context['sandbox']['max']){
 		$context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
