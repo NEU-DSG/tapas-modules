@@ -679,11 +679,11 @@ function batch_resave_ographies(){
 	if (!isset($context['sandbox']['progress'])){
 		$context['sandbox']['progress'] = 0;
 		$context['sandbox']['current_node'] = 0;
-		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchField();
 	}
-	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
-	$without_projects = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id AND node.nid NOT IN (SELECT field_data_field_tapas_project.entity_id FROM {field_data_field_tapas_project})', array(':type'=>'tapas_record'))->fetchCol();
-	$without_collections = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_types.entity_id AND node.nid NOT IN (SELECT og_membership.etid FROM og_membership WHERE field_name = :field_name)', array(':type'=>'tapas_record', ':field_name'=>'og_tapas_r_to_c'))->fetchCol();
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$without_projects = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_type.entity_id AND node.nid NOT IN (SELECT field_data_field_tapas_project.entity_id FROM {field_data_field_tapas_project})', array(':type'=>'tapas_record'))->fetchCol();
+	$without_collections = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid = field_data_field_tapas_record_ography_type.entity_id AND node.nid NOT IN (SELECT og_membership.etid FROM og_membership WHERE field_name = :field_name)', array(':type'=>'tapas_record', ':field_name'=>'og_tapas_r_to_c'))->fetchCol();
 	if (!is_array($nids)){
 		$nids = [$nids];
 	}
@@ -709,9 +709,9 @@ function batch_resave_regular_records(){
 	if (!isset($context['sandbox']['progress'])){
 		$context['sandbox']['progress'] = 0;
 		$context['sandbox']['current_node'] = 0;
-		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchField();
 	}
-	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchCol();
 	$without_projects = db_query('SELECT nid FROM {node} WHERE node.type = :type AND node.nid NOT IN (SELECT field_data_field_tapas_project.entity_id FROM {field_data_field_tapas_project})', array(':type'=>'tapas_record'))->fetchCol();
 	$without_collections = db_query('SELECT nid FROM node WHERE node.type = :type AND node.nid NOT IN (SELECT og_membership.etid FROM og_membership WHERE field_name = :field_name)', array(':type'=>'tapas_record', ':field_name'=>'og_tapas_r_to_c'))->fetchCol();
 	if (!is_array($nids)){
@@ -740,9 +740,9 @@ function batch_resave_broken(){
 	if (!isset($context['sandbox']['progress'])){
 		$context['sandbox']['progress'] = 0;
 		$context['sandbox']['current_node'] = 0;
-		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchField();
+		$context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT nid) FROM  {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchField();
 	}
-	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_types} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_types.entity_id', array(':type'=>'tapas_record'))->fetchCol();
+	$nids = db_query('SELECT nid FROM {node}, {field_data_field_tapas_record_ography_type} WHERE node.type = :type AND node.nid != field_data_field_tapas_record_ography_type.entity_id', array(':type'=>'tapas_record'))->fetchCol();
 	$without_projects = db_query('SELECT nid FROM {node} WHERE node.type = :type AND node.nid NOT IN (SELECT field_data_field_tapas_project.entity_id FROM {field_data_field_tapas_project})', array(':type'=>'tapas_record'))->fetchCol();
 	$without_collections = db_query('SELECT nid FROM node WHERE node.type = :type AND node.nid NOT IN (SELECT og_membership.etid FROM og_membership WHERE field_name = :field_name)', array(':type'=>'tapas_record', ':field_name'=>'og_tapas_r_to_c'))->fetchCol();
 	if (!is_array($nids)){
