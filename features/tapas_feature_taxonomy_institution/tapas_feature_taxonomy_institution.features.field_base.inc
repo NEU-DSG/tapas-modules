@@ -10,7 +10,7 @@
 function tapas_feature_taxonomy_institution_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_image_name'
+  // Exported field_base: 'field_image_name'.
   $field_bases['field_image_name'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -32,7 +32,7 @@ function tapas_feature_taxonomy_institution_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_institution_address'
+  // Exported field_base: 'field_institution_address'.
   $field_bases['field_institution_address'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -51,7 +51,7 @@ function tapas_feature_taxonomy_institution_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_institution_image'
+  // Exported field_base: 'field_institution_image'.
   $field_bases['field_institution_image'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -73,7 +73,7 @@ function tapas_feature_taxonomy_institution_field_default_field_bases() {
     'type' => 'image',
   );
 
-  // Exported field_base: 'field_institution_latitude'
+  // Exported field_base: 'field_institution_latitude'.
   $field_bases['field_institution_latitude'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -90,7 +90,7 @@ function tapas_feature_taxonomy_institution_field_default_field_bases() {
     'type' => 'number_float',
   );
 
-  // Exported field_base: 'field_institution_longitude'
+  // Exported field_base: 'field_institution_longitude'.
   $field_bases['field_institution_longitude'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -107,7 +107,7 @@ function tapas_feature_taxonomy_institution_field_default_field_bases() {
     'type' => 'number_float',
   );
 
-  // Exported field_base: 'field_institution_official_flag'
+  // Exported field_base: 'field_institution_official_flag'.
   $field_bases['field_institution_official_flag'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -132,7 +132,7 @@ function tapas_feature_taxonomy_institution_field_default_field_bases() {
     'type' => 'list_boolean',
   );
 
-  // Exported field_base: 'field_institution_url'
+  // Exported field_base: 'field_institution_url'.
   $field_bases['field_institution_url'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -161,7 +161,7 @@ function tapas_feature_taxonomy_institution_field_default_field_bases() {
     'type' => 'link_field',
   );
 
-  // Exported field_base: 'field_old_url_alias'
+  // Exported field_base: 'field_old_url_alias'.
   $field_bases['field_old_url_alias'] = array(
     'active' => 1,
     'cardinality' => 1,

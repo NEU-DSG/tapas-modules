@@ -185,7 +185,6 @@ function tapas_feature_base_og_field_default_field_bases() {
         ),
         'target_bundles' => array(
           'tapas_collection' => 'tapas_collection',
-          'tapas_shared' => 'tapas_shared',
         ),
       ),
       'handler_submit' => 'Change handler',

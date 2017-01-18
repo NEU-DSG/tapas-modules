@@ -10,7 +10,7 @@
 function tapas_feature_content_profile_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'profile2-main-field_profile_about'
+  // Exported field_instance: 'profile2-main-field_profile_about'.
   $field_instances['profile2-main-field_profile_about'] = array(
     'bundle' => 'main',
     'default_value' => NULL,
@@ -28,7 +28,7 @@ function tapas_feature_content_profile_field_default_field_instances() {
     'entity_type' => 'profile2',
     'field_name' => 'field_profile_about',
     'label' => 'profile-about',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'text_processing' => 1,
       'user_register_form' => FALSE,
@@ -44,7 +44,7 @@ function tapas_feature_content_profile_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'profile2-main-field_profile_avatar'
+  // Exported field_instance: 'profile2-main-field_profile_avatar'.
   $field_instances['profile2-main-field_profile_avatar'] = array(
     'bundle' => 'main',
     'deleted' => 0,
@@ -88,7 +88,7 @@ function tapas_feature_content_profile_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'profile2-main-field_profile_display_name'
+  // Exported field_instance: 'profile2-main-field_profile_display_name'.
   $field_instances['profile2-main-field_profile_display_name'] = array(
     'bundle' => 'main',
     'default_value' => NULL,
@@ -122,7 +122,7 @@ function tapas_feature_content_profile_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'profile2-main-field_profile_institution'
+  // Exported field_instance: 'profile2-main-field_profile_institution'.
   $field_instances['profile2-main-field_profile_institution'] = array(
     'bundle' => 'main',
     'default_value' => NULL,

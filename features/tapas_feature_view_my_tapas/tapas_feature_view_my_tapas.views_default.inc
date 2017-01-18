@@ -154,8 +154,24 @@ function tapas_feature_view_my_tapas_views_default_views() {
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area']['content'] = 'You don\'t have any projects yet. <a href=\'/node/add/tapas-project\'>Create one now.</a>';
-  $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
+  $handler->display->display_options['empty']['area']['content'] = 'You don\'t have any projects yet. <a href=\'/node/add/tapas-project\'>Create one now.</a>
+
+<p>You must have an active membership through the TEI-C to access this feature of TAPAS. Learn <a data-toggle="modal" data-target="#teic">more</a>.</p>
+
+<div class="modal fade" id="teic">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h2>TAPAS | TEI-C Memberships</h2>
+</div>
+<div class="modal-body">
+<p>The TEI-C is an important financial supporter of the TAPAS project. Their support helps alleviate much of the costs associated with operating TAPAS, allowing us to offer TEI preservation and access services through the TAPAS repository at no cost to users. As a benefit to joining the TEI-C, TAPAS users get access to a suite of tools for building and managing projects with their data.</p>
+<p>To register for a TEI-C membership, or to learn more about pricing for Individual and Institutional plans, please visit <a href="http://members.tei-c.org/Join">http://members.tei-c.org/Join</a>. If you are unsure if your TEI-C membership is up to date, you can search the directory of current members: <a href="http://members.tei-c.org/Subscribers">http://members.tei-c.org/Subscribers</a>. You can also check to see if your institution is already enrolled here: <a href="http://members.tei-c.org/Institutions">http://members.tei-c.org/Institutions</a>.</p>
+</div>
+</div>
+</div>
+</div>';
+  $handler->display->display_options['empty']['area']['format'] = 'full_html';
   $handler->display->display_options['defaults']['relationships'] = FALSE;
   /* Relationship: Content: Author */
   $handler->display->display_options['relationships']['uid']['id'] = 'uid';
@@ -227,13 +243,6 @@ function tapas_feature_view_my_tapas_views_default_views() {
   $handler->display->display_options['header']['area']['field'] = 'area';
   $handler->display->display_options['header']['area']['content'] = '<a href="/node/add/tapas-collection" class="text-right h5 btn btn-primary add-new"><span class="fa fa-plus"></span> Add New</a>';
   $handler->display->display_options['header']['area']['format'] = 'filtered_html';
-  /* Header: Global: Text area */
-  $handler->display->display_options['header']['area_1']['id'] = 'area_1';
-  $handler->display->display_options['header']['area_1']['table'] = 'views';
-  $handler->display->display_options['header']['area_1']['field'] = 'area';
-  $handler->display->display_options['header']['area_1']['empty'] = TRUE;
-  $handler->display->display_options['header']['area_1']['content'] = '<h4 class="clearfix"><a href="/content/test-area" class="pull-left">Test Area</a></h4>';
-  $handler->display->display_options['header']['area_1']['format'] = 'full_html';
   $handler->display->display_options['defaults']['footer'] = FALSE;
   /* Footer: Global: Text area */
   $handler->display->display_options['footer']['area']['id'] = 'area';
@@ -382,8 +391,24 @@ function tapas_feature_view_my_tapas_views_default_views() {
   $handler->display->display_options['empty']['area']['table'] = 'views';
   $handler->display->display_options['empty']['area']['field'] = 'area';
   $handler->display->display_options['empty']['area']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area']['content'] = 'You don\'t have any projects yet. <a href=\'/node/add/tapas-project\'>Create one now.</a>';
-  $handler->display->display_options['empty']['area']['format'] = 'filtered_html';
+  $handler->display->display_options['empty']['area']['content'] = 'You don\'t have any projects yet. <a href=\'/node/add/tapas-project\'>Create one now.</a>
+
+<p>You must have an active membership through the TEI-C to access this feature of TAPAS. Learn <a data-toggle="modal" data-target="#teic">more</a>.</p>
+
+<div class="modal fade" id="teic">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h2>TAPAS | TEI-C Memberships</h2>
+</div>
+<div class="modal-body">
+<p>The TEI-C is an important financial supporter of the TAPAS project. Their support helps alleviate much of the costs associated with operating TAPAS, allowing us to offer TEI preservation and access services through the TAPAS repository at no cost to users. As a benefit to joining the TEI-C, TAPAS users get access to a suite of tools for building and managing projects with their data.</p>
+<p>To register for a TEI-C membership, or to learn more about pricing for Individual and Institutional plans, please visit <a href="http://members.tei-c.org/Join">http://members.tei-c.org/Join</a>. If you are unsure if your TEI-C membership is up to date, you can search the directory of current members: <a href="http://members.tei-c.org/Subscribers">http://members.tei-c.org/Subscribers</a>. You can also check to see if your institution is already enrolled here: <a href="http://members.tei-c.org/Institutions">http://members.tei-c.org/Institutions</a>.</p>
+</div>
+</div>
+</div>
+</div>';
+  $handler->display->display_options['empty']['area']['format'] = 'full_html';
   $handler->display->display_options['defaults']['relationships'] = FALSE;
   /* Relationship: Content: Author */
   $handler->display->display_options['relationships']['uid']['id'] = 'uid';
@@ -420,6 +445,13 @@ function tapas_feature_view_my_tapas_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['element_wrapper_class'] = 'col-sm-2';
   $handler->display->display_options['fields']['edit_node']['element_default_classes'] = FALSE;
   $handler->display->display_options['fields']['edit_node']['text'] = 'Edit';
+  /* Field: Global: View */
+  $handler->display->display_options['fields']['view']['id'] = 'view';
+  $handler->display->display_options['fields']['view']['table'] = 'views';
+  $handler->display->display_options['fields']['view']['field'] = 'view';
+  $handler->display->display_options['fields']['view']['label'] = 'Collections';
+  $handler->display->display_options['fields']['view']['view'] = 'embedded_collection_list_for_all_projects';
+  $handler->display->display_options['fields']['view']['arguments'] = '[!nid]';
   $handler->display->display_options['defaults']['sorts'] = FALSE;
   /* Sort criterion: Content: Title */
   $handler->display->display_options['sorts']['title']['id'] = 'title';
@@ -475,13 +507,6 @@ function tapas_feature_view_my_tapas_views_default_views() {
   $handler->display->display_options['header']['area']['content'] = '<a href="/node/add/tapas-collection" class="text-right h5 btn btn-primary add-new" ><span class="fa fa-plus"></span> Add New</a>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   $handler->display->display_options['header']['area']['tokenize'] = TRUE;
-  /* Header: Global: Text area */
-  $handler->display->display_options['header']['area_1']['id'] = 'area_1';
-  $handler->display->display_options['header']['area_1']['table'] = 'views';
-  $handler->display->display_options['header']['area_1']['field'] = 'area';
-  $handler->display->display_options['header']['area_1']['empty'] = TRUE;
-  $handler->display->display_options['header']['area_1']['content'] = '<h4 class="clearfix"><a href="/content/test-area" class="pull-left">Test Area</a></h4>';
-  $handler->display->display_options['header']['area_1']['format'] = 'full_html';
   $handler->display->display_options['defaults']['footer'] = FALSE;
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Field: Content: Nid */
@@ -639,7 +664,7 @@ function tapas_feature_view_my_tapas_views_default_views() {
   $handler->display->display_options['fields']['nid']['label'] = '';
   $handler->display->display_options['fields']['nid']['exclude'] = TRUE;
   $handler->display->display_options['fields']['nid']['element_label_colon'] = FALSE;
-  /* Field: Content: File Type */
+  /* Field: Content: Support File Type */
   $handler->display->display_options['fields']['field_tapas_record_ography_type']['id'] = 'field_tapas_record_ography_type';
   $handler->display->display_options['fields']['field_tapas_record_ography_type']['table'] = 'field_data_field_tapas_record_ography_type';
   $handler->display->display_options['fields']['field_tapas_record_ography_type']['field'] = 'field_tapas_record_ography_type';

@@ -170,7 +170,7 @@ function tapas_feature_view_news_default_fe_block_settings() {
 
   $export['views-news-block_4'] = array(
     'cache' => -1,
-    'css_class' => 'col-sm-5',
+    'css_class' => 'col-sm-12',
     'custom' => 0,
     'delta' => 'news-block_4',
     'module' => 'views',

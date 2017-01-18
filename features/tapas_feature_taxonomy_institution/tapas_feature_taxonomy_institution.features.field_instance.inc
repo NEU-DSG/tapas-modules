@@ -10,7 +10,8 @@
 function tapas_feature_taxonomy_institution_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'taxonomy_term-tapas_institution-field_image_name'
+  // Exported field_instance:
+  // 'taxonomy_term-tapas_institution-field_image_name'.
   $field_instances['taxonomy_term-tapas_institution-field_image_name'] = array(
     'bundle' => 'tapas_institution',
     'default_value' => NULL,
@@ -45,7 +46,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'taxonomy_term-tapas_institution-field_institution_address'
+  // 'taxonomy_term-tapas_institution-field_institution_address'.
   $field_instances['taxonomy_term-tapas_institution-field_institution_address'] = array(
     'bundle' => 'tapas_institution',
     'default_value' => NULL,
@@ -53,7 +54,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'hidden',
+        'label' => 'above',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
@@ -80,7 +81,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'taxonomy_term-tapas_institution-field_institution_image'
+  // 'taxonomy_term-tapas_institution-field_institution_image'.
   $field_instances['taxonomy_term-tapas_institution-field_institution_image'] = array(
     'bundle' => 'tapas_institution',
     'deleted' => 0,
@@ -125,7 +126,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'taxonomy_term-tapas_institution-field_institution_latitude'
+  // 'taxonomy_term-tapas_institution-field_institution_latitude'.
   $field_instances['taxonomy_term-tapas_institution-field_institution_latitude'] = array(
     'bundle' => 'tapas_institution',
     'default_value' => NULL,
@@ -160,7 +161,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'taxonomy_term-tapas_institution-field_institution_longitude'
+  // 'taxonomy_term-tapas_institution-field_institution_longitude'.
   $field_instances['taxonomy_term-tapas_institution-field_institution_longitude'] = array(
     'bundle' => 'tapas_institution',
     'default_value' => NULL,
@@ -195,7 +196,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'taxonomy_term-tapas_institution-field_institution_official_flag'
+  // 'taxonomy_term-tapas_institution-field_institution_official_flag'.
   $field_instances['taxonomy_term-tapas_institution-field_institution_official_flag'] = array(
     'bundle' => 'tapas_institution',
     'default_value' => array(
@@ -232,7 +233,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'taxonomy_term-tapas_institution-field_institution_url'
+  // 'taxonomy_term-tapas_institution-field_institution_url'.
   $field_instances['taxonomy_term-tapas_institution-field_institution_url'] = array(
     'bundle' => 'tapas_institution',
     'default_value' => NULL,
@@ -284,7 +285,7 @@ function tapas_feature_taxonomy_institution_field_default_field_instances() {
   );
 
   // Exported field_instance:
-  // 'taxonomy_term-tapas_institution-field_old_url_alias'
+  // 'taxonomy_term-tapas_institution-field_old_url_alias'.
   $field_instances['taxonomy_term-tapas_institution-field_old_url_alias'] = array(
     'bundle' => 'tapas_institution',
     'default_value' => NULL,

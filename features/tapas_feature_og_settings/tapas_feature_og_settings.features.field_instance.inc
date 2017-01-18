@@ -182,7 +182,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
     'settings' => array(
       'behaviors' => array(
         'og_widget' => array(
-          'access_override' => 0,
+          'access_override' => 1,
           'admin' => array(
             'widget_type' => 'entityreference_autocomplete',
           ),
@@ -342,7 +342,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
     'bundle' => 'tapas_record',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => 'Associate your record with one or more of your collections',
+    'description' => '<p>Associate your record with one or more of your project collections, or add it to the Commons public collection.</p><p>Learn more about the TAPAS Commons <a href="#">here.</a></p>',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -357,6 +357,13 @@ function tapas_feature_og_settings_field_default_field_instances() {
         'settings' => array(),
         'type' => 'og_list_default',
         'weight' => 7,
+      ),
+      'reader_pane' => array(
+        'label' => 'above',
+        'module' => 'og_ui',
+        'settings' => array(),
+        'type' => 'og_list_default',
+        'weight' => 5,
       ),
       'search_index' => array(
         'label' => 'above',
@@ -415,7 +422,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
       'module' => 'og',
       'settings' => array(),
       'type' => 'og_complex',
-      'weight' => 5,
+      'weight' => 6,
     ),
   );
 
@@ -455,7 +462,7 @@ function tapas_feature_og_settings_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Associate your record with one or more of your collections');
+  t('<p>Associate your record with one or more of your project collections, or add it to the Commons public collection.</p><p>Learn more about the TAPAS Commons <a href="#">here.</a></p>');
   t('Collections');
   t('Determine if this is an OG group.');
   t('Group');

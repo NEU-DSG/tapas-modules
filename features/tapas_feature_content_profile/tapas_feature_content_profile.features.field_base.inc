@@ -10,7 +10,7 @@
 function tapas_feature_content_profile_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_profile_about'
+  // Exported field_base: 'field_profile_about'.
   $field_bases['field_profile_about'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -31,7 +31,7 @@ function tapas_feature_content_profile_field_default_field_bases() {
     'type' => 'text_long',
   );
 
-  // Exported field_base: 'field_profile_avatar'
+  // Exported field_base: 'field_profile_avatar'.
   $field_bases['field_profile_avatar'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -54,7 +54,7 @@ function tapas_feature_content_profile_field_default_field_bases() {
     'type' => 'image',
   );
 
-  // Exported field_base: 'field_profile_display_name'
+  // Exported field_base: 'field_profile_display_name'.
   $field_bases['field_profile_display_name'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -76,7 +76,7 @@ function tapas_feature_content_profile_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_profile_institution'
+  // Exported field_base: 'field_profile_institution'.
   $field_bases['field_profile_institution'] = array(
     'active' => 1,
     'cardinality' => -1,
