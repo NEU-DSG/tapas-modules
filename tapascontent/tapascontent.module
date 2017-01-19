@@ -318,9 +318,10 @@ function _tapascontent_insert_update_common_tasks($node) {
  * @param results $results: the results from posting the data to hydra
 */
 function _tapascontent_process_upsert_results($results, $node){
+	watchdog('process_results', '<pre>'.print_r($results, TRUE).'</pre>');
 	if ($results[1] != 202){
 		if ($results[1] == 500){
-			$error = "The server is currently unreachable. Please try again or contact us to report the issue.";
+			$error = "The server is currently unreachable or returned a fatal error. Please try again or contact us to report the issue.";
 		} else {
 			$error = json_decode($results[0]);
 			$error = $error->errors[0];

@@ -187,6 +187,7 @@ function tapashydra_get_tei($did, $type) {
 
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET', CURLOPT_RETURNTRANSFER => TRUE);
 	$response = _tapashydra_curlcall($url, $curl_options, true);
+	watchdog('get_tei', '<pre>'.print_r($response, TRUE).'</pre>');
 	if ($response[1] == 200){
 		return $response[0];
 	} else if ($response[1] == 500){
@@ -195,8 +196,11 @@ function tapashydra_get_tei($did, $type) {
 		$error = json_decode($response[0]);
 		if (isset($error->message)){
 			$error = $error->message;
+			$error = $error.". Please try again or contact us to report the issue.";
+		} else {
+			$error = $response[0];
 		}
-		return $error.". Please try again or contact us to report the issue.";
+		return $error;
 	} else {
 		return "There was an unknown error. Please try again or contact us to report the issue";
 	}
