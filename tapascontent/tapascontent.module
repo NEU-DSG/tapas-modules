@@ -122,8 +122,15 @@ function tapascontent_node_delete($node) {
  */
 
 function tapascontent_node_view($node, $view_mode, $langcode) {
+	global $user;
 	if ($node->type == TAPAS_RECORD && $view_mode == 'full') {
 		tapascontent_view_tei_record($node);
+	}
+	if (isset($node->field_upload_status[LANGUAGE_NONE][0]['value']) && node_access("update", $node, $user) === TRUE){
+		$upload_status = $node->field_upload_status[LANGUAGE_NONE][0]['value'];
+		if ($upload_status != ""){
+			drupal_set_message($upload_status, 'error');
+		}
 	}
 }
 
@@ -137,11 +144,15 @@ function tapascontent_preprocess_node(&$variables){
         'bundle' => 'tapas_record',
         'view_mode' => 'full'));
       $reader_group = $groups['node']['tapas_record']['full']['group_record_reader_content'];
-      $reader_group->children[] = 'tapas_tab_reader';
-      field_group_group_save($reader_group);
+			if (!in_array('tapas_tab_reader', $reader_group->children)){
+				$reader_group->children[] = 'tapas_tab_reader';
+				field_group_group_save($reader_group);
+			}
 			$meta_group = $groups['node']['tapas_record']['full']['group_record_metadata_content'];
-			$meta_group->children[] = 'tapas_tab_meta';
-			field_group_group_save($meta_group);
+			if (!in_array('tapas_tab_meta', $meta_group->children)){
+				$meta_group->children[] = 'tapas_tab_meta';
+				field_group_group_save($meta_group);
+			}
       break;
   }
 }
@@ -264,28 +275,31 @@ function tapascontent_node_presave($node) {
 function _tapascontent_insert_update($node) {
   switch($node->type) {
     case TAPAS_PROJECT:
+			_tapascontent_insert_update_common_tasks($node);
       $members = _tapascontent_get_group_members($node);
       $data = _tapascontent_projcol_hydradata($node);
       foreach($members as $key => $value) {
         $data["members"."[$key]"] = $value;
       }
       watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
-      tapashydra_post($data, TAPAS_POST_PROJECT_URL);
-      _tapascontent_insert_update_common_tasks($node);
+      $results = tapashydra_post($data, TAPAS_POST_PROJECT_URL);
+			_tapascontent_process_upsert_results($results, $node);
       break;
     case TAPAS_COLLECTION:
+			_tapascontent_insert_update_common_tasks($node);
       watchdog('debug_tapascontent_insert_update', "Insert/Update called for TAPAS_COLLECTION");
       $data = _tapascontent_projcol_hydradata($node);
       $proj_as_array = _tapascontent_get_parent_uuids($node);
       $data['project_did'] = $proj_as_array[0];
       watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
-      tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
-      _tapascontent_insert_update_common_tasks($node);
+      $results = tapashydra_post($data, TAPAS_POST_COLLECTION_URL);
+			_tapascontent_process_upsert_results($results, $node);
       break;
     case TAPAS_RECORD:
+			_tapascontent_insert_update_common_tasks($node);
       $data = _tapascontent_record_hydradata($node);
-      tapashydra_post($data, TAPAS_POST_TEI_URL);
-      _tapascontent_insert_update_common_tasks($node);
+      $results = tapashydra_post($data, TAPAS_POST_TEI_URL);
+			_tapascontent_process_upsert_results($results, $node);
       watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
       break;
   }
@@ -295,6 +309,34 @@ function _tapascontent_insert_update_common_tasks($node) {
   // Index the content
   $node = node_load($node->nid);
   _tapascontent_index_content($node);
+}
+
+
+/**
+ * @internal This function processes the results from the post call to hydra, it looks to see the http code which is returned and if there is an error. If there is an issue, it saves that information to the upload_status field so that it can be displayed to the user
+ * @param node $node: the node
+ * @param results $results: the results from posting the data to hydra
+*/
+function _tapascontent_process_upsert_results($results, $node){
+	if ($results[1] != 202){
+		if ($results[1] == 500){
+			$error = "The server is currently unreachable. Please try again or contact us to report the issue.";
+		} else {
+			$error = json_decode($results[0]);
+			$error = $error->errors[0];
+		}
+		$node->field_upload_status[LANGUAGE_NONE][0]['value'] = '<b>There was an error processing your item</b>: '.$error;
+		field_attach_presave('node', $node);
+		field_attach_update('node', $node);
+		// Clear the static loading cache.
+		entity_get_controller('node')->resetCache(array($node->nid));
+	} else {
+		$node->field_upload_status[LANGUAGE_NONE][0]['value'] = "";
+		field_attach_presave('node', $node);
+		field_attach_update('node', $node);
+		// Clear the static loading cache.
+		entity_get_controller('node')->resetCache(array($node->nid));
+	}
 }
 
 // ====================================================================================

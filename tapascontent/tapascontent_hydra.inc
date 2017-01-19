@@ -52,7 +52,8 @@ function tapashydra_post($data, $url_base) {
 		CURLOPT_POSTFIELDS => $data_sanitized,
 	);
         watchdog('debug_tapashydra_post', '<pre>'.print_r($curl_options, TRUE).'</pre>');
-	return _tapashydra_curlcall($url, $curl_options);
+	$http_code = true;
+	return _tapashydra_curlcall($url, $curl_options, $http_code);
 }
 
 /**
@@ -87,7 +88,7 @@ function tapashydra_delete($url_base, $node) {
  * @return string" The Hydra result message.
  */
 
-function _tapashydra_curlcall($url, $options) {
+function _tapashydra_curlcall($url, $options, $http_code = false) {
 	$header = array('Authorization: Token token=' . TAPASHYDRA_AUTH_TOKEN);
 
 	$common_opts = array(
@@ -119,10 +120,14 @@ function _tapashydra_curlcall($url, $options) {
 		watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($ch, TRUE).'</pre>');
 		watchdog('debug_tapashydra_curlcall', '<pre>'.print_r($result, TRUE).'</pre>');
 	}
-
+	$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	curl_close($ch);
-	return $result;
 
+	if ($http_code == 1){
+		return array($result, $httpcode);
+	} else {
+		return $result;
+	}
 }
 
 /**
@@ -181,8 +186,20 @@ function tapashydra_get_tei($did, $type) {
 	//drupal_set_message("URL is $url");
 
 	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET', CURLOPT_RETURNTRANSFER => TRUE);
-
-	return _tapashydra_curlcall($url, $curl_options);
+	$response = _tapashydra_curlcall($url, $curl_options, true);
+	if ($response[1] == 200){
+		return $response[0];
+	} else if ($response[1] == 500){
+		return "There was an issue contacting the server. Please try again or contact us to report the issue";
+	} else if ($response[1] == 404){
+		$error = json_decode($response[0]);
+		if (isset($error->message)){
+			$error = $error->message;
+		}
+		return $error.". Please try again or contact us to report the issue.";
+	} else {
+		return "There was an unknown error. Please try again or contact us to report the issue";
+	}
 }
 
 
