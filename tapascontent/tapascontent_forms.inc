@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * @file
  * tapascontent_forms_inc
@@ -30,6 +30,9 @@ function tapascontent_form_node_form_alter(&$form, &$form_state, $form_id) {
 	if(isset($form['field_tapas_upload_status'])) {
 		$form['field_tapas_upload_status']['#access'] = FALSE;
 	}
+  if(isset($form['field_upload_status'])) {
+    $form['field_upload_status']['#access'] = FALSE;
+  }
 
 }
 
@@ -70,7 +73,7 @@ function _tapascontent_collection_form_check(&$form) {
 	$user_groups = og_get_groups_by_user(NULL, "node");
 
 	if(empty($user_groups)) {
-		_tapascontent_disable_collection_form($form); 
+		_tapascontent_disable_collection_form($form);
 	} else {
 		try {
 			foreach($user_groups as $gid) {
@@ -87,7 +90,7 @@ function _tapascontent_collection_form_check(&$form) {
 				//drupal_set_message("We seem to be experiencing a problem. Please open a support ticket, and copy this message in. (Unable to remove invalid group $gid.)");
 			}
 			_tapascontent_collection_form_check($form);
-		} 
+		}
 
 	}
 
@@ -100,7 +103,7 @@ function _tapascontent_collection_form_check(&$form) {
 
 function _tapascontent_disable_collection_form(&$form) {
 
-		
+
 		$form['field_tapas_description']['#access'] = FALSE;
 		$form['field_tapas_thumbnail']['#access'] = FALSE;
 		$form['field_tapas_slug']['#access'] = FALSE;
@@ -119,8 +122,8 @@ function _tapascontent_disable_collection_form(&$form) {
 				unset($form[$key]);
 			}
 		}
-		$form['title']['#prefix'] = 
-			"<h2>" . TAPASCONTENT_CREATE_PROJ_FIRST_HEADER . "</h2>" . 
+		$form['title']['#prefix'] =
+			"<h2>" . TAPASCONTENT_CREATE_PROJ_FIRST_HEADER . "</h2>" .
 			TAPASCONTENT_CREATE_PROJ_FIRST_TEXT;
 }
 
@@ -137,12 +140,12 @@ function _tapascontent_disable_collection_form(&$form) {
 function _tapascontent_validate_project_form($form, &$form_state) {
   $slug = _get_slug($form, $form_state);
 
-  $query_base = 'SELECT COUNT(*) from field_data_field_tapas_slug WHERE' . 
+  $query_base = 'SELECT COUNT(*) from field_data_field_tapas_slug WHERE' .
     ' field_tapas_slug_value = :value AND bundle = :bundle';
 
-  if (isset($form['#node']->nid)) { 
+  if (isset($form['#node']->nid)) {
     $query_base .= ' AND entity_id != :nid';
-    $count = db_query($query_base, [':value' => $slug, ':bundle' => 'tapas_project', 
+    $count = db_query($query_base, [':value' => $slug, ':bundle' => 'tapas_project',
       ':nid' => $form['#node']->nid])->fetchField();
   } else {
     $count = db_query($query_base, [':value' => $slug, ':bundle' => 'tapas_project'])
@@ -150,7 +153,7 @@ function _tapascontent_validate_project_form($form, &$form_state) {
  }
 
   // Attach an error if other projects are using this slug
-  if ($count > 0) { 
+  if ($count > 0) {
     $error = 'You must select a project slug that is not already in use.';
     form_set_error('field_tapas_slug', $error);
   }
@@ -174,7 +177,6 @@ function _tapascontent_validate_collection_form($form, &$form_state) {
 /**
  * syntactic sugar to get the slug value.
  */
-function _get_slug($form, &$form_state) { 
+function _get_slug($form, &$form_state) {
   return $form_state['values']['field_tapas_slug'][LANGUAGE_NONE][0]['value'];
 }
-
