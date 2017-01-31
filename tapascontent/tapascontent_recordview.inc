@@ -44,14 +44,22 @@ function tapascontent_view_tei_record($node) {
 			$default_view = $collection->field_tapas_preferred_view['und'][0]['value'];
 		}
 	}
-	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid, $default_view);
+	if (isset($node->field_tapas_record_ography_type['und'][0]['value'])){
+		$ography = true;
+		if ($default_view == "tapas_generic"){
+			$default_view = "teibp";
+		}
+	} else {
+		$ography = false;
+	}
+	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid, $default_view, $ography);
 	$node->content[TAPAS_METATAB][0] = _tapascontent_metatab($uuid);
 }
 
 /**
  * @internal. Provides render array for reader tab of records.
  */
-function _tapascontent_readertab($uuid, $default_view) {
+function _tapascontent_readertab($uuid, $default_view, $ography) {
 	$view_packages = _tapascontent_get_view_packages();
 	$view_markup = array();
 	if ($view_packages != NULL){
@@ -60,14 +68,16 @@ function _tapascontent_readertab($uuid, $default_view) {
 			$view_markup[] = '<div class="reader_'.$view->machine_name.'">'.$view_html.'</div>';
 			//TODO enqueue the right js here based on thew $view->js_dir
 			drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/teibp/js/teibp.js', array('type'=>'file'));
-			drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
-			drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/contextualItems.js', array('type'=>'file'));
-			drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
+			if (!$ography){
+				drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/jquery/plugins/jquery.blockUI.js', array('type'=>'file'));
+				drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/contextualItems.js', array('type'=>'file'));
+				drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
+			}
 			// TODO add the right css here based on the $view->css_dir to data attributes in the markup so they can be processed by the record.js file
 		}
 	}
 
-	$styledrop = _tapas_readertab_dropdown($view_packages, $default_view);
+	$styledrop = _tapas_readertab_dropdown($view_packages, $default_view, $ography);
 	$tei = tapashydra_get_tei($uuid, 'tei');
 	$xml_helper_fields = "<div class='row'><div class='checkbox'><label for='toggle_word_wrap'><input type='checkbox' id='toggle_word_wrap' name='toggle_word_wrap'/>Toggle Soft Wrap</label></div><div class='checkbox'><label for='toggle_invisibles'><input type='checkbox' id='toggle_invisibles' name='toggle_invisibles'/>Toggle Invisibles</label></div></div>";
 	$markup = '<div class="reader_tei">'.$xml_helper_fields.'<pre>'.htmlentities($tei).'</pre></div>';
@@ -106,15 +116,18 @@ function _tapascontent_get_view_packages(){
  * @internal. Provides the style drop-down on the rendered tei view.
  */
 
-function _tapas_readertab_dropdown($view_packages, $default_view) {
+function _tapas_readertab_dropdown($view_packages, $default_view, $ography) {
 	$options = array();
 	$options[$default_view] = "Default";
 	foreach($view_packages as $view){
-		if ($view->machine_name == $default_view){
-			$options[$view->machine_name] = $view->human_name . " (Default view)";
-		} else {
-			$options[$view->machine_name] = $view->human_name;
-		}
+		// if ($view->machine_name == $default_view){
+			// $options[$view->machine_name] = $view->human_name . " (Default view)";
+		// } else {
+		$options[$view->machine_name] = $view->human_name;
+		// }
+	}
+	if ($ography){
+		unset($options["tapas_generic"]);
 	}
 	$options['tei'] = TAPAS_TEI_LABEL;
 	if ($options[$default_view] == "Default"){
