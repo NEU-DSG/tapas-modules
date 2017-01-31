@@ -75,8 +75,6 @@ define('TAPAS_POST_TEI_URL', TAPAS_BASE_API_URL . "/files");
  * Fetched by a GET command.
  */
 define('TAPAS_GET_RAW', 'tei');
-define('TAPAS_GET_BP', 'teibp');
-define('TAPAS_GET_GENERIC', 'tapas_generic');
 
 /** Whether to include debug output. Not intended for production! */
 define("TAPAS_INCLUDE_CURL_DEBUG", FALSE);
