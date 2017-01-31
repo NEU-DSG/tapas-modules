@@ -33,26 +33,29 @@ function tapascontent_view_tei_record($node) {
 	drupal_add_js($theme_path.'/assets/js/record.js', array('type'=>'file', 'requires_jquery'=>true));
 	drupal_add_js($theme_path.'/assets/js/ace.js', array('type'=>'file', 'requires_jquery'=>true));
 	drupal_add_library('system','ui.dialog');
-	//TODO - pass the node default view and the collection preferred view to the reader tab?
 	$uuid = $node->uuid;
-	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid);
+	$default_view = "tapas_generic";
+	if (isset($node->field_tapas_default_view['und'][0]['value'])){ //node default view set
+		$default_view = $node->field_tapas_default_view['und'][0]['value'];
+	} elseif (isset($node->og_tapas_r_to_c['und'][0]['target_id'])){ //no node default view but collection is set
+		$collection = $node->og_tapas_r_to_c['und'][0]['target_id'];
+		$collection = node_load($collection);
+		if (isset($collection->field_tapas_preferred_view['und'][0]['value'])){ // collection preferred view is set
+			$default_view = $collection->field_tapas_preferred_view['und'][0]['value'];
+		}
+	}
+	$node->content[TAPAS_READERTAB][0] = _tapascontent_readertab($uuid, $default_view);
 	$node->content[TAPAS_METATAB][0] = _tapascontent_metatab($uuid);
 }
 
 /**
  * @internal. Provides render array for reader tab of records.
  */
-function _tapascontent_readertab($uuid) {
-	$url = TAPAS_BASE_API_URL . "/api/view_packages";
-	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET');
-	$response = _tapashydra_curlcall($url, $curl_options, true);
+function _tapascontent_readertab($uuid, $default_view) {
+	$view_packages = _tapascontent_get_view_packages();
 	$view_markup = array();
-	// TODO reach out here to the API for view_packages rails_api.localhost:8080/api/view_packages to get back JSON of all of the available view packages then loop through to do tapashydra_get_tei for each one, also do drupal_add_js based on the js files which are included in the json, and add the css as data params in the html so it can be picked up by the record.js file
-	if ($response[1] == 200){
-		$view_packages = json_decode($response[0]);
-
+	if ($view_packages != NULL){
 		foreach($view_packages as $view){
-			// dpm($view->machine_name);
 			$view_html = tapashydra_get_tei($uuid, $view->machine_name);
 			$view_markup[] = '<div class="reader_'.$view->machine_name.'">'.$view_html.'</div>';
 			//TODO enqueue the right js here based on thew $view->js_dir
@@ -62,11 +65,9 @@ function _tapascontent_readertab($uuid) {
 			drupal_add_js('/profiles/buildtapas/themes/tapas-themes/tapas_redesign/lib/tapas-generic/js/tapas-generic.js', array('type'=>'file'));
 			// TODO add the right css here based on the $view->css_dir to data attributes in the markup so they can be processed by the record.js file
 		}
-	} else {
-		$view_packages = NULL;
 	}
 
-	$styledrop = _tapas_readertab_dropdown($view_packages);
+	$styledrop = _tapas_readertab_dropdown($view_packages, $default_view);
 	$tei = tapashydra_get_tei($uuid, 'tei');
 	$xml_helper_fields = "<div class='row'><div class='checkbox'><label for='toggle_word_wrap'><input type='checkbox' id='toggle_word_wrap' name='toggle_word_wrap'/>Toggle Soft Wrap</label></div><div class='checkbox'><label for='toggle_invisibles'><input type='checkbox' id='toggle_invisibles' name='toggle_invisibles'/>Toggle Invisibles</label></div></div>";
 	$markup = '<div class="reader_tei">'.$xml_helper_fields.'<pre>'.htmlentities($tei).'</pre></div>';
@@ -87,18 +88,39 @@ function _tapascontent_readertab($uuid) {
 	return $readingtab;
 }
 
+/* @internal. provides the available view packages from teh RAILS API
+*
+*/
+function _tapascontent_get_view_packages(){
+	$url = TAPAS_BASE_API_URL . "/api/view_packages";
+	$curl_options = array(CURLOPT_CUSTOMREQUEST => 'GET');
+	$response = _tapashydra_curlcall($url, $curl_options, true);
+	if ($response[1] == 200){
+		return json_decode($response[0]);
+	} else {
+		return NULL;
+	}
+}
+
 /**
  * @internal. Provides the style drop-down on the rendered tei view.
  */
 
-function _tapas_readertab_dropdown($view_packages) {
+function _tapas_readertab_dropdown($view_packages, $default_view) {
 	$options = array();
-	//TODO will need to determine order based on preferred collection and default record views
+	$options[$default_view] = "Default";
 	foreach($view_packages as $view){
-		$options[$view->machine_name] = $view->human_name;
+		if ($view->machine_name == $default_view){
+			$options[$view->machine_name] = $view->human_name . " (Default view)";
+		} else {
+			$options[$view->machine_name] = $view->human_name;
+		}
 	}
 	$options['tei'] = TAPAS_TEI_LABEL;
-
+	if ($options[$default_view] == "Default"){
+		//it wasn't in the list of view packages so it must not be valid anymore, lets remove it from the options;
+		unset($options[$default_view]);
+	}
 
 	return array (
 			'#name'=>'reading_selector',
