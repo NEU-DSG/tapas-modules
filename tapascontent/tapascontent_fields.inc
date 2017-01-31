@@ -103,13 +103,13 @@ define ('TAPAS_FILE_MAXSIZE', '');
 
 function tapas_field_bases() {
 
-  $allowed_ographies = array ( 
+  $allowed_ographies = array (
     'allowed_values' => array(
-      'bibliography' => 'bibliography', 
-      'odd_file' => 'odd_file', 
-      'orgography' => 'orgography', 
-      'otherography' => 'otherography', 
-      'personography' => 'personography', 
+      'bibliography' => 'bibliography',
+      'odd_file' => 'odd_file',
+      'orgography' => 'orgography',
+      'otherography' => 'otherography',
+      'personography' => 'personography',
       'placeography' => 'placeography'
     ),
   );
@@ -272,7 +272,7 @@ function _tapascontent_all_fields() {
 				'label' => t('Upload Status'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_PROJECT,
-      ) + 
+      ) +
       tapas_instance_multiselect() // TODO: Why is this multiselect?
     ),
 
@@ -315,7 +315,7 @@ function _tapascontent_all_fields() {
 				'label' => t('Upload Status'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_COLLECTION,
-      ) + 
+      ) +
       tapas_instance_multiselect()
     ),
 
@@ -333,7 +333,7 @@ function _tapascontent_all_fields() {
 		TAPAS_P_INSTANCE_PRE . 'thumbnail' => (
 			array(
 				'field_name' => TAPAS_FIELD_PREFIX . 'thumbnail',
-				'label' => t('Shared Repository Thumbnail'), 
+				'label' => t('Shared Repository Thumbnail'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_SHARED,
 				'description' => TAPAS_INSTANCE_DESC_SHAREDTHUMB,
@@ -402,7 +402,7 @@ function _tapascontent_all_fields() {
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
 				'description' => TAPAS_INSTANCE_DESC_RECORD_OGRAPHY_TYPE,
-      ) + 
+      ) +
       tapas_instance_multiselect()
     ),
 
@@ -412,7 +412,7 @@ function _tapascontent_all_fields() {
 				'label' => t('Record Project'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
-      ) + 
+      ) +
       tapas_instance_project()
     ),
 
@@ -422,7 +422,7 @@ function _tapascontent_all_fields() {
 				'label' => t('Upload Status'),
 				'entity_type' => 'node',
 				'bundle' => TAPAS_RECORD,
-      ) + 
+      ) +
       tapas_instance_multiselect()
     ),
 	);
@@ -460,9 +460,9 @@ function tapas_instance_hiddentext() {
  * @return array A field instance array
  */
 
-function tapas_instance_project() { 
+function tapas_instance_project() {
   return array(
-    'required' => FALSE, 
+    'required' => FALSE,
     'display' => array('default' => array('type' => 'hidden')),
     'widget' => array(
       'module' => 'options',
@@ -473,15 +473,15 @@ function tapas_instance_project() {
 
 /** Returns a field instance array for specifically the ography type field
  *
- * @return array A field instance array 
+ * @return array A field instance array
  */
 
 function tapas_instance_multiselect() {
   return array(
-    'required' => FALSE, 
+    'required' => FALSE,
     'widget' => array(
-      'module' => 'multiselect', 
-      'type'=>'multiselect', 
+      'module' => 'multiselect',
+      'type'=>'multiselect',
     ),
   );
 }
@@ -595,15 +595,15 @@ function tapas_instance_datefield() {
 		'display' => array(
 			'default' => array(
 				'label' => 'inline',
-				'module' => 'date', 
-				'type' => 'date_default', 
+				'module' => 'date',
+				'type' => 'date_default',
 			),
 		),
 		'widget' => array(
 			'type' => 'date_select',
 			'module' => 'date',
 		),
-	
+
 	);
 }
 
@@ -695,4 +695,78 @@ function tapas_instance_hyperlinks() {
 			'type' => 'link_field',
 		),
 	);
+}
+
+
+function _tapas_preferred_and_default_view_packages(){
+  $field_name = TAPAS_FIELD_PREFIX.'preferred_view';
+  if (!field_info_field($field_name)) {
+    $view_packages = _tapascontent_get_view_packages();
+    $allowed_views = array(
+      'allowed_values' => array(
+      ),
+    );
+    foreach($view_packages as $view){
+      $allowed_views['allowed_values'][$view->machine_name] = $view->human_name;
+    }
+
+    $field = array(
+      'field_name' => $field_name,
+      'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'text',
+			'type' => 'list_text',
+			'settings' => $allowed_views,
+    );
+    field_create_field($field);
+    field_info_cache_clear();
+
+    $instance = array('field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => TAPAS_COLLECTION,
+      'label' => 'Preferred View Package',
+      'description' => 'Provide a preferred view package for the records in this collection. Should a recond belong to more than one collection, it can only have one preferred view package. Preferred view packages can be overriden at the record level by designating a default view package.'
+    );
+    field_create_instance($instance);
+    watchdog('tapascontent', $field_name." successfully created");
+  } else {
+    watchdog('tapascontent', $field_name." already exists");
+  }
+}
+
+
+function _tapas_default_view_packages(){
+  $field_name = TAPAS_FIELD_PREFIX.'default_view';
+  if (!field_info_field($field_name)) {
+    $view_packages = _tapascontent_get_view_packages();
+    $allowed_views = array(
+      'allowed_values' => array(
+      ),
+    );
+    foreach($view_packages as $view){
+      $allowed_views['allowed_values'][$view->machine_name] = $view->human_name;
+    }
+
+    $field = array(
+      'field_name' => $field_name,
+      'entity_types' => array('node'),
+			'cardinality' => 1,
+			'module' => 'text',
+			'type' => 'list_text',
+			'settings' => $allowed_views,
+    );
+    field_create_field($field);
+    field_info_cache_clear();
+
+    $instance = array('field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => TAPAS_RECORD,
+      'label' => 'Default View Package',
+      'description' => 'Provide a default view package for this record. This will trump any default set at the collection level.'
+    );
+    field_create_instance($instance);
+    watchdog('tapascontent', $field_name." successfully created");
+  } else {
+    watchdog('tapascontent', $field_name." already exists");
+  }
 }

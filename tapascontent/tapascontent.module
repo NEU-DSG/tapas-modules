@@ -858,3 +858,12 @@ function tapascontent_menu() {
    );
   return $items;
 }
+
+
+function tapascontent_update_7201(){
+  _tapas_preferred_and_default_view_packages();
+}
+
+function tapascontent_update_7202(){
+	_tapas_default_view_packages();
+}
