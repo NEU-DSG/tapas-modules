@@ -33,6 +33,23 @@ function tapascontent_form_node_form_alter(&$form, &$form_state, $form_id) {
   if(isset($form['field_upload_status'])) {
     $form['field_upload_status']['#access'] = FALSE;
   }
+  // get preferred and default view package options from the Rails API
+  if(isset($form['field_tapas_preferred_view'])){
+    $view_packages = _tapascontent_get_view_packages();
+    $options = array('_none'=>'- None -');
+    foreach($view_packages as $view){
+      $options[$view->machine_name] = $view->human_name;
+    }
+    $form['field_tapas_preferred_view']['und']['#options'] = $options;
+  }
+  if(isset($form['field_tapas_default_view'])){
+    $view_packages = _tapascontent_get_view_packages();
+    $options = array('_none'=>'- None -');
+    foreach($view_packages as $view){
+      $options[$view->machine_name] = $view->human_name;
+    }
+    $form['field_tapas_default_view']['und']['#options'] = $options;
+  }
 
 }
 
