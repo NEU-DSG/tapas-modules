@@ -761,7 +761,7 @@ function _tapas_default_view_packages(){
     $instance = array('field_name' => $field_name,
       'entity_type' => 'node',
       'bundle' => TAPAS_RECORD,
-      'label' => 'Default View Package',
+      'label' => 'View Package',
       'description' => 'Provide a default view package for this record. This will trump any default set at the collection level.'
     );
     field_create_instance($instance);
