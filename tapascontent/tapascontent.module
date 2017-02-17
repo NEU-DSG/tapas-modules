@@ -123,7 +123,7 @@ function tapascontent_node_delete($node) {
 
 function tapascontent_node_view($node, $view_mode, $langcode) {
 	global $user;
-	if ($node->type == TAPAS_RECORD && $view_mode == 'full') {
+	if ($node->type == TAPAS_RECORD && ($view_mode == 'full' || $view_mode == 'reader_pane')) {
 		tapascontent_view_tei_record($node);
 	}
 	if (isset($node->field_upload_status[LANGUAGE_NONE][0]['value']) && node_access("update", $node, $user) === TRUE){
@@ -857,4 +857,13 @@ function tapascontent_menu() {
     'type' => MENU_NORMAL_ITEM,
    );
   return $items;
+}
+
+
+function tapascontent_update_7201(){
+  _tapas_preferred_and_default_view_packages();
+}
+
+function tapascontent_update_7202(){
+	_tapas_default_view_packages();
 }

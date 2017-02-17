@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Two Pane Reader feature.
+ */
+
+include_once 'tapas_feature_two_pane_reader.features.inc';

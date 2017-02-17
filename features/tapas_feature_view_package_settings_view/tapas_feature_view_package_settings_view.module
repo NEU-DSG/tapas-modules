@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the View Package Settings View feature.
+ */
+
+include_once 'tapas_feature_view_package_settings_view.features.inc';

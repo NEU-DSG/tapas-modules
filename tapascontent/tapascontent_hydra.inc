@@ -181,7 +181,11 @@ function tapashydra_get_tei($did, $type) {
 		//drupal_set_message("One of the values is not set. DID: $did Type: $type");
 	}
 
-	$url = TAPAS_BASE_API_URL . "/files/$did/$type";
+	if ($type != "tei" && $type != "mods"){
+		$url = TAPAS_BASE_API_URL . "/files/$did/html/$type";
+	} else {
+		$url = TAPAS_BASE_API_URL . "/files/$did/$type";
+	}
 
 	//drupal_set_message("URL is $url");
 
