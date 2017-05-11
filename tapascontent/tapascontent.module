@@ -169,6 +169,7 @@ function tapascontent_preprocess_node(&$variables){
  */
 
 function _tapascontent_get_group_members($node) {
+	watchdog('debug_tapascontent_membership', '<pre>'. print_r(og_get_group_members_properties($node, [], OG_STATE_ACTIVE, 'node'), TRUE).'</pre>');
 	return og_get_group_members_properties($node, [], OG_STATE_ACTIVE, 'node');
 }
 
@@ -289,6 +290,10 @@ function _tapascontent_insert_update($node) {
 			_tapascontent_insert_update_common_tasks($node);
       watchdog('debug_tapascontent_insert_update', "Insert/Update called for TAPAS_COLLECTION");
       $data = _tapascontent_projcol_hydradata($node);
+			$members = _tapascontent_get_group_members($node);
+			foreach($members as $key => $value) {
+				$data["members"."[$key]"] = $value;
+			}
       $proj_as_array = _tapascontent_get_parent_uuids($node);
       $data['project_did'] = $proj_as_array[0];
       watchdog('debug_tapascontent_insert_update', '<pre>'. print_r($data, TRUE).'</pre>');
