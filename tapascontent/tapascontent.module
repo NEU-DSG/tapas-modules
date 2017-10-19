@@ -17,6 +17,136 @@ include_once('tapascontent_recordview.inc');
 include_once('tapascontent_solr_indexing.inc');
 include_once('tapascontent_forms.inc');
 
+
+/**
+     * API helper class. You can copy whole class in your PHP application.
+     */
+class WaApiClient {
+	const AUTH_URL = 'https://oauth.wildapricot.org/auth/token';
+   private $tokenScope = 'auto';
+   private static $_instance;
+   private $token;
+
+   public function initTokenByContactCredentials($userName, $password, $scope = null) {
+      if ($scope) {
+         $this->tokenScope = $scope;
+      }
+      $this->token = $this->getAuthTokenByAdminCredentials($userName, $password);
+      if (!$this->token) {
+         throw new Exception('Unable to get authorization token.');
+      }
+   }
+  public function initTokenByApiKey($apiKey, $scope = null) {
+	    if ($scope) {
+	       $this->tokenScope = $scope;
+	    }
+	    $this->token = $this->getAuthTokenByApiKey($apiKey);
+	    if (!$this->token) {
+	       throw new Exception('Unable to get authorization token.');
+	    }
+	 }
+     // this function makes authenticated request to API
+     // -----------------------
+     // $url is an absolute URL
+     // $verb is an optional parameter.
+     // Use 'GET' to retrieve data,
+     //     'POST' to create new record
+     //     'PUT' to update existing record
+     //     'DELETE' to remove record
+     // $data is an optional parameter - data to sent to server. Pass this parameter with 'POST' or 'PUT' requests.
+     // ------------------------
+     // returns object decoded from response json
+     public function makeRequest($url, $verb = 'GET', $data = null)
+     {
+        if (!$this->token) {
+           throw new Exception('Access token is not initialized. Call initTokenByApiKey or initTokenByContactCredentials before performing requests.');
+        }
+        $ch = curl_init();
+        $headers = array(
+           'Authorization: Bearer ' . $this->token,
+           'Content-Type: application/json'
+        );
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        if ($data) {
+           $jsonData = json_encode($data);
+           curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+           $headers = array_merge($headers, array('Content-Length: '.strlen($jsonData)));
+        }
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $verb);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $jsonResult = curl_exec($ch);
+        if ($jsonResult === false) {
+           throw new Exception(curl_errno($ch) . ': ' . curl_error($ch));
+        }
+        // var_dump($jsonResult); // Uncomment line to debug response
+        curl_close($ch);
+        return json_decode($jsonResult, true);
+     }
+     private function getAuthTokenByAdminCredentials($login, $password)
+     {
+        if ($login == '') {
+           throw new Exception('login is empty');
+        }
+        $data = sprintf("grant_type=%s&username=%s&password=%s&scope=%s", 'password', urlencode($login), urlencode($password), urlencode($this->tokenScope));
+        throw new Exception('Change clientId and clientSecret to values specific for your authorized application. For details see:  https://help.wildapricot.com/display/DOC/Authorizing+external+applications');
+        $clientId = 'SamplePhpApplication';
+        $clientSecret = 'open_wa_api_client';
+        $authorizationHeader = "Authorization: Basic " . base64_encode( $clientId . ":" . $clientSecret);
+        return $this->getAuthToken($data, $authorizationHeader);
+     }
+     private function getAuthTokenByApiKey($apiKey)
+     {
+        $data = sprintf("grant_type=%s&scope=%s", 'client_credentials', $this->tokenScope);
+        $authorizationHeader = "Authorization: Basic " . base64_encode("APIKEY:" . $apiKey);
+        return $this->getAuthToken($data, $authorizationHeader);
+     }
+     private function getAuthToken($data, $authorizationHeader)
+     {
+        $ch = curl_init();
+        $headers = array(
+           $authorizationHeader,
+           'Content-Length: ' . strlen($data)
+        );
+        curl_setopt($ch, CURLOPT_URL, WaApiClient::AUTH_URL);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	  $response = curl_exec($ch);
+	  if ($response === false) {
+           throw new Exception(curl_errno($ch) . ': ' . curl_error($ch));
+        }
+        // var_dump($response); // Uncomment line to debug response
+
+        $result = json_decode($response , true);
+        curl_close($ch);
+        return $result['access_token'];
+     }
+     public static function getInstance()
+     {
+        if (!is_object(self::$_instance)) {
+           self::$_instance = new self();
+        }
+        return self::$_instance;
+     }
+     public final function __clone()
+     {
+        throw new Exception('It\'s impossible to clone singleton "' . __CLASS__ . '"!');
+     }
+     private function __construct()
+     {
+        if (!extension_loaded('curl')) {
+           throw new Exception('cURL library is not loaded');
+        }
+     }
+     public function __destruct()
+     {
+        $this->token = null;
+     }
+  }
+
 // ====================================================================================
 // Functions implementing hooks
 // ====================================================================================
@@ -495,6 +625,7 @@ function tapascontent_user_login(&$edit, $user) {
 
   // Checks if Wild Apricot says the user is a paid member
   $is_paid_member = _tapascontent_is_paid_member($user->mail);
+	_tapascontent_watchdog("paid status is".$is_paid_member);
 
   // Checks if the user is currently flagged as a paid member
   $currently_member = array_key_exists($member_rid, $user->roles);
@@ -507,7 +638,7 @@ function tapascontent_user_login(&$edit, $user) {
     $msg = "Our records indicate that you are no longer a TEI Member.  You now have limited access to" .
       " the TAPAS Service.  If this was done in error, please contact us.";
     //drupal_set_message($msg);
-  } elseif ($is_paid_member === null) {
+	} elseif ($is_paid_member === null) {
     $msg = "Failed to contact Wild Apricot about membership status of"
       . " $user->mail.   Proceeding without changes made to user status";
     _tapascontent_watchdog($msg, WATCHDOG_NOTICE);
@@ -521,68 +652,47 @@ function tapascontent_user_login(&$edit, $user) {
 function _tapascontent_is_paid_member($email) {
   $key = variable_get('wild_apricot_api_key', false);
   $aid = '66796';
+	$waApiClient = WaApiClient::getInstance();
+	$waApiClient->initTokenByApiKey($key);
+	$url = "https://api.wildapricot.org/v2/Accounts/$aid/Contacts?";
 
-  $query_url  = "https://api.wildapricot.org/v1/Accounts/$aid/Contacts?apikey=$key&\$filter=";
-  $query_url .= "'e-Mail'%20eq%20'".$email."'";
-  $query_url .= "&\$select='Membership%20Status'";
+	$queryParams = array(
+          '$async' => 'false', // execute request synchronously
+          '$top' => 10, // limit result set to 10 records
+          '$filter' => 'e-Mail eq '.$email, // filter only members
+          '$select' => 'Membership Status'
+       );
+	$url .= http_build_query($queryParams);
+	$result = $waApiClient->makeRequest($url);
+	_tapascontent_watchdog("This is the result<pre>".print_r($result, true)."</pre>", WATCHDOG_NOTICE);
 
-  // This is the JSON response returned by the API call in toto
-  $async_result = _tapascontent_curl_get_apricot($query_url);
-
-  // Check the WildApricot server once every ten seconds or until our
-  // query is complete.
-  $i = 0;
-  while((($async_result === null) or ($async_result->State != 'Complete')) and ($i <= 10)) {
-    sleep(1);
-    $async_result = _tapascontent_curl_get_apricot($query_url);
-    $i += 1;
+  $users = $result['Contacts'];
+  $user_count = count($users);
+	_tapascontent_watchdog("These are users<pre>".print_r($users, true)."</pre>", WATCHDOG_NOTICE);
+	_tapascontent_watchdog("user cont is ".$user_count, WATCHDOG_DEBUG);
+  // In the case where no users were returned, the email address
+  // we entered is associated with a user that doesn't exist according to
+  // the TEIC.  Not a paid member.
+  if($user_count == 0) {
+		_tapascontent_watchdog("getting that it is zero", WATCHDOG_NOTICE);
+    return false;
   }
 
-  if(is_object($async_result) and ($async_result->State === 'Complete')) {
-    $result_url = $async_result->ResultUrl."&apikey=$key";
-    $result = _tapascontent_curl_get_apricot($result_url);
+  // Too many users were returned by the query -
+  // email addresses should not be ambiguous so we return null
+  if($user_count > 1) {
+    $msg = "Wild Apricot returned $user_count users when asked for the user" .
+      " with email address $email.  Skipping paid member status grant/revoke.";
+    _tapascontent_watchdog($msg, WATCHDOG_ERROR);
+    return null;
+  }
 
-    // In the case where $result is null, goofily loop hoping that Wild Apricot
-    // will snap out of it.
-    $step_two_i = 0;
-    while(($result === null) and ($step_two_i <= 10)) {
-      sleep(1);
-      $result = _tapascontent_curl_get_apricot($result_url);
-      $step_two_i += 1;
-    }
-
-    if ($result === null) {
-      return null;
-    }
-
-    $users = $result->Contacts;
-    $user_count = count($users);
-
-    // In the case where no users were returned, the email address
-    // we entered is associated with a user that doesn't exist according to
-    // the TEIC.  Not a paid member.
-    if($user_count === 0) {
-      return false;
-    }
-
-    // Too many users were returned by the query -
-    // email addresses should not be ambiguous so we return null
-    if($user_count > 1) {
-      $msg = "Wild Apricot returned $user_count users when asked for the user" .
-        " with email address $email.  Skipping paid member status grant/revoke.";
-      _tapascontent_watchdog($msg, WATCHDOG_ERROR);
-      return null;
-    }
-
-    $status = $users[0]->Status;
-
-    if ($status === 'Active') {
-      return true;
-    } elseif ($status != null) {
-      return false;
-    } else {
-      return null;
-    }
+  $status = $users[0]['Status'];
+	_tapascontent_watchdog('user is '.$status, WATCHDOG_NOTICE);
+  if ($status === 'Active') {
+    return true;
+  } elseif ($status != null) {
+    return false;
   } else {
     return null;
   }
